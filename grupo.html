@@ -1,0 +1,1004 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Kings of Ruin - Grupo</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Alegreya+Sans:ital,wght@0,400;0,700;1,400&family=Cinzel:wght@600;700&family=Crimson+Pro:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+
+    <style>
+        :root { 
+            --font-celtic: 'Celtic Garamond', 'Crimson Pro', serif; 
+            --font-title: 'Cinzel', serif;
+            --font-ui: 'Alegreya Sans', sans-serif;
+        }
+
+        body {
+            background-color: transparent;
+            color: #b8b4a7;
+            -webkit-tap-highlight-color: transparent;
+            font-family: var(--font-celtic);
+            overflow-x: hidden;
+            position: relative;
+            margin: 0;
+            padding: 0;
+            font-size: 16px;
+        }
+
+        body::after {
+            content: "";
+            position: fixed;
+            top: 0; left: 0; width: 100vw; height: 100vh;
+            background-image: linear-gradient(rgba(7, 9, 8, 0.75), rgba(7, 9, 8, 0.75)), url('https://lh3.googleusercontent.com/d/1CVTwNLqVBc4Y97ZD82hIaf4wJnPeK4-L');
+            background-size: cover;
+            background-position: center;
+            pointer-events: none;
+            z-index: -2;
+        }
+
+        ::-webkit-scrollbar { display: none; }
+
+        h1, h2, h3, .font-title { font-family: var(--font-title) !important; }
+        .font-sans { font-family: var(--font-ui) !important; }
+        .font-celtic { font-family: var(--font-celtic) !important; }
+
+        .site-header {
+            background: linear-gradient(180deg, rgba(7, 9, 8, 0.95) 0%, rgba(7, 9, 8, 0.85) 100%);
+            border-bottom: 1px solid rgba(43, 54, 48, 0.5);
+            padding: 8px 16px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: relative;
+            z-index: 25;
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+        }
+        .header-logo-img {
+            height: clamp(44px, 11vw, 54px);
+            width: auto;
+            max-width: 260px;
+            object-fit: contain;
+            display: block;
+            filter: drop-shadow(0 2px 6px rgba(0, 0, 0, 0.7));
+        }
+
+        .ost-player-slot {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 12px;
+            background: rgba(16, 20, 18, 0.7);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid #2b3630;
+            border-radius: 9999px;
+            color: #c2a675;
+            font-family: var(--font-ui);
+            font-size: clamp(0.75rem, 2.5vw, 0.85rem);
+            font-weight: bold;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            box-shadow: inset 0 1px 3px rgba(0,0,0,0.8), 0 2px 6px rgba(0,0,0,0.6);
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .hero-card {
+            background: #090b0a;
+            border: 1px solid #2b3630;
+            border-radius: 3px;
+            transition: border-color 0.25s, box-shadow 0.25s;
+        }
+        .hero-card.expanded {
+            border-color: #c2a675;
+            box-shadow: 0 0 12px rgba(194,166,117,0.18), inset 0 0 15px rgba(0,0,0,0.9);
+        }
+
+        /* COMBOBOX CUSTOMIZADO */
+        .stat-select {
+            background: #050706;
+            border: 1px solid #2b3630;
+            color: #c2a675;
+            outline: none;
+            font-family: var(--font-title);
+            font-size: 1.15rem;
+            font-weight: bold;
+            text-align: center;
+            height: 32px;
+            width: 100%;
+            border-radius: 3px;
+            box-shadow: inset 0 1px 3px rgba(0,0,0,0.9);
+            cursor: pointer;
+            padding: 0 4px;
+        }
+        .stat-select:focus {
+            border-color: #c2a675;
+            box-shadow: 0 0 6px rgba(194,166,117,0.4);
+        }
+
+        .stat-input {
+            background: #050706;
+            border: 1px solid #2b3630;
+            color: #c2a675;
+            outline: none;
+            font-family: var(--font-title);
+            font-size: 1.15rem;
+            font-weight: bold;
+            text-align: center;
+            width: 100%;
+            height: 32px;
+            border-radius: 3px;
+            box-shadow: inset 0 1px 3px rgba(0,0,0,0.9);
+            transition: all 0.2s;
+        }
+        .stat-input:focus {
+            border-color: #c2a675;
+            background: rgba(0,0,0,0.95);
+            box-shadow: 0 0 6px rgba(194,166,117,0.4);
+        }
+
+        .module-toggle-btn {
+            background: #0d120f;
+            border: 1px solid #1f2722;
+            padding: 7px 10px;
+            border-radius: 3px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            width: 100%;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        .module-toggle-btn:hover { border-color: #2b3630; background: #121814; }
+        .module-toggle-btn.open { border-color: #c2a675; background: #141c17; }
+
+        .attr-pill {
+            background: #060807;
+            border: 1px solid #1f2722;
+            padding: 5px 8px;
+            border-radius: 3px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            width: 100%;
+        }
+
+        /* BASE BRANCA PADRONIZADA DOS ÍCONES DE ATRIBUTO */
+        .attr-icon-badge {
+            width: 28px;
+            height: 28px;
+            min-width: 28px;
+            background: #ffffff;
+            border: 1px solid #c2a675;
+            border-radius: 3px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 3px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.4);
+            flex-shrink: 0;
+            overflow: hidden;
+        }
+        .attr-icon-img {
+            width: 100%;
+            height: 100%;
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+            display: block;
+            filter: brightness(0) saturate(100%) invert(67%) sepia(23%) saturate(600%) hue-rotate(5deg) brightness(92%) contrast(87%);
+        }
+
+        /* BINGO DE CARTAS 1 A 20 */
+        .card-slot-btn {
+            position: relative;
+            width: clamp(25px, 6.8vw, 31px);
+            height: clamp(25px, 6.8vw, 31px);
+            background: #070908;
+            border: 1px solid #232d27;
+            box-shadow: inset 0 1px 3px rgba(0,0,0,0.8);
+            color: #6d7872;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: var(--font-title);
+            font-weight: bold;
+            font-size: 11px;
+            border-radius: 2px;
+            transition: all 0.15s ease;
+            cursor: pointer;
+            padding: 0;
+            flex-shrink: 0;
+            line-height: 1;
+        }
+        .card-slot-btn.combat-active {
+            background: #450606;
+            border-color: #9e1515;
+            color: #b8b4a7;
+            box-shadow: inset 0 0 8px rgba(0,0,0,0.8), 0 0 5px rgba(158,21,21,0.4);
+        }
+        .card-slot-btn.diplo-active {
+            background: #0c2538;
+            border-color: #0284c7;
+            color: #b8b4a7;
+            box-shadow: inset 0 0 8px rgba(0,0,0,0.8), 0 0 5px rgba(2,132,199,0.4);
+        }
+
+        /* CARDS DE ITEM E SEGREDO */
+        .entity-item-card {
+            background: #060807;
+            border: 1px solid #1f2722;
+            border-radius: 3px;
+            padding: 8px 10px;
+            transition: all 0.2s;
+        }
+        .entity-item-card.used {
+            opacity: 0.6;
+            border-style: dashed;
+        }
+
+        .status-toggle-pill {
+            font-family: var(--font-ui);
+            font-size: 10px;
+            font-weight: bold;
+            text-transform: uppercase;
+            padding: 2px 6px;
+            border-radius: 3px;
+            border: 1px solid #2b3630;
+            background: #090b0a;
+            color: #8c938f;
+            cursor: pointer;
+            transition: all 0.15s;
+        }
+        .status-toggle-pill.active {
+            background: #141c17;
+            border-color: #c2a675;
+            color: #c2a675;
+        }
+        .status-toggle-pill.exhausted {
+            background: #2b1111;
+            border-color: #9e1515;
+            color: #ff6b6b;
+        }
+
+        .note-input {
+            background: transparent;
+            border: none;
+            color: #8c938f;
+            outline: none;
+            border-bottom: 1px dashed #2b3630;
+            transition: all 0.3s;
+            width: 100%;
+            font-family: var(--font-celtic);
+            font-size: 1.05rem;
+            padding: 3px 0 3px 4px;
+        }
+        .note-input:focus {
+            border-bottom-color: #c2a675;
+            border-bottom-style: solid;
+            color: #b8b4a7;
+        }
+
+        .bottom-nav-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 4rem;
+            width: 100%;
+            max-width: 512px;
+            margin: 0 auto;
+            gap: clamp(2px, 1.5vw, 12px);
+            padding: 0 4px;
+        }
+        .bottom-nav-item {
+            width: clamp(54px, 18vw, 76px);
+            flex-shrink: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100%;
+            padding: 0 2px;
+            transition: color 0.2s;
+        }
+        .bottom-nav-label {
+            font-size: clamp(10px, 2.7vw, 12px);
+            font-family: var(--font-ui);
+            text-transform: uppercase;
+            font-weight: 700;
+            letter-spacing: 0.01em;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            width: 100%;
+            text-align: center;
+            margin-top: 2px;
+            line-height: 1;
+        }
+    </style>
+</head>
+<body class="h-screen flex flex-col">
+
+    <header class="site-header flex-shrink-0">
+        <img src="https://lh3.googleusercontent.com/d/1U3juHgIiAcpfSSQiW3nWN20MhMUx7tJR" alt="Kings of Ruin" class="header-logo-img">
+        <div class="ost-player-slot" title="Trilha Sonora">
+            <i class="ph-fill ph-music-notes text-base"></i>
+            <span>OST</span>
+        </div>
+    </header>
+
+    <main id="main-scroll" class="flex-1 overflow-y-auto w-full max-w-lg mx-auto z-10 flex flex-col pb-20 pt-2 px-3 space-y-3.5">
+        
+        <div class="flex items-center justify-between px-1 mt-1">
+            <label id="screen-title-label" class="text-[15px] uppercase font-title tracking-widest text-[#6d7872] flex items-center gap-2 font-bold">
+                <i class="ph-fill ph-shield-chevron text-[20px]"></i> Integrantes da Expedição
+            </label>
+            <span id="screen-role-badge" class="text-[11px] font-sans text-[#8c938f] uppercase tracking-wider font-bold">Modo Cronista</span>
+        </div>
+
+        <div id="heroes-list" class="space-y-3.5"></div>
+
+    </main>
+
+    <!-- NAVEGAÇÃO INFERIOR DINÂMICA -->
+    <nav class="fixed bottom-0 w-full z-30 bg-[#070908]/95 backdrop-blur-md border-t border-[#1a211e] pb-safe shadow-[0_-4px_20px_rgba(0,0,0,1)] flex-shrink-0">
+        <div id="bottom-nav-bar" class="bottom-nav-container"></div>
+    </nav>
+
+    <script>
+        const storedPlayer = localStorage.getItem('active_player');
+        const storedCampaign = localStorage.getItem('active_campaign');
+
+        let userRole = 'cronista';
+        let currentSinglePlayerHeroId = null;
+        let activePlayerName = '';
+
+        if (storedPlayer && !storedCampaign) {
+            userRole = 'jogador';
+            try {
+                const pData = JSON.parse(storedPlayer);
+                currentSinglePlayerHeroId = pData.heroId || 'elgan';
+                activePlayerName = pData.playerName || 'Jogador';
+            } catch(e) {
+                currentSinglePlayerHeroId = 'elgan';
+            }
+        }
+
+        const initialDeck = Array.from({ length: 15 }, (_, i) => i + 1);
+
+        const heroesData = [
+            {
+                id: 'elgan',
+                name: 'Elgan',
+                title: 'O Candelário',
+                resources: { food: 0, wealth: 0, exp: 0, magic: 0 },
+                tracks: { health: 12, energy: 6, terror: 0 },
+                attributes: {
+                    aggressiveness: 1, empathy: 1,
+                    courage: 0, caution: 1,
+                    practicality: 2, spirituality: 1
+                },
+                decks: { combat: [...initialDeck], diplomacy: [...initialDeck] },
+                skills: {
+                    aggressiveness: '', empathy: '',
+                    courage: '', caution: '',
+                    practicality: '', spirituality: ''
+                },
+                itemsList: [],
+                secretsList: [],
+                notes: '',
+                openModules: { attributes: false, inventory: false }
+            },
+            {
+                id: 'gerdwyn',
+                name: 'Gerdwyn',
+                title: 'A Mercenária',
+                resources: { food: 0, wealth: 0, exp: 0, magic: 0 },
+                tracks: { health: 14, energy: 5, terror: 0 },
+                attributes: {
+                    aggressiveness: 2, empathy: 0,
+                    courage: 2, caution: 1,
+                    practicality: 1, spirituality: 0
+                },
+                decks: { combat: [...initialDeck], diplomacy: [...initialDeck] },
+                skills: {
+                    aggressiveness: '', empathy: '',
+                    courage: '', caution: '',
+                    practicality: '', spirituality: ''
+                },
+                itemsList: [],
+                secretsList: [],
+                notes: '',
+                openModules: { attributes: false, inventory: false }
+            },
+            {
+                id: 'iunis',
+                name: 'Iunis',
+                title: 'A Gladiatrix Fomoriana',
+                resources: { food: 0, wealth: 0, exp: 0, magic: 0 },
+                tracks: { health: 11, energy: 7, terror: 0 },
+                attributes: {
+                    aggressiveness: 0, empathy: 2,
+                    courage: 0, caution: 2,
+                    practicality: 1, spirituality: 2
+                },
+                decks: { combat: [...initialDeck], diplomacy: [...initialDeck] },
+                skills: {
+                    aggressiveness: '', empathy: '',
+                    courage: '', caution: '',
+                    practicality: '', spirituality: ''
+                },
+                itemsList: [],
+                secretsList: [],
+                notes: '',
+                openModules: { attributes: false, inventory: false }
+            },
+            {
+                id: 'osbert',
+                name: 'Osbert',
+                title: 'O Bufão Itinerante',
+                resources: { food: 0, wealth: 0, exp: 0, magic: 0 },
+                tracks: { health: 13, energy: 6, terror: 0 },
+                attributes: {
+                    aggressiveness: 1, empathy: 1,
+                    courage: 1, caution: 0,
+                    practicality: 2, spirituality: 1
+                },
+                decks: { combat: [...initialDeck], diplomacy: [...initialDeck] },
+                skills: {
+                    aggressiveness: '', empathy: '',
+                    courage: '', caution: '',
+                    practicality: '', spirituality: ''
+                },
+                itemsList: [],
+                secretsList: [],
+                notes: '',
+                openModules: { attributes: false, inventory: false }
+            }
+        ];
+
+        function renderBottomNav() {
+            const navContainer = document.getElementById('bottom-nav-bar');
+            if (!navContainer) return;
+
+            if (userRole === 'cronista') {
+                navContainer.innerHTML = `
+                    <a href="cronica.html" class="bottom-nav-item text-[#6d7872] hover:text-[#b8b4a7]">
+                        <i class="ph-fill ph-book-open text-[23px]"></i>
+                        <span class="bottom-nav-label">Crônica</span>
+                    </a>
+                    <a href="grupo.html" class="bottom-nav-item text-[#c2a675]">
+                        <i class="ph-fill ph-users-three text-[23px]"></i>
+                        <span class="bottom-nav-label">Grupo</span>
+                    </a>
+                    <a href="diario.html" class="bottom-nav-item text-[#6d7872] hover:text-[#b8b4a7]">
+                        <i class="ph-fill ph-feather text-[23px]"></i>
+                        <span class="bottom-nav-label">Diário</span>
+                    </a>
+                    <a href="salvar.html" class="bottom-nav-item text-[#6d7872] hover:text-[#b8b4a7]">
+                        <i class="ph-fill ph-archive text-[23px]"></i>
+                        <span class="bottom-nav-label">Salvar</span>
+                    </a>
+                    <a href="config.html" class="bottom-nav-item text-[#6d7872] hover:text-[#b8b4a7]">
+                        <i class="ph-fill ph-gear-six text-[23px]"></i>
+                        <span class="bottom-nav-label">Config.</span>
+                    </a>
+                `;
+            } else {
+                navContainer.innerHTML = `
+                    <a href="grupo.html" class="bottom-nav-item text-[#c2a675]">
+                        <i class="ph-fill ph-user-circle text-[23px]"></i>
+                        <span class="bottom-nav-label">Grupo</span>
+                    </a>
+                    <a href="diario.html" class="bottom-nav-item text-[#6d7872] hover:text-[#b8b4a7]">
+                        <i class="ph-fill ph-feather text-[23px]"></i>
+                        <span class="bottom-nav-label">Diário</span>
+                    </a>
+                    <a href="exportar.html" class="bottom-nav-item text-[#6d7872] hover:text-[#b8b4a7]">
+                        <i class="ph-fill ph-share-network text-[23px]"></i>
+                        <span class="bottom-nav-label">Exportar</span>
+                    </a>
+                    <a href="config.html" class="bottom-nav-item text-[#6d7872] hover:text-[#b8b4a7]">
+                        <i class="ph-fill ph-gear-six text-[23px]"></i>
+                        <span class="bottom-nav-label">Config.</span>
+                    </a>
+                `;
+            }
+        }
+
+        function createOptionOptions(max, current) {
+            let opts = '';
+            for (let i = 0; i <= max; i++) {
+                opts += `<option value="${i}" ${i === current ? 'selected' : ''} class="bg-[#090b0a] text-[#c2a675]">${i}</option>`;
+            }
+            return opts;
+        }
+
+        function toggleHeroModule(heroId, moduleKey) {
+            const hero = heroesData.find(h => h.id === heroId);
+            if (!hero) return;
+            hero.openModules[moduleKey] = !hero.openModules[moduleKey];
+            renderHeroes();
+        }
+
+        function updateHeroResource(heroId, res, val) {
+            const hero = heroesData.find(h => h.id === heroId);
+            if (hero && hero.resources) hero.resources[res] = parseInt(val, 10) || 0;
+        }
+
+        function updateHeroTrack(heroId, track, val) {
+            const hero = heroesData.find(h => h.id === heroId);
+            if (hero && hero.tracks) hero.tracks[track] = parseInt(val, 10) || 0;
+        }
+
+        function updateHeroAttr(heroId, attr, val) {
+            const hero = heroesData.find(h => h.id === heroId);
+            if (hero && hero.attributes) hero.attributes[attr] = parseInt(val, 10) || 0;
+        }
+
+        function updateHeroSkill(heroId, attr, val) {
+            const hero = heroesData.find(h => h.id === heroId);
+            if (hero && hero.skills) hero.skills[attr] = val;
+        }
+
+        function toggleDeckCard(heroId, deckType, cardNum) {
+            const hero = heroesData.find(h => h.id === heroId);
+            if (!hero || !hero.decks) return;
+
+            const list = hero.decks[deckType];
+            const idx = list.indexOf(cardNum);
+
+            if (idx === -1) {
+                list.push(cardNum);
+                list.sort((a, b) => a - b);
+            } else {
+                list.splice(idx, 1);
+            }
+
+            renderHeroes();
+        }
+
+        function addItem(heroId) {
+            const hero = heroesData.find(h => h.id === heroId);
+            if (!hero) return;
+            hero.itemsList.push({
+                id: 'item_' + Date.now(),
+                name: '',
+                equipped: true,
+                spent: false
+            });
+            renderHeroes();
+        }
+
+        function removeItem(heroId, itemId) {
+            const hero = heroesData.find(h => h.id === heroId);
+            if (!hero) return;
+            hero.itemsList = hero.itemsList.filter(i => i.id !== itemId);
+            renderHeroes();
+        }
+
+        function toggleItemEquip(heroId, itemId) {
+            const hero = heroesData.find(h => h.id === heroId);
+            if (!hero) return;
+            const item = hero.itemsList.find(i => i.id === itemId);
+            if (item) item.equipped = !item.equipped;
+            renderHeroes();
+        }
+
+        function toggleItemSpent(heroId, itemId) {
+            const hero = heroesData.find(h => h.id === heroId);
+            if (!hero) return;
+            const item = hero.itemsList.find(i => i.id === itemId);
+            if (item) item.spent = !item.spent;
+            renderHeroes();
+        }
+
+        function updateItemName(heroId, itemId, name) {
+            const hero = heroesData.find(h => h.id === heroId);
+            if (!hero) return;
+            const item = hero.itemsList.find(i => i.id === itemId);
+            if (item) item.name = name;
+        }
+
+        function addSecret(heroId) {
+            const hero = heroesData.find(h => h.id === heroId);
+            if (!hero) return;
+            hero.secretsList.push({
+                id: 'sec_' + Date.now(),
+                number: '',
+                desc: ''
+            });
+            renderHeroes();
+        }
+
+        function removeSecret(heroId, secId) {
+            const hero = heroesData.find(h => h.id === heroId);
+            if (!hero) return;
+            hero.secretsList = hero.secretsList.filter(s => s.id !== secId);
+            renderHeroes();
+        }
+
+        function updateSecretField(heroId, secId, field, val) {
+            const hero = heroesData.find(h => h.id === heroId);
+            if (!hero) return;
+            const sec = hero.secretsList.find(s => s.id === secId);
+            if (sec) sec[field] = val;
+        }
+
+        function renderHeroes() {
+            const container = document.getElementById('heroes-list');
+            if (!container) return;
+
+            const titleLabel = document.getElementById('screen-title-label');
+            const roleBadge = document.getElementById('screen-role-badge');
+
+            let heroesToRender = heroesData;
+            if (userRole === 'jogador' && currentSinglePlayerHeroId) {
+                heroesToRender = heroesData.filter(h => h.id === currentSinglePlayerHeroId);
+                if (titleLabel) titleLabel.innerHTML = '<i class="ph-fill ph-user-circle text-[20px]"></i> Minha Ficha de Herói';
+                if (roleBadge) roleBadge.innerText = activePlayerName ? `Jogador (${activePlayerName})` : 'Modo Jogador';
+            } else {
+                if (titleLabel) titleLabel.innerHTML = '<i class="ph-fill ph-shield-chevron text-[20px]"></i> Integrantes da Expedição';
+                if (roleBadge) roleBadge.innerText = 'Modo Cronista';
+            }
+
+            let html = '';
+
+            heroesToRender.forEach(h => {
+                const isAnyModuleOpen = h.openModules.attributes || h.openModules.inventory;
+
+                let combatBingoHtml = '';
+                for (let i = 1; i <= 20; i++) {
+                    const isActive = h.decks.combat.includes(i);
+                    combatBingoHtml += `
+                        <button onclick="toggleDeckCard('${h.id}', 'combat', ${i})" class="card-slot-btn ${isActive ? 'combat-active' : ''}">
+                            ${i}
+                        </button>
+                    `;
+                }
+
+                let diploBingoHtml = '';
+                for (let i = 1; i <= 20; i++) {
+                    const isActive = h.decks.diplomacy.includes(i);
+                    diploBingoHtml += `
+                        <button onclick="toggleDeckCard('${h.id}', 'diplomacy', ${i})" class="card-slot-btn ${isActive ? 'diplo-active' : ''}">
+                            ${i}
+                        </button>
+                    `;
+                }
+
+                let itemsHtml = '';
+                h.itemsList.forEach(item => {
+                    itemsHtml += `
+                        <div class="entity-item-card ${item.spent ? 'used' : ''} space-y-1.5">
+                            <div class="flex items-center justify-between gap-2">
+                                <input type="text" class="note-input !text-[0.95rem] !border-none !p-0 placeholder-[#4a5550]" placeholder="Nome do item..." value="${item.name}" oninput="updateItemName('${h.id}', '${item.id}', this.value)">
+                                <button onclick="removeItem('${h.id}', '${item.id}')" class="text-[#6d7872] hover:text-[#ff6b6b] p-0.5" title="Remover item">
+                                    <i class="ph-bold ph-trash text-sm"></i>
+                                </button>
+                            </div>
+                            <div class="flex items-center gap-1.5">
+                                <button onclick="toggleItemEquip('${h.id}', '${item.id}')" class="status-toggle-pill ${item.equipped ? 'active' : ''}">
+                                    ${item.equipped ? 'Equipado' : 'Mochila'}
+                                </button>
+                                <button onclick="toggleItemSpent('${h.id}', '${item.id}')" class="status-toggle-pill ${item.spent ? 'exhausted' : ''}">
+                                    ${item.spent ? 'Usado' : 'Pronto'}
+                                </button>
+                            </div>
+                        </div>
+                    `;
+                });
+
+                let secretsHtml = '';
+                h.secretsList.forEach(sec => {
+                    secretsHtml += `
+                        <div class="entity-item-card flex items-center justify-between gap-2">
+                            <div class="flex items-center gap-2 flex-1 min-w-0">
+                                <input type="text" class="stat-input !w-[44px] !h-[26px] !text-xs !p-0" placeholder="Nº" value="${sec.number}" oninput="updateSecretField('${h.id}', '${sec.id}', 'number', this.value)">
+                                <input type="text" class="note-input !text-[0.95rem] !border-none !p-0 placeholder-[#4a5550] flex-1" placeholder="Descrição do segredo..." value="${sec.desc}" oninput="updateSecretField('${h.id}', '${sec.id}', 'desc', this.value)">
+                            </div>
+                            <button onclick="removeSecret('${h.id}', '${sec.id}')" class="text-[#6d7872] hover:text-[#ff6b6b] p-0.5" title="Remover segredo">
+                                <i class="ph-bold ph-trash text-sm"></i>
+                            </button>
+                        </div>
+                    `;
+                });
+
+                html += `
+                    <div id="hero-card-${h.id}" class="hero-card ${isAnyModuleOpen ? 'expanded' : ''} p-3.5 shadow-md space-y-3">
+                        
+                        <!-- CABEÇALHO DO PERSONAGEM -->
+                        <div class="flex items-center justify-between pb-1.5 border-b border-[#141a17]">
+                            <div class="flex items-center gap-2">
+                                <h3 class="font-title text-[18px] text-[#c2a675] tracking-wide leading-none font-bold">${h.name}</h3>
+                                <span class="text-[10.5px] font-sans font-bold bg-[#141a17] text-[#8c938f] px-1.5 py-0.5 rounded border border-[#2b3630]">${h.title}</span>
+                            </div>
+                        </div>
+
+                        <!-- 1. TRILHAS VITAIS COM ÍCONES E SELECT (0 a 15) -->
+                        <div>
+                            <span class="text-[11px] font-title text-[#8c938f] uppercase tracking-wider block mb-1.5 font-bold">
+                                Trilhas Vitais
+                            </span>
+                            <div class="grid grid-cols-3 gap-2">
+                                <!-- Saúde -->
+                                <div class="bg-[#050706] border border-[#1e2621] p-1.5 rounded flex items-center gap-2">
+                                    <img src="asset/icons/health.png" alt="Saúde" class="w-6 h-6 object-contain flex-shrink-0" onerror="this.src='https://placehold.co/24x24/111/ef4444?text=S'">
+                                    <select onchange="updateHeroTrack('${h.id}', 'health', this.value)" class="stat-select">
+                                        ${createOptionOptions(15, h.tracks.health)}
+                                    </select>
+                                </div>
+                                <!-- Energia -->
+                                <div class="bg-[#050706] border border-[#1e2621] p-1.5 rounded flex items-center gap-2">
+                                    <img src="asset/icons/energy.png" alt="Energia" class="w-6 h-6 object-contain flex-shrink-0" onerror="this.src='https://placehold.co/24x24/111/eab308?text=E'">
+                                    <select onchange="updateHeroTrack('${h.id}', 'energy', this.value)" class="stat-select">
+                                        ${createOptionOptions(15, h.tracks.energy)}
+                                    </select>
+                                </div>
+                                <!-- Pavor -->
+                                <div class="bg-[#050706] border border-[#1e2621] p-1.5 rounded flex items-center gap-2">
+                                    <img src="asset/icons/terror.png" alt="Pavor" class="w-6 h-6 object-contain flex-shrink-0" onerror="this.src='https://placehold.co/24x24/111/a855f7?text=P'">
+                                    <select onchange="updateHeroTrack('${h.id}', 'terror', this.value)" class="stat-select">
+                                        ${createOptionOptions(15, h.tracks.terror)}
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 2. RECURSOS PESSOAIS -->
+                        <div>
+                            <span class="text-[11px] font-title text-[#8c938f] uppercase tracking-wider block mb-1.5 font-bold">
+                                Recursos Pessoais
+                            </span>
+                            <div class="grid grid-cols-4 gap-2">
+                                <div class="bg-[#050706] border border-[#1e2621] p-1.5 rounded flex flex-col items-center">
+                                    <span class="font-title text-[11px] font-bold text-[#b8b4a7] uppercase tracking-wider">Comida</span>
+                                    <input type="number" min="0" value="${h.resources.food}" oninput="updateHeroResource('${h.id}', 'food', this.value)" class="stat-input mt-1">
+                                </div>
+                                <div class="bg-[#050706] border border-[#1e2621] p-1.5 rounded flex flex-col items-center">
+                                    <span class="font-title text-[11px] font-bold text-[#b8b4a7] uppercase tracking-wider">Riqueza</span>
+                                    <input type="number" min="0" value="${h.resources.wealth}" oninput="updateHeroResource('${h.id}', 'wealth', this.value)" class="stat-input mt-1">
+                                </div>
+                                <div class="bg-[#050706] border border-[#1e2621] p-1.5 rounded flex flex-col items-center">
+                                    <span class="font-title text-[11px] font-bold text-[#b8b4a7] uppercase tracking-wider">Exp</span>
+                                    <input type="number" min="0" value="${h.resources.exp}" oninput="updateHeroResource('${h.id}', 'exp', this.value)" class="stat-input mt-1">
+                                </div>
+                                <div class="bg-[#050706] border border-[#1e2621] p-1.5 rounded flex flex-col items-center">
+                                    <span class="font-title text-[11px] font-bold text-[#b8b4a7] uppercase tracking-wider">Magia</span>
+                                    <input type="number" min="0" value="${h.resources.magic}" oninput="updateHeroResource('${h.id}', 'magic', this.value)" class="stat-input mt-1">
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 3. GAVETAS EXPANSÍVEIS -->
+                        <div class="space-y-2 pt-1 border-t border-[#141a17]">
+                            
+                            <!-- GAVETA A: ATRIBUTOS & PERÍCIAS COM ÍCONES PADRONIZADOS EM BASE BRANCA -->
+                            <div>
+                                <button onclick="toggleHeroModule('${h.id}', 'attributes')" class="module-toggle-btn ${h.openModules.attributes ? 'open' : ''}">
+                                    <span class="font-title text-[12.5px] text-[#b8b4a7] uppercase tracking-wider font-bold flex items-center gap-1.5">
+                                        <i class="ph-fill ph-scales text-[#c2a675]"></i> Atributos & Perícias
+                                    </span>
+                                    <i class="ph-bold ${h.openModules.attributes ? 'ph-caret-up' : 'ph-caret-down'} text-[#8c938f] text-[16px]"></i>
+                                </button>
+
+                                ${h.openModules.attributes ? `
+                                    <div class="mt-2.5 p-2.5 bg-[#060807] border border-[#1a211e] rounded space-y-2.5">
+                                        
+                                        <div class="space-y-1.5">
+                                            <div class="grid grid-cols-2 gap-2">
+                                                <!-- Agressividade (agression.png) -->
+                                                <div class="attr-pill">
+                                                    <div class="flex items-center gap-2 min-w-0">
+                                                        <div class="attr-icon-badge">
+                                                            <img src="asset/icons/agression.png" alt="Agressividade" class="attr-icon-img" onerror="this.src='https://placehold.co/28x28/fff/c2a675?text=A'">
+                                                        </div>
+                                                        <span class="font-sans text-[12px] font-bold text-[#b8b4a7] truncate">Agressividade</span>
+                                                    </div>
+                                                    <select onchange="updateHeroAttr('${h.id}', 'aggressiveness', this.value)" class="stat-select !h-[26px] !w-[38px] !text-sm">
+                                                        ${createOptionOptions(9, h.attributes.aggressiveness)}
+                                                    </select>
+                                                </div>
+
+                                                <!-- Empatia (empathy.png) -->
+                                                <div class="attr-pill">
+                                                    <div class="flex items-center gap-2 min-w-0">
+                                                        <div class="attr-icon-badge">
+                                                            <img src="asset/icons/empathy.png" alt="Empatia" class="attr-icon-img" onerror="this.src='https://placehold.co/28x28/fff/c2a675?text=E'">
+                                                        </div>
+                                                        <span class="font-sans text-[12px] font-bold text-[#b8b4a7] truncate">Empatia</span>
+                                                    </div>
+                                                    <select onchange="updateHeroAttr('${h.id}', 'empathy', this.value)" class="stat-select !h-[26px] !w-[38px] !text-sm">
+                                                        ${createOptionOptions(9, h.attributes.empathy)}
+                                                    </select>
+                                                </div>
+                                            </div>
+
+                                            <div class="grid grid-cols-2 gap-2">
+                                                <!-- Coragem (courage.png) -->
+                                                <div class="attr-pill">
+                                                    <div class="flex items-center gap-2 min-w-0">
+                                                        <div class="attr-icon-badge">
+                                                            <img src="asset/icons/courage.png" alt="Coragem" class="attr-icon-img" onerror="this.src='https://placehold.co/28x28/fff/c2a675?text=C'">
+                                                        </div>
+                                                        <span class="font-sans text-[12px] font-bold text-[#b8b4a7] truncate">Coragem</span>
+                                                    </div>
+                                                    <select onchange="updateHeroAttr('${h.id}', 'courage', this.value)" class="stat-select !h-[26px] !w-[38px] !text-sm">
+                                                        ${createOptionOptions(9, h.attributes.courage)}
+                                                    </select>
+                                                </div>
+
+                                                <!-- Cautela (caution.png) -->
+                                                <div class="attr-pill">
+                                                    <div class="flex items-center gap-2 min-w-0">
+                                                        <div class="attr-icon-badge">
+                                                            <img src="asset/icons/caution.png" alt="Cautela" class="attr-icon-img" onerror="this.src='https://placehold.co/28x28/fff/c2a675?text=K'">
+                                                        </div>
+                                                        <span class="font-sans text-[12px] font-bold text-[#b8b4a7] truncate">Cautela</span>
+                                                    </div>
+                                                    <select onchange="updateHeroAttr('${h.id}', 'caution', this.value)" class="stat-select !h-[26px] !w-[38px] !text-sm">
+                                                        ${createOptionOptions(9, h.attributes.caution)}
+                                                    </select>
+                                                </div>
+                                            </div>
+
+                                            <div class="grid grid-cols-2 gap-2">
+                                                <!-- Praticidade (practicality.png) -->
+                                                <div class="attr-pill">
+                                                    <div class="flex items-center gap-2 min-w-0">
+                                                        <div class="attr-icon-badge">
+                                                            <img src="asset/icons/practicality.png" alt="Praticidade" class="attr-icon-img" onerror="this.src='https://placehold.co/28x28/fff/c2a675?text=P'">
+                                                        </div>
+                                                        <span class="font-sans text-[12px] font-bold text-[#b8b4a7] truncate">Praticidade</span>
+                                                    </div>
+                                                    <select onchange="updateHeroAttr('${h.id}', 'practicality', this.value)" class="stat-select !h-[26px] !w-[38px] !text-sm">
+                                                        ${createOptionOptions(9, h.attributes.practicality)}
+                                                    </select>
+                                                </div>
+
+                                                <!-- Espiritualidade (spirituality.png) -->
+                                                <div class="attr-pill">
+                                                    <div class="flex items-center gap-2 min-w-0">
+                                                        <div class="attr-icon-badge">
+                                                            <img src="asset/icons/spirituality.png" alt="Espiritualidade" class="attr-icon-img" onerror="this.src='https://placehold.co/28x28/fff/c2a675?text=S'">
+                                                        </div>
+                                                        <span class="font-sans text-[12px] font-bold text-[#b8b4a7] truncate">Espiritualidade</span>
+                                                    </div>
+                                                    <select onchange="updateHeroAttr('${h.id}', 'spirituality', this.value)" class="stat-select !h-[26px] !w-[38px] !text-sm">
+                                                        ${createOptionOptions(9, h.attributes.spirituality)}
+                                                    </select>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <!-- PERÍCIAS VINCULADAS -->
+                                        <div class="pt-2 border-t border-[#141a17] space-y-1.5">
+                                            <span class="text-[10.5px] font-title text-[#8c938f] uppercase tracking-wider block font-bold">Cartas de Perícia Adquiridas</span>
+                                            <div class="grid grid-cols-2 gap-1.5">
+                                                <div class="bg-[#050706] border border-[#1e2621] p-1.5 rounded flex items-center gap-1.5">
+                                                    <span class="font-sans text-[10.5px] font-bold text-[#8c938f] whitespace-nowrap">Agress.:</span>
+                                                    <input type="text" class="note-input !text-[0.95rem] placeholder-[#343d38] italic" placeholder="Perícia..." value="${h.skills.aggressiveness}" oninput="updateHeroSkill('${h.id}', 'aggressiveness', this.value)" autocomplete="off">
+                                                </div>
+                                                <div class="bg-[#050706] border border-[#1e2621] p-1.5 rounded flex items-center gap-1.5">
+                                                    <span class="font-sans text-[10.5px] font-bold text-[#8c938f] whitespace-nowrap">Empat.:</span>
+                                                    <input type="text" class="note-input !text-[0.95rem] placeholder-[#343d38] italic" placeholder="Perícia..." value="${h.skills.empathy}" oninput="updateHeroSkill('${h.id}', 'empathy', this.value)" autocomplete="off">
+                                                </div>
+                                                <div class="bg-[#050706] border border-[#1e2621] p-1.5 rounded flex items-center gap-1.5">
+                                                    <span class="font-sans text-[10.5px] font-bold text-[#8c938f] whitespace-nowrap">Corag.:</span>
+                                                    <input type="text" class="note-input !text-[0.95rem] placeholder-[#343d38] italic" placeholder="Perícia..." value="${h.skills.courage}" oninput="updateHeroSkill('${h.id}', 'courage', this.value)" autocomplete="off">
+                                                </div>
+                                                <div class="bg-[#050706] border border-[#1e2621] p-1.5 rounded flex items-center gap-1.5">
+                                                    <span class="font-sans text-[10.5px] font-bold text-[#8c938f] whitespace-nowrap">Caut.:</span>
+                                                    <input type="text" class="note-input !text-[0.95rem] placeholder-[#343d38] italic" placeholder="Perícia..." value="${h.skills.caution}" oninput="updateHeroSkill('${h.id}', 'caution', this.value)" autocomplete="off">
+                                                </div>
+                                                <div class="bg-[#050706] border border-[#1e2621] p-1.5 rounded flex items-center gap-1.5">
+                                                    <span class="font-sans text-[10.5px] font-bold text-[#8c938f] whitespace-nowrap">Prat.:</span>
+                                                    <input type="text" class="note-input !text-[0.95rem] placeholder-[#343d38] italic" placeholder="Perícia..." value="${h.skills.practicality}" oninput="updateHeroSkill('${h.id}', 'practicality', this.value)" autocomplete="off">
+                                                </div>
+                                                <div class="bg-[#050706] border border-[#1e2621] p-1.5 rounded flex items-center gap-1.5">
+                                                    <span class="font-sans text-[10.5px] font-bold text-[#8c938f] whitespace-nowrap">Espirit.:</span>
+                                                    <input type="text" class="note-input !text-[0.95rem] placeholder-[#343d38] italic" placeholder="Perícia..." value="${h.skills.spirituality}" oninput="updateHeroSkill('${h.id}', 'spirituality', this.value)" autocomplete="off">
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                ` : ''}
+                            </div>
+
+                            <!-- GAVETA B: BARALHOS (1 A 20) & INVENTÁRIO COM CARDS INDIVIDUAIS -->
+                            <div>
+                                <button onclick="toggleHeroModule('${h.id}', 'inventory')" class="module-toggle-btn ${h.openModules.inventory ? 'open' : ''}">
+                                    <span class="font-title text-[12.5px] text-[#b8b4a7] uppercase tracking-wider font-bold flex items-center gap-1.5">
+                                        <i class="ph-fill ph-archive-box text-[#c2a675]"></i> Baralhos & Inventário
+                                    </span>
+                                    <i class="ph-bold ${h.openModules.inventory ? 'ph-caret-up' : 'ph-caret-down'} text-[#8c938f] text-[16px]"></i>
+                                </button>
+
+                                ${h.openModules.inventory ? `
+                                    <div class="mt-2.5 p-2.5 bg-[#060807] border border-[#1a211e] rounded space-y-3">
+                                        
+                                        <!-- COMBATE (1 A 20) -->
+                                        <div>
+                                            <div class="flex items-center justify-between mb-1.5">
+                                                <span class="font-sans text-[12px] font-bold text-[#ef4444] uppercase flex items-center gap-1">
+                                                    <i class="ph-fill ph-sword"></i> Baralho de Combate (1-20)
+                                                </span>
+                                                <span class="font-sans text-[11px] font-bold text-[#8c938f]">
+                                                    <strong class="text-[#ef4444]">${h.decks.combat.length}</strong> ativas
+                                                </span>
+                                            </div>
+                                            <div class="flex flex-wrap gap-1">
+                                                ${combatBingoHtml}
+                                            </div>
+                                        </div>
+
+                                        <!-- DIPLOMACIA (1 A 20) -->
+                                        <div class="pt-2 border-t border-[#141a17]">
+                                            <div class="flex items-center justify-between mb-1.5">
+                                                <span class="font-sans text-[12px] font-bold text-[#38bdf8] uppercase flex items-center gap-1">
+                                                    <i class="ph-fill ph-chats-circle"></i> Baralho de Diplomacia (1-20)
+                                                </span>
+                                                <span class="font-sans text-[11px] font-bold text-[#8c938f]">
+                                                    <strong class="text-[#38bdf8]">${h.decks.diplomacy.length}</strong> ativas
+                                                </span>
+                                            </div>
+                                            <div class="flex flex-wrap gap-1">
+                                                ${diploBingoHtml}
+                                            </div>
+                                        </div>
+
+                                        <!-- ITENS INDIVIDUAIS -->
+                                        <div class="pt-2 border-t border-[#141a17] space-y-2">
+                                            <div class="flex items-center justify-between">
+                                                <span class="font-title text-[11.5px] uppercase text-[#c2a675] font-bold flex items-center gap-1">
+                                                    <i class="ph-fill ph-shield"></i> Itens do Personagem
+                                                </span>
+                                                <button type="button" onclick="addItem('${h.id}')" class="text-[10.5px] font-sans font-bold uppercase tracking-wider px-2 py-0.5 rounded bg-[#101613] border border-[#2b3630] text-[#c2a675] hover:border-[#c2a675]">
+                                                    + Adicionar Item
+                                                </button>
+                                            </div>
+                                            <div class="space-y-1.5">
+                                                ${itemsHtml || '<p class="text-[12px] font-celtic italic text-[#4a5550]">Nenhum item registrado.</p>'}
+                                            </div>
+                                        </div>
+
+                                        <!-- SEGREDOS INDIVIDUAIS -->
+                                        <div class="pt-2 border-t border-[#141a17] space-y-2">
+                                            <div class="flex items-center justify-between">
+                                                <span class="font-title text-[11.5px] uppercase text-[#c2a675] font-bold flex items-center gap-1">
+                                                    <i class="ph-fill ph-key"></i> Segredos Adquiridos
+                                                </span>
+                                                <button type="button" onclick="addSecret('${h.id}')" class="text-[10.5px] font-sans font-bold uppercase tracking-wider px-2 py-0.5 rounded bg-[#101613] border border-[#2b3630] text-[#c2a675] hover:border-[#c2a675]">
+                                                    + Adicionar Segredo
+                                                </button>
+                                            </div>
+                                            <div class="space-y-1.5">
+                                                ${secretsHtml || '<p class="text-[12px] font-celtic italic text-[#4a5550]">Nenhum segredo registrado.</p>'}
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                ` : ''}
+                            </div>
+
+                        </div>
+
+                    </div>
+                `;
+            });
+
+            container.innerHTML = html;
+        }
+
+        window.onload = () => {
+            renderBottomNav();
+            renderHeroes();
+        };
+    </script>
+</body>
+</html>

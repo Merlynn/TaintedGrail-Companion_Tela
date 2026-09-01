@@ -1,0 +1,1088 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Kings of Ruin - Salvar Jogo</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Alegreya+Sans:ital,wght@0,400;0,700;1,400&family=Cinzel:wght@600;700&family=Crimson+Pro:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+
+    <style>
+        :root { 
+            --font-celtic: 'Celtic Garamond', 'Crimson Pro', serif; 
+            --font-title: 'Cinzel', serif;
+            --font-ui: 'Alegreya Sans', sans-serif;
+        }
+
+        body {
+            background-color: transparent;
+            color: #b8b4a7;
+            -webkit-tap-highlight-color: transparent;
+            font-family: var(--font-celtic);
+            overflow-x: hidden;
+            margin: 0; padding: 0;
+            font-size: 16px;
+        }
+
+        body::after {
+            content: "";
+            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+            background-image: linear-gradient(rgba(7, 9, 8, 0.85), rgba(7, 9, 8, 0.95)), url('https://lh3.googleusercontent.com/d/1CVTwNLqVBc4Y97ZD82hIaf4wJnPeK4-L');
+            background-size: cover; background-position: center;
+            pointer-events: none; z-index: -2;
+        }
+
+        ::-webkit-scrollbar { display: none; }
+
+        h1, h2, h3, .font-title { font-family: var(--font-title) !important; }
+        .font-sans { font-family: var(--font-ui) !important; }
+
+        .wizard-step { display: none; opacity: 0; transition: opacity 0.3s ease; }
+        .wizard-step.active { display: block; opacity: 1; }
+
+        /* CABEÇALHO */
+        .site-header {
+            background: linear-gradient(180deg, rgba(7, 9, 8, 0.95) 0%, rgba(7, 9, 8, 0.85) 100%);
+            border-bottom: 1px solid rgba(43, 54, 48, 0.5);
+            padding: 8px 16px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: relative;
+            z-index: 25;
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+        }
+        .header-logo-img {
+            height: clamp(44px, 11vw, 54px);
+            width: auto;
+            max-width: 260px;
+            object-fit: contain;
+            display: block;
+            filter: drop-shadow(0 2px 6px rgba(0, 0, 0, 0.7));
+        }
+
+        .ost-player-slot {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 12px;
+            background: rgba(16, 20, 18, 0.7);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid #2b3630;
+            border-radius: 9999px;
+            color: #c2a675;
+            font-family: var(--font-ui);
+            font-size: clamp(0.75rem, 2.5vw, 0.85rem);
+            font-weight: bold;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            box-shadow: inset 0 1px 3px rgba(0,0,0,0.8), 0 2px 6px rgba(0,0,0,0.6);
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        .ost-player-slot:hover {
+            border-color: #c2a675;
+            background: rgba(26, 33, 30, 0.9);
+            box-shadow: 0 0 8px rgba(194, 166, 117, 0.3);
+        }
+
+        /* TRILHA DE JORNADA */
+        .timeline-step { 
+            display: flex; flex-direction: column; align-items: center; cursor: pointer; width: 25%; position: relative; z-index: 2;
+        }
+        .timeline-node { 
+            width: 14px; height: 14px; transform: rotate(45deg); background: #070908; 
+            border: 1px solid #4a5550; transition: all 0.3s ease; box-shadow: inset 0 0 4px rgba(0,0,0,1); 
+        }
+        .timeline-step.active .timeline-node { 
+            background: #c2a675; border-color: #e5cd96; box-shadow: 0 0 10px rgba(194,166,117,0.6); 
+        }
+        .timeline-step.completed .timeline-node { 
+            background: #2b3630; border-color: #4a5550; 
+        }
+        .timeline-text { 
+            font-family: var(--font-title); font-size: clamp(10px, 2.8vw, 13px); color: #6d7872; text-transform: uppercase; 
+            letter-spacing: 0.08em; transition: all 0.3s ease; margin-top: 8px; text-align: center; 
+        }
+        .timeline-step.active .timeline-text { 
+            color: #c2a675; font-weight: bold; text-shadow: 0 0 8px rgba(194,166,117,0.3); 
+        }
+        .timeline-step.completed .timeline-text { 
+            color: #8c938f; 
+        }
+
+        /* BADGE DE STATUS */
+        .status-badge {
+            background: #101412;
+            border: 1px solid #2b3630;
+            color: #8c938f;
+            font-family: var(--font-ui);
+            font-size: clamp(9.5px, 2.5vw, 11.5px);
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            padding: 2px 6px;
+            border-radius: 3px;
+            cursor: pointer;
+            transition: all 0.2s;
+            white-space: nowrap;
+        }
+        .status-badge.strangeness {
+            background: #2b1111;
+            border-color: #9e1515;
+            color: #ff6b6b;
+            text-shadow: 0 0 5px rgba(255,107,107,0.4);
+        }
+
+        /* BOTÕES DE ÍCONE DO MAPA */
+        .token-header-btn {
+            background: #0d120f;
+            border: 1px solid #1a211e;
+            width: 30px;
+            height: 30px;
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.2s;
+            position: relative;
+            flex-shrink: 0;
+        }
+        .token-header-btn.inactive {
+            opacity: 0.3;
+            border-color: transparent;
+            background: transparent;
+        }
+        .token-header-btn.active {
+            opacity: 1;
+            border-color: #c2a675;
+            background: #141c17;
+            box-shadow: 0 0 6px rgba(194,166,117,0.3);
+        }
+        .token-header-btn .badge-count {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background: #c2a675;
+            color: #070908;
+            font-family: var(--font-ui);
+            font-size: clamp(10.5px, 2.7vw, 12px);
+            font-weight: bold;
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            line-height: 1;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.8);
+        }
+
+        .location-card-item {
+            transition: border-color 0.25s, box-shadow 0.25s;
+        }
+        .location-card-item.editing-focus {
+            border-color: #c2a675 !important;
+            box-shadow: 0 0 12px rgba(194,166,117,0.2), inset 0 0 10px rgba(0,0,0,0.9) !important;
+        }
+
+        .token-cell-card {
+            background: #060807;
+            border: 1px solid #1f2722;
+            border-radius: 3px;
+            padding: 5px 8px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            width: 100%;
+        }
+        .token-select {
+            background: #0e1310;
+            border: 1px solid #2b3630;
+            color: #c2a675;
+            font-family: var(--font-title);
+            font-size: clamp(13px, 3.5vw, 15px);
+            font-weight: bold;
+            padding: 3px 6px;
+            border-radius: 2px;
+            outline: none;
+            cursor: pointer;
+            width: 52px;
+            text-align: center;
+        }
+
+        .photo-btn {
+            background: rgba(7, 9, 8, 0.8); border: 1px dashed #6d7872; color: #b8b4a7;
+            width: 100%; padding: 12px; border-radius: 4px; font-family: var(--font-ui); font-size: 0.9rem;
+            text-transform: uppercase; letter-spacing: 0.1em; display: flex; flex-direction: column;
+            align-items: center; justify-content: center; gap: 8px; transition: all 0.2s; cursor: pointer;
+            margin-top: 1rem;
+        }
+        .photo-btn:active { background: #1a211e; border-color: #c2a675; color: #c2a675; }
+
+        .photo-add-small {
+            background: rgba(7, 9, 8, 0.6); border: 1px dashed #6d7872; color: #b8b4a7;
+            width: 80px; height: 80px; border-radius: 4px; display: flex; flex-direction: column;
+            align-items: center; justify-content: center; gap: 4px; transition: all 0.2s; cursor: pointer;
+            flex-shrink: 0;
+        }
+        .photo-add-small:active { background: #1a211e; border-color: #c2a675; color: #c2a675; }
+
+        .photo-thumbnail {
+            width: 80px; height: 80px; border-radius: 4px; object-fit: cover;
+            border: 1px solid #2b3630; box-shadow: 0 2px 8px rgba(0,0,0,0.8);
+        }
+
+        .nav-button {
+            background: #1a211e; border: 1px solid #2b3630; color: #c2a675; padding: 10px 16px;
+            border-radius: 4px; font-family: var(--font-ui); font-size: 0.95rem; text-transform: uppercase;
+            letter-spacing: 0.1em; font-weight: bold; flex: 1; text-align: center; cursor: pointer; transition: all 0.2s;
+        }
+        .nav-button:active { background: #c2a675; color: #070908; }
+        .nav-button.primary { background: #450606; border-color: #9e1515; color: #b8b4a7; }
+        .nav-button.primary:active { background: #9e1515; color: #fff; }
+
+        .inline-input {
+            background: rgba(0,0,0,0.4); border: 1px solid #2b3630; color: #c2a675;
+            outline: none; font-family: var(--font-celtic); font-size: 1.15rem;
+            border-radius: 3px; padding: 2px 8px; transition: all 0.2s; box-shadow: inset 0 1px 3px rgba(0,0,0,0.8);
+            width: 100%; height: 34px;
+        }
+        .inline-input:focus { border-color: #c2a675; background: rgba(0,0,0,0.8); }
+        .inline-input::placeholder { color: #343d38; font-style: italic; }
+
+        .padron-input {
+            background: rgba(0,0,0,0.6); border: 1px solid #2b3630; color: #c2a675;
+            outline: none; font-family: var(--font-celtic); font-size: 1.05rem; text-align: center;
+            transition: all 0.2s; width: 100%; height: 100%; border-radius: 2px;
+        }
+        .padron-input:focus { border-color: #c2a675; background: rgba(0,0,0,0.9); z-index: 10; position: relative; }
+        .padron-input::placeholder { color: #343d38; }
+
+        .add-tracker-btn {
+            background: rgba(7, 9, 8, 0.6); border: 1px solid #2b3630; color: #b8b4a7; width: 28px; height: 28px;
+            display: flex; align-items: center; justify-content: center; border-radius: 4px;
+            font-size: 1.1rem; cursor: pointer; transition: all 0.2s;
+        }
+        .add-tracker-btn:active, .add-tracker-btn:hover { background: #1a211e; color: #c2a675; border-color: #c2a675; }
+
+        .search-input {
+            background: rgba(7, 9, 8, 0.9); border: 1px solid #2b3630; color: #b8b4a7; width: 100%;
+            padding: 12px 14px; font-size: 1.15rem; border-radius: 4px; box-shadow: inset 0 2px 6px rgba(0,0,0,0.8);
+            transition: border-color 0.2s; font-family: var(--font-celtic);
+        }
+        .search-input:focus { outline: none; border-color: #6d7872; }
+
+        .world-add-btn {
+            position: absolute; right: 4px; top: 50%; transform: translateY(-50%);
+            background: #1a211e; border: 1px solid #2b3630; color: #b8b4a7; padding: 6px 12px;
+            border-radius: 3px; font-family: var(--font-ui); text-transform: uppercase; font-weight: bold; font-size: 0.8rem; transition: all 0.2s; cursor: pointer;
+        }
+        .world-add-btn:active { background: #c2a675; color: #070908; }
+
+        .note-input {
+            background: transparent; border: none; color: #8c938f; outline: none; border-bottom: 1px dashed #2b3630;
+            transition: all 0.3s; width: 100%; font-family: var(--font-celtic); font-size: 1.05rem; padding: 4px 0 4px 4px;
+        }
+        .note-input:focus { border-bottom-color: #c2a675; border-bottom-style: solid; color: #b8b4a7; }
+
+        @keyframes shake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-4px); } 50% { transform: translateX(4px); } 75% { transform: translateX(-4px); } }
+        .shake-warning { animation: shake 0.3s ease-in-out; color: #9e1515 !important; }
+
+        .delete-confirm {
+            background-color: #9e1515 !important; border-color: #ff3333 !important; color: #ffffff !important;
+            animation: pulse-red 1s infinite;
+        }
+        @keyframes pulse-red {
+            0%, 100% { box-shadow: 0 0 0 0 rgba(255, 51, 51, 0.7); }
+            50% { box-shadow: 0 0 0 4px rgba(255, 51, 51, 0); }
+        }
+
+        .corner-tl { top: 0; left: 0; border-top: 1px solid #2b3630; border-left: 1px solid #2b3630; }
+        .corner-tr { top: 0; right: 0; border-top: 1px solid #2b3630; border-right: 1px solid #2b3630; }
+        .corner-bl { bottom: 0; left: 0; border-bottom: 1px solid #2b3630; border-left: 1px solid #2b3630; }
+        .corner-br { bottom: 0; right: 0; border-bottom: 1px solid #2b3630; border-right: 1px solid #2b3630; }
+        
+        /* NAVEGAÇÃO INFERIOR CENTRADA E COM TIPOGRAFIA AMPLIADA */
+        .bottom-nav-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 4rem;
+            width: 100%;
+            max-width: 512px;
+            margin: 0 auto;
+            gap: clamp(2px, 1.5vw, 12px);
+            padding: 0 4px;
+        }
+        .bottom-nav-item {
+            width: clamp(54px, 18vw, 76px);
+            flex-shrink: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100%;
+            padding: 0 2px;
+            transition: color 0.2s;
+        }
+        .bottom-nav-label {
+            font-size: clamp(10px, 2.7vw, 12px);
+            font-family: var(--font-ui);
+            text-transform: uppercase;
+            font-weight: 700;
+            letter-spacing: 0.01em;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            width: 100%;
+            text-align: center;
+            margin-top: 2px;
+            line-height: 1;
+        }
+    </style>
+</head>
+<body class="h-screen flex flex-col">
+
+    <!-- CABEÇALHO -->
+    <header class="site-header flex-shrink-0">
+        <img src="https://lh3.googleusercontent.com/d/1U3juHgIiAcpfSSQiW3nWN20MhMUx7tJR" alt="Kings of Ruin" class="header-logo-img">
+        <div class="ost-player-slot" title="Trilha Sonora">
+            <i class="ph-fill ph-music-notes text-base"></i>
+            <span>OST</span>
+        </div>
+    </header>
+
+    <!-- PROGRESSO DO WIZARD -->
+    <div class="px-2 pt-5 pb-3 border-b border-[#1a211e] bg-[#090b0a]/95 backdrop-blur-md sticky top-0 z-20 flex-shrink-0">
+        <div class="relative max-w-sm mx-auto">
+            <div class="absolute top-[6px] left-[12%] right-[12%] h-[1px] bg-[#2b3630] z-0"></div>
+            
+            <div class="flex justify-between items-start relative z-10">
+                <div class="timeline-step active" onclick="goToStep(1)" id="indicator-1">
+                    <div class="timeline-node"></div>
+                    <span class="timeline-text">Criaturas</span>
+                </div>
+                <div class="timeline-step" onclick="goToStep(2)" id="indicator-2">
+                    <div class="timeline-node"></div>
+                    <span class="timeline-text">O Mapa</span>
+                </div>
+                <div class="timeline-step" onclick="goToStep(3)" id="indicator-3">
+                    <div class="timeline-node"></div>
+                    <span class="timeline-text">Na Caixa</span>
+                </div>
+                <div class="timeline-step" onclick="goToStep(4)" id="indicator-4">
+                    <div class="timeline-node"></div>
+                    <span class="timeline-text">Resumo</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <main id="main-scroll" class="flex-1 overflow-y-auto w-full max-w-lg mx-auto z-10 flex flex-col pb-20 pt-2 px-3">
+        
+        <div class="flex-1 space-y-4">
+            
+            <!-- PASSO 1: CRIATURAS -->
+            <div id="step-1" class="wizard-step active relative bg-[#090b0a]/90 backdrop-blur-sm p-4 shadow-[inset_0_0_20px_rgba(0,0,0,1)] border border-[#141a17] rounded-sm mt-2">
+                <div class="absolute w-4 h-4 corner-tl opacity-50"></div>
+                <div class="absolute w-4 h-4 corner-tr opacity-50"></div>
+                <div class="absolute w-4 h-4 corner-bl opacity-50"></div>
+                <div class="absolute w-4 h-4 corner-br opacity-50"></div>
+
+                <h2 class="text-2xl text-[#c2a675] tracking-wider text-center border-b border-[#2b3630] pb-3 mb-2 font-title">Criaturas e Totens</h2>
+                
+                <div class="space-y-2">
+                    <div id="tracker-padrons"></div>
+                    <div id="tracker-monarcas"></div>
+                    <div id="tracker-companheiros"></div>
+                    <div id="tracker-guardioes"></div>
+                </div>
+
+                <div id="photo-gallery-step1" class="mt-6"></div>
+            </div>
+
+            <!-- PASSO 2: O MAPA -->
+            <div id="step-2" class="wizard-step relative bg-[#090b0a]/90 backdrop-blur-sm p-4 shadow-[inset_0_0_20px_rgba(0,0,0,1)] border border-[#141a17] rounded-sm mt-2">
+                <div class="absolute w-4 h-4 corner-tl opacity-50"></div>
+                <div class="absolute w-4 h-4 corner-tr opacity-50"></div>
+                <div class="absolute w-4 h-4 corner-bl opacity-50"></div>
+                <div class="absolute w-4 h-4 corner-br opacity-50"></div>
+
+                <h2 class="text-2xl text-[#c2a675] tracking-wider text-center border-b border-[#2b3630] pb-3 mb-4 font-title">Cartas e Tokens no Mapa</h2>
+                
+                <div class="pt-2">
+                    <label id="map-section-title" class="text-[15px] uppercase font-title tracking-widest text-[#6d7872] block mb-4 flex items-center gap-2">
+                        <i class="ph-fill ph-map-pin-line text-[#6d7872] text-[20px]"></i> Locais Revelados e Tokens
+                    </label>
+                    <div class="relative mb-4">
+                        <input type="text" id="new-location-input" onkeypress="handleLocationEnter(event)" class="search-input italic" style="padding-right: 95px;" placeholder="Ex: 104...">
+                        <button onclick="addLocation()" class="world-add-btn">Registrar</button>
+                    </div>
+                    <div id="world-locations-list" class="space-y-3"></div>
+                </div>
+
+                <div id="photo-gallery-step2" class="mt-6"></div>
+            </div>
+
+            <!-- PASSO 3: NA CAIXA -->
+            <div id="step-3" class="wizard-step relative bg-[#090b0a]/90 backdrop-blur-sm p-4 shadow-[inset_0_0_20px_rgba(0,0,0,1)] border border-[#141a17] rounded-sm mt-2">
+                <div class="absolute w-4 h-4 corner-tl opacity-50"></div>
+                <div class="absolute w-4 h-4 corner-tr opacity-50"></div>
+                <div class="absolute w-4 h-4 corner-bl opacity-50"></div>
+                <div class="absolute w-4 h-4 corner-br opacity-50"></div>
+
+                <h2 class="text-2xl text-[#c2a675] tracking-wider text-center border-b border-[#2b3630] pb-3 mb-3 font-title">Guardar na Caixa</h2>
+                
+                <p class="text-[15px] text-[#8c938f] text-center font-celtic mb-4 leading-relaxed">
+                    Recolha os componentes físicos da mesa e organize-os nos compartimentos correspondentes:
+                </p>
+
+                <div class="space-y-3">
+                    <div class="p-3.5 bg-[#070908]/70 border border-[#2b3630] rounded-sm">
+                        <div class="flex items-center gap-2 mb-2 pb-1.5 border-b border-[#141a17]">
+                            <i class="ph-fill ph-user text-[#c2a675] text-[20px]"></i>
+                            <span class="font-title text-[14.5px] text-[#c2a675] tracking-wider uppercase font-bold">Cada Jogador (Salvamento)</span>
+                        </div>
+                        <ul class="text-[15px] text-[#b8b4a7] font-celtic space-y-1.5 list-disc list-inside leading-relaxed pl-1">
+                            <li>Cartas de Combate e Diplomacia ativas.</li>
+                            <li>Separadores e Cartas do Acervo de Evolução.</li>
+                            <li>Itens e Segredos pessoais (espaço menor).</li>
+                            <li>Perícias adquiridas.</li>
+                        </ul>
+                    </div>
+
+                    <div class="p-3.5 bg-[#070908]/70 border border-[#2b3630] rounded-sm">
+                        <div class="flex items-center gap-2 mb-2 pb-1.5 border-b border-[#141a17]">
+                            <i class="ph-fill ph-map-trifold text-[#c2a675] text-[20px]"></i>
+                            <span class="font-title text-[14.5px] text-[#c2a675] tracking-wider uppercase font-bold">Mundo Salvo (Comp. Grande)</span>
+                        </div>
+                        <ul class="text-[15px] text-[#b8b4a7] font-celtic space-y-1.5 list-disc list-inside leading-relaxed pl-1">
+                            <li>Todos os <strong class="text-[#c2a675]">Locais revelados</strong> e cartas de Consulta (<em class="text-[#8c938f]">não vire as cartas!</em>).</li>
+                        </ul>
+                    </div>
+
+                    <div class="p-3.5 bg-[#070908]/70 border border-[#2b3630] rounded-sm">
+                        <div class="flex items-center gap-2 mb-2 pb-1.5 border-b border-[#141a17]">
+                            <i class="ph-fill ph-cards text-[#c2a675] text-[20px]"></i>
+                            <span class="font-title text-[14.5px] text-[#c2a675] tracking-wider uppercase font-bold">Mundo Salvo (Comp. Padrão)</span>
+                        </div>
+                        <ul class="text-[15px] text-[#b8b4a7] font-celtic space-y-1.5 list-disc list-inside leading-relaxed pl-1">
+                            <li>Guardiões Ativos, Conflitos atuais e Segredos padrão ativos atrás dos separadores.</li>
+                            <li>Baralho de Incidentes, Demandas Ativas e Incidentes Ativos (<em class="text-[#8c938f]">não vire os Incidentes!</em>).</li>
+                        </ul>
+                    </div>
+
+                    <div class="p-3.5 bg-[#070908]/70 border border-[#2b3630] rounded-sm">
+                        <div class="flex items-center gap-2 mb-2 pb-1.5 border-b border-[#141a17]">
+                            <i class="ph-fill ph-archive-box text-[#c2a675] text-[20px]"></i>
+                            <span class="font-title text-[14.5px] text-[#c2a675] tracking-wider uppercase font-bold">Comp. Pequeno & Caixa Principal</span>
+                        </div>
+                        <ul class="text-[15px] text-[#b8b4a7] font-celtic space-y-1.5 list-disc list-inside leading-relaxed pl-1">
+                            <li>Baralho de Itens disponíveis e Segredos pequenos no comp. pequeno.</li>
+                            <li>Miniaturas, totens e tokens restantes nos espaços da caixa principal.</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- PASSO 4: RESUMO DINÂMICO -->
+            <div id="step-4" class="wizard-step relative bg-[#090b0a]/90 backdrop-blur-sm p-4 shadow-[inset_0_0_20px_rgba(0,0,0,1)] border border-[#141a17] rounded-sm mt-2">
+                <div class="absolute w-4 h-4 corner-tl opacity-50"></div>
+                <div class="absolute w-4 h-4 corner-tr opacity-50"></div>
+                <div class="absolute w-4 h-4 corner-bl opacity-50"></div>
+                <div class="absolute w-4 h-4 corner-br opacity-50"></div>
+
+                <h2 class="text-2xl text-[#c2a675] tracking-wider text-center border-b border-[#2b3630] pb-3 mb-3 font-title">Selar Registro</h2>
+                <p class="text-[15px] text-[#8c938f] text-center font-celtic mb-4 leading-relaxed">
+                    Confira o consolidado das anotações desta sessão antes de finalizar:
+                </p>
+
+                <div id="summary-content" class="space-y-3"></div>
+            </div>
+
+        </div>
+
+        <div class="flex gap-4 mt-6 px-3 mb-6">
+            <button id="btn-prev" onclick="prevStep()" class="nav-button opacity-50 pointer-events-none">Anterior</button>
+            <button id="btn-next" onclick="nextStep()" class="nav-button primary">Próximo</button>
+        </div>
+
+    </main>
+
+    <!-- NAVEGAÇÃO INFERIOR -->
+    <nav class="fixed bottom-0 w-full z-30 bg-[#070908]/95 backdrop-blur-md border-t border-[#1a211e] pb-safe shadow-[0_-4px_20px_rgba(0,0,0,1)] flex-shrink-0">
+        <div class="bottom-nav-container">
+            
+            <a href="cronica.html" class="bottom-nav-item text-[#6d7872] hover:text-[#b8b4a7]">
+                <i class="ph-fill ph-book-open text-[23px]"></i>
+                <span class="bottom-nav-label">Crônica</span>
+            </a>
+
+            <a href="grupo.html" class="bottom-nav-item text-[#6d7872] hover:text-[#b8b4a7]">
+                <i class="ph-fill ph-users-three text-[23px]"></i>
+                <span class="bottom-nav-label">Grupo</span>
+            </a>
+
+            <a href="diario.html" class="bottom-nav-item text-[#6d7872] hover:text-[#b8b4a7]">
+                <i class="ph-fill ph-feather text-[23px]"></i>
+                <span class="bottom-nav-label">Diário</span>
+            </a>
+
+            <a href="salvar.html" class="bottom-nav-item text-[#c2a675]">
+                <i class="ph-fill ph-archive text-[23px]"></i>
+                <span class="bottom-nav-label">Salvar</span>
+            </a>
+
+            <a href="config.html" class="bottom-nav-item text-[#6d7872] hover:text-[#b8b4a7]">
+                <i class="ph-fill ph-gear-six text-[23px]"></i>
+                <span class="bottom-nav-label">Config.</span>
+            </a>
+
+        </div>
+    </nav>
+
+    <script>
+        document.addEventListener('focusin', (e) => {
+            if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') {
+                setTimeout(() => {
+                    if (e.target.classList.contains('padron-input')) {
+                        const padronTitle = document.getElementById('title-section-padrons');
+                        if (padronTitle) {
+                            padronTitle.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                            return;
+                        }
+                    }
+
+                    if (e.target.id === 'new-location-input') {
+                        const mapTitle = document.getElementById('map-section-title');
+                        if (mapTitle) {
+                            mapTitle.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                            return;
+                        }
+                    }
+
+                    const parentCard = e.target.closest('.location-card-item');
+                    if (parentCard) {
+                        parentCard.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                        return;
+                    }
+
+                    e.target.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                }, 300);
+            }
+        });
+
+        document.addEventListener('click', (e) => {
+            if (currentStep !== 2) return;
+            const clickedCard = e.target.closest('.location-card-item');
+            const clickedAddBtn = e.target.closest('.world-add-btn');
+            const clickedInput = e.target.closest('#new-location-input');
+
+            if (!clickedCard && !clickedAddBtn && !clickedInput) {
+                let hasChanges = false;
+                Object.keys(worldLocations).forEach(loc => {
+                    if (worldLocations[loc].isExpanded) {
+                        worldLocations[loc].isExpanded = false;
+                        hasChanges = true;
+                    }
+                });
+                if (hasChanges) renderWorldLocations();
+            }
+        });
+
+        let currentStep = 1;
+        const totalSteps = 4;
+
+        function updateUI() {
+            document.querySelectorAll('.wizard-step').forEach(el => el.classList.remove('active'));
+            document.getElementById(`step-${currentStep}`).classList.add('active');
+
+            document.querySelectorAll('.timeline-step').forEach((el, index) => {
+                el.classList.remove('active', 'completed');
+                if (index + 1 === currentStep) el.classList.add('active');
+                if (index + 1 < currentStep) el.classList.add('completed');
+            });
+
+            const btnPrev = document.getElementById('btn-prev');
+            const btnNext = document.getElementById('btn-next');
+
+            if (currentStep === 1) {
+                btnPrev.classList.add('opacity-50', 'pointer-events-none');
+            } else {
+                btnPrev.classList.remove('opacity-50', 'pointer-events-none');
+            }
+
+            if (currentStep === totalSteps) {
+                renderSummary();
+                btnNext.innerText = "Salvar Jogo";
+                btnNext.style.background = "#2b3630";
+                btnNext.style.borderColor = "#c2a675";
+            } else {
+                btnNext.innerText = "Próximo";
+                btnNext.style.background = "";
+                btnNext.style.borderColor = "";
+            }
+
+            document.getElementById('main-scroll').scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function nextStep() {
+            if (currentStep < totalSteps) { currentStep++; updateUI(); } 
+            else { alert("Registro selado e salvo com sucesso!"); }
+        }
+
+        function prevStep() { if (currentStep > 1) { currentStep--; updateUI(); } }
+        function goToStep(step) { currentStep = step; updateUI(); }
+
+        const photoConfig = {
+            step1: { id: 'step1', title: 'Anexar Foto da Mesa', icon: 'ph-camera' },
+            step2: { id: 'step2', title: 'Anexar Foto da Área do Mapa', icon: 'ph-map-trifold' }
+        };
+        let photos = { step1: [], step2: [] };
+
+        function mockCapturePhoto(stepId) {
+            const mockUrl = "https://placehold.co/400x400/1a211e/6d7872?text=FOTO";
+            photos[stepId].push(mockUrl);
+            renderPhotoGallery(stepId);
+        }
+
+        function requestRemovePhoto(stepId, index, btnEl) {
+            if (btnEl.classList.contains('delete-confirm-photo')) {
+                photos[stepId].splice(index, 1);
+                renderPhotoGallery(stepId);
+            } else {
+                btnEl.classList.add('delete-confirm-photo');
+                btnEl.innerHTML = '<i class="ph-fill ph-trash text-[#ffffff] text-[16px]"></i>';
+                btnEl.style.backgroundColor = '#ff3333';
+                btnEl.style.borderColor = '#9e1515';
+                
+                setTimeout(() => {
+                    if (document.body.contains(btnEl)) {
+                        btnEl.classList.remove('delete-confirm-photo');
+                        btnEl.innerHTML = '<i class="ph-bold ph-trash text-[16px]"></i>';
+                        btnEl.style.backgroundColor = 'rgba(7, 9, 8, 0.8)';
+                        btnEl.style.borderColor = '#2b3630';
+                    }
+                }, 2500);
+            }
+        }
+
+        function renderPhotoGallery(stepId) {
+            const container = document.getElementById(`photo-gallery-${stepId}`);
+            if(!container) return;
+
+            const config = photoConfig[stepId];
+            const data = photos[stepId];
+
+            if (data.length === 0) {
+                container.innerHTML = `
+                    <button onclick="mockCapturePhoto('${stepId}')" class="photo-btn mt-2">
+                        <i class="ph ${config.icon} text-2xl"></i>
+                        <span>${config.title}</span>
+                    </button>
+                `;
+            } else {
+                let html = `<div class="flex gap-3 overflow-x-auto pb-2 snap-x items-center justify-start mt-2">`;
+                
+                html += `
+                    <button onclick="mockCapturePhoto('${stepId}')" class="photo-add-small snap-center" title="Adicionar outra foto">
+                        <i class="ph ph-plus text-2xl mb-1"></i>
+                        <span class="text-[9px] uppercase tracking-widest font-sans font-bold">Foto</span>
+                    </button>
+                `;
+
+                data.forEach((url, index) => {
+                    html += `
+                    <div class="relative flex-shrink-0 snap-center">
+                        <img src="${url}" class="photo-thumbnail" alt="Foto salva">
+                        <button onclick="requestRemovePhoto('${stepId}', ${index}, this)" class="absolute -top-2 -right-2 w-7 h-7 bg-[#070908]/90 border border-[#2b3630] rounded-full flex items-center justify-center text-[#6d7872] shadow-lg transition-all z-10 backdrop-blur-sm">
+                            <i class="ph-bold ph-trash text-[14px]"></i>
+                        </button>
+                    </div>`;
+                });
+
+                html += `</div>`;
+                container.innerHTML = html;
+            }
+        }
+
+        function requestRemoveTracker(category, index, btnEl) {
+            if (btnEl.classList.contains('delete-confirm')) { removeTracker(category, index); } 
+            else {
+                btnEl.classList.add('delete-confirm');
+                btnEl.innerHTML = '<i class="ph-bold ph-trash text-[18px]"></i>';
+                btnEl.style.backgroundColor = '#ff3333'; btnEl.style.borderColor = '#9e1515'; btnEl.style.color = '#fff';
+                setTimeout(() => {
+                    if (document.body.contains(btnEl)) {
+                        btnEl.classList.remove('delete-confirm');
+                        let iconSize = category === 'padrons' ? '22px' : '18px';
+                        btnEl.innerHTML = `<i class="ph-fill ph-trash text-[${iconSize}]"></i>`;
+                        btnEl.style.backgroundColor = ''; btnEl.style.borderColor = ''; btnEl.style.color = '';
+                    }
+                }, 2500);
+            }
+        }
+
+        let worldLocations = {}; 
+        function handleLocationEnter(event) { if (event.key === 'Enter') addLocation(); }
+        function triggerWarning(element) { element.classList.add('shake-warning'); setTimeout(() => element.classList.remove('shake-warning'), 300); }
+
+        function addLocation() {
+            const input = document.getElementById('new-location-input'); const locNum = input.value.trim();
+            if (locNum === "" || worldLocations.hasOwnProperty(locNum)) { triggerWarning(input); input.value = ""; return; }
+            
+            Object.keys(worldLocations).forEach(loc => worldLocations[loc].isExpanded = false);
+
+            worldLocations[locNum] = { 
+                status: 'Límpido', 
+                note: "", 
+                isExpanded: true,
+                tokens: { lightHourglass: 0, darkHourglass: 0, scroll: 0, cube: 0 } 
+            }; 
+            input.value = ""; 
+            renderWorldLocations();
+
+            setTimeout(() => {
+                const newCard = document.getElementById(`loc-card-${locNum}`);
+                if (newCard) newCard.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }, 100);
+        }
+
+        function toggleLocationStatus(locNum) {
+            const current = worldLocations[locNum].status;
+            worldLocations[locNum].status = (current === 'Límpido') ? 'Estranheza' : 'Límpido';
+            renderWorldLocations();
+        }
+
+        function toggleLocationExpand(locNum) {
+            const currentState = worldLocations[locNum].isExpanded;
+            Object.keys(worldLocations).forEach(loc => worldLocations[loc].isExpanded = false);
+            worldLocations[locNum].isExpanded = !currentState;
+            renderWorldLocations();
+
+            if (!currentState) {
+                setTimeout(() => {
+                    const card = document.getElementById(`loc-card-${locNum}`);
+                    if (card) card.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }, 100);
+            }
+        }
+
+        function handleTokenIconClick(locNum, tokenKey) {
+            Object.keys(worldLocations).forEach(loc => worldLocations[loc].isExpanded = false);
+            worldLocations[locNum].isExpanded = true;
+            if (worldLocations[locNum].tokens[tokenKey] === 0) {
+                worldLocations[locNum].tokens[tokenKey] = 1;
+            }
+            renderWorldLocations();
+
+            setTimeout(() => {
+                const card = document.getElementById(`loc-card-${locNum}`);
+                if (card) card.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }, 100);
+        }
+
+        function setLocationTokenValue(locNum, tokenKey, val) {
+            worldLocations[locNum].tokens[tokenKey] = parseInt(val, 10);
+            renderWorldLocations();
+        }
+
+        function requestRemoveLocation(locNum, btnEl) {
+            if (btnEl.classList.contains('delete-confirm')) { removeLocation(locNum); } 
+            else {
+                btnEl.classList.add('delete-confirm');
+                btnEl.innerHTML = '<i class="ph-bold ph-trash text-[18px]"></i>';
+                btnEl.style.color = '#ff3333';
+                setTimeout(() => {
+                    if (document.body.contains(btnEl)) {
+                        btnEl.classList.remove('delete-confirm');
+                        btnEl.innerHTML = '<i class="ph-fill ph-trash text-[18px]"></i>';
+                        btnEl.style.color = '';
+                    }
+                }, 2500);
+            }
+        }
+
+        function removeLocation(locNum) { delete worldLocations[locNum]; renderWorldLocations(); }
+        function saveWorldNote(locNum, text) { worldLocations[locNum].note = text; }
+
+        function renderWorldLocations() {
+            const container = document.getElementById('world-locations-list'); if(!container) return;
+            const locations = Object.keys(worldLocations); container.innerHTML = '';
+            if (locations.length === 0) { container.innerHTML = `<div class="text-[16px] text-[#6d7872] italic font-celtic px-2 py-1 mb-2">Nenhum em jogo.</div>`; return; }
+
+            const tokenMeta = {
+                lightHourglass: { label: 'Tempo (C)', icon: 'ph-hourglass', color: 'text-[#d1d5db]' },
+                darkHourglass: { label: 'Tempo (E)', icon: 'ph-hourglass-high', color: 'text-[#6b7280]' },
+                scroll: { label: 'Demanda', icon: 'ph-scroll', color: 'text-[#c2a675]' },
+                cube: { label: 'Universal', icon: 'ph-cube', color: 'text-[#ef4444]' }
+            };
+
+            locations.reverse().forEach(locNum => {
+                const locData = worldLocations[locNum];
+                const isStrange = locData.status === 'Estranheza';
+                const badgeClass = isStrange ? 'status-badge strangeness' : 'status-badge';
+                const cardFocusClass = locData.isExpanded ? 'editing-focus' : '';
+
+                const activeTokenKeys = Object.keys(locData.tokens).filter(k => locData.tokens[k] > 0);
+
+                let dropdownGridHtml = '';
+                if (activeTokenKeys.length > 0) {
+                    dropdownGridHtml = `<div class="grid grid-cols-2 gap-2.5 pt-2.5 pb-1 border-t border-[#141a17]">`;
+                    activeTokenKeys.forEach(k => {
+                        const meta = tokenMeta[k];
+                        const count = locData.tokens[k];
+                        let optionsHtml = '';
+                        for(let i = 0; i <= 7; i++) {
+                            optionsHtml += `<option value="${i}" ${i === count ? 'selected' : ''}>${i}</option>`;
+                        }
+
+                        dropdownGridHtml += `
+                            <div class="token-cell-card">
+                                <div class="flex items-center gap-2 overflow-hidden">
+                                    <i class="ph-fill ${meta.icon} ${meta.color} text-[18px] flex-shrink-0"></i>
+                                    <span class="font-sans text-[13px] font-bold text-[#b8b4a7] truncate">${meta.label}</span>
+                                </div>
+                                <select class="token-select" onchange="setLocationTokenValue('${locNum}', '${k}', this.value)">
+                                    ${optionsHtml}
+                                </select>
+                            </div>
+                        `;
+                    });
+                    dropdownGridHtml += `</div>`;
+                }
+
+                container.innerHTML += `
+                    <div id="loc-card-${locNum}" class="location-card-item ${cardFocusClass} bg-[#090b0a] border border-[#2b3630] px-3 py-2.5 rounded-sm relative mt-3 shadow-md" onclick="event.stopPropagation()">
+                        <div class="flex items-center justify-between gap-1">
+                            <div class="flex items-center gap-1.5 flex-shrink-0 cursor-pointer" onclick="toggleLocationExpand('${locNum}')">
+                                <span class="font-celtic text-[19px] text-[#c2a675] tracking-wide block leading-none font-title">${locNum}</span>
+                                <button onclick="event.stopPropagation(); toggleLocationStatus('${locNum}')" class="${badgeClass}">${locData.status}</button>
+                            </div>
+
+                            <div class="flex items-center gap-1.5">
+                                <button onclick="handleTokenIconClick('${locNum}', 'lightHourglass')" class="token-header-btn ${locData.tokens.lightHourglass > 0 ? 'active' : 'inactive'}" title="Tempo Claro">
+                                    <i class="ph-fill ph-hourglass text-[#d1d5db] text-[16px]"></i>
+                                    ${locData.tokens.lightHourglass > 0 ? `<span class="badge-count">${locData.tokens.lightHourglass}</span>` : ''}
+                                </button>
+                                <button onclick="handleTokenIconClick('${locNum}', 'darkHourglass')" class="token-header-btn ${locData.tokens.darkHourglass > 0 ? 'active' : 'inactive'}" title="Tempo Escuro">
+                                    <i class="ph-fill ph-hourglass-high text-[#6b7280] text-[16px]"></i>
+                                    ${locData.tokens.darkHourglass > 0 ? `<span class="badge-count">${locData.tokens.darkHourglass}</span>` : ''}
+                                </button>
+                                <button onclick="handleTokenIconClick('${locNum}', 'scroll')" class="token-header-btn ${locData.tokens.scroll > 0 ? 'active' : 'inactive'}" title="Demanda">
+                                    <i class="ph-fill ph-scroll text-[#c2a675] text-[16px]"></i>
+                                    ${locData.tokens.scroll > 0 ? `<span class="badge-count">${locData.tokens.scroll}</span>` : ''}
+                                </button>
+                                <button onclick="handleTokenIconClick('${locNum}', 'cube')" class="token-header-btn ${locData.tokens.cube > 0 ? 'active' : 'inactive'}" title="Universal">
+                                    <i class="ph-fill ph-cube text-[#ef4444] text-[16px]"></i>
+                                    ${locData.tokens.cube > 0 ? `<span class="badge-count">${locData.tokens.cube}</span>` : ''}
+                                </button>
+                            </div>
+
+                            <button onclick="requestRemoveLocation('${locNum}', this)" class="text-[#6d7872] hover:text-[#ff3333] transition-all p-1 flex-shrink-0"><i class="ph-fill ph-trash text-[19px]"></i></button>
+                        </div>
+
+                        ${locData.isExpanded ? `
+                            ${dropdownGridHtml}
+                            <div class="flex items-end gap-2 pt-2 border-t border-[#141a17] mt-1">
+                                <i class="ph-fill ph-feather text-[#6d7872] text-[15px] mb-1"></i>
+                                <input type="text" class="note-input placeholder-[#343d38] italic text-[1.05rem]" placeholder="Anotações do local..." value="${locData.note}" oninput="saveWorldNote('${locNum}', this.value)" autocomplete="off">
+                            </div>
+                        ` : ''}
+                    </div>`;
+            });
+        }
+
+        function renderSummary() {
+            const container = document.getElementById('summary-content');
+            if (!container) return;
+
+            let html = '';
+
+            let activePadronsCount = 0;
+            if (trackers.padrons && trackers.padrons.length > 0) {
+                trackers.padrons.forEach(quadrant => {
+                    const hasFilledField = quadrant.some(val => val && val.trim() !== '');
+                    if (hasFilledField) activePadronsCount++;
+                });
+            }
+
+            let monarcasCount = trackers.monarcas.filter(m => m.name.trim() !== '').length;
+            let companheirosCount = trackers.companheiros.filter(c => c.name.trim() !== '').length;
+            let guardioesCount = trackers.guardioes.filter(g => g.name.trim() !== '').length;
+
+            html += `
+                <div class="p-3.5 bg-[#070908]/70 border border-[#2b3630] rounded-sm">
+                    <div class="flex items-center justify-between pb-1.5 border-b border-[#141a17] mb-2">
+                        <span class="font-title text-[14.5px] text-[#c2a675] uppercase font-bold flex items-center gap-1.5">
+                            <i class="ph-fill ph-paw-print text-[18px]"></i> Criaturas & Totens
+                        </span>
+                        <span class="text-[12.5px] font-sans font-bold text-[#8c938f]">${activePadronsCount + monarcasCount + companheirosCount + guardioesCount} registros</span>
+                    </div>
+                    <div class="text-[14.5px] font-celtic text-[#b8b4a7] space-y-1.5">
+                        <div>• Padrons: ${activePadronsCount > 0 ? `<strong class="text-[#c2a675]">Ativos (${activePadronsCount})</strong>` : '<span class="text-[#6d7872]">Nenhum</span>'}</div>
+                        <div>• Monarcas da Ruína: ${monarcasCount > 0 ? `<strong class="text-[#c2a675]">${monarcasCount}</strong>` : '<span class="text-[#6d7872]">Nenhum</span>'}</div>
+                        <div>• Companheiros: ${companheirosCount > 0 ? `<strong class="text-[#c2a675]">${companheirosCount}</strong>` : '<span class="text-[#6d7872]">Nenhum</span>'}</div>
+                        <div>• Guardiões: ${guardioesCount > 0 ? `<strong class="text-[#c2a675]">${guardioesCount}</strong>` : '<span class="text-[#6d7872]">Nenhum</span>'}</div>
+                    </div>
+                </div>
+            `;
+
+            const locKeys = Object.keys(worldLocations);
+            html += `
+                <div class="p-3.5 bg-[#070908]/70 border border-[#2b3630] rounded-sm">
+                    <div class="flex items-center justify-between pb-1.5 border-b border-[#141a17] mb-2">
+                        <span class="font-title text-[14.5px] text-[#c2a675] uppercase font-bold flex items-center gap-1.5">
+                            <i class="ph-fill ph-map-pin-line text-[18px]"></i> Cartas do Mapa
+                        </span>
+                        <span class="text-[12.5px] font-sans font-bold text-[#8c938f]">${locKeys.length} locais salvos</span>
+                    </div>
+            `;
+
+            if (locKeys.length === 0) {
+                html += `<div class="text-[14.5px] text-[#6d7872] italic font-celtic">Nenhum local em jogo.</div>`;
+            } else {
+                html += `<div class="flex flex-wrap gap-2 max-h-36 overflow-y-auto">`;
+                locKeys.forEach(loc => {
+                    const data = worldLocations[loc];
+                    const isStrange = data.status === 'Estranheza';
+                    const badgeLetter = isStrange ? 'E' : 'L';
+                    const badgeColorStyle = isStrange 
+                        ? 'background: #2b1111; border: 1px solid #9e1515; color: #ff6b6b; text-shadow: 0 0 5px rgba(255,107,107,0.4);' 
+                        : 'background: #101412; border: 1px solid #2b3630; color: #8c938f;';
+
+                    html += `
+                        <div class="bg-[#050706] border border-[#1e2621] px-2.5 py-1 rounded-sm text-[13.5px] font-sans flex items-center gap-1.5">
+                            <span class="font-bold text-[#c2a675]">${loc}</span>
+                            <span class="text-[10px] font-bold px-1 py-0.5 rounded-sm uppercase tracking-wider" style="${badgeColorStyle}">${badgeLetter}</span>
+                        </div>
+                    `;
+                });
+                html += `</div>`;
+            }
+            html += `</div>`;
+
+            const totalPhotos = photos.step1.length + photos.step2.length;
+            html += `
+                <div class="p-3.5 bg-[#070908]/70 border border-[#2b3630] rounded-sm">
+                    <div class="flex items-center justify-between pb-1.5 border-b border-[#141a17] mb-2">
+                        <span class="font-title text-[14.5px] text-[#c2a675] uppercase font-bold flex items-center gap-1.5">
+                            <i class="ph-fill ph-camera text-[18px]"></i> Registros Fotográficos
+                        </span>
+                        <span class="text-[12.5px] font-sans font-bold text-[#8c938f]">${totalPhotos} fotos</span>
+                    </div>
+                    <div class="text-[14.5px] font-celtic text-[#b8b4a7]">
+                        ${totalPhotos > 0 ? `Fotos da mesa e do mapa anexadas.` : '<span class="text-[#6d7872] italic">Nenhuma foto anexada nesta sessão.</span>'}
+                    </div>
+                </div>
+            `;
+
+            container.innerHTML = html;
+        }
+
+        const dbEntities = { monarcas: ["Claudyne", "Veneda", "Nōnus", "Owyn", "Morrigan"], companheiros: ["Corcel de Batalha", "Cão Rastreador", "Corvo da Névoa", "Lince", "Familiar"], guardioes: ["Guardião do Desfiladeiro", "Aberração de Wyrd", "Aparição Errante", "Caçador Caído", "Aparição Anciã"] };
+        let trackers = { padrons: [], monarcas: [], companheiros: [], guardioes: [] };
+        const trackerConfig = { padrons: { title: "Padrons", icon: "ph-lighthouse", color: "text-[#c2a675] drop-shadow-[0_0_5px_rgba(194,166,117,0.5)]", max: 3, type: 'array' }, monarcas: { title: "Monarcas da Ruína", icon: "ph-crown", color: "text-[#ff3333] drop-shadow-[0_0_5px_rgba(255,51,51,0.6)]", max: 3, type: 'object' }, companheiros: { title: "Companheiros", icon: "ph-paw-print", color: "text-[#b8b4a7] drop-shadow-[0_0_3px_rgba(184,180,167,0.5)]", max: 99, type: 'object' }, guardioes: { title: "Guardiões", icon: "ph-sword", color: "text-[#c2a675] drop-shadow-[0_0_5px_rgba(194,166,117,0.5)]", max: 99, type: 'object' } };
+
+        function addTracker(category) {
+            if (category === 'padrons') { if (trackers.padrons.length === 0) trackers.padrons = [['', '', '', ''], ['', '', '', ''], ['', '', '', '']]; } 
+            else if (trackers[category].length < trackerConfig[category].max) trackers[category].push({name: '', loc: ''});
+            renderTrackers();
+        }
+
+        function removeTracker(category, index) {
+            if (category === 'padrons') trackers.padrons = []; else trackers[category].splice(index, 1);
+            renderTrackers();
+        }
+
+        function updateTrackerArray(cat, r, c, val) { trackers[cat][r][c] = val; }
+        function updateTrackerObject(cat, r, f, val) { trackers[cat][r][f] = val; }
+        function romanize(num) { return ['I', 'II', 'III'][num] || num + 1; }
+
+        function showSuggestions(inputEl, category, index) {
+            const val = inputEl.value.toLowerCase(); const box = document.getElementById(`suggestions-${category}-${index}`);
+            if(!box) return;
+            const matches = val === '' ? dbEntities[category] : dbEntities[category].filter(n => n.toLowerCase().includes(val));
+            if (matches.length === 0) { box.style.display = 'none'; return; }
+            let html = ''; matches.forEach(m => html += `<div class="p-3 border-b border-[#1a211e] text-[14px] text-[#b8b4a7] font-sans cursor-pointer hover:bg-[#1a211e]" onmousedown="selectSuggestion('${category}', ${index}, '${m}')">${m}</div>`);
+            box.innerHTML = html; box.style.display = 'block';
+        }
+
+        function selectSuggestion(c, i, val) { updateTrackerObject(c, i, 'name', val); renderTrackers(); }
+
+        function renderTrackers() {
+            Object.keys(trackerConfig).forEach(category => {
+                const config = trackerConfig[category]; const container = document.getElementById(`tracker-${category}`);
+                if (!container) return; const data = trackers[category];
+                
+                let btnHtml = '';
+                if (data.length === 0) btnHtml = `<button onclick="addTracker('${category}')" class="add-tracker-btn"><i class="ph ph-plus"></i></button>`;
+                else if (category === 'padrons') btnHtml = `<button onclick="requestRemoveTracker('${category}', null, this)" class="flex items-center justify-center text-[#6d7872] hover:text-[#ff3333] transition-colors p-1 rounded-sm"><i class="ph-fill ph-trash text-[22px]"></i></button>`;
+                else if (data.length < config.max) btnHtml = `<button onclick="addTracker('${category}')" class="add-tracker-btn"><i class="ph ph-plus"></i></button>`;
+
+                let idAttr = category === 'padrons' ? 'id="title-section-padrons"' : '';
+
+                let html = `<div ${idAttr} class="flex items-center justify-between mb-4 mt-5 border-b border-[#2b3630] pb-2">
+                                <label class="text-[15px] uppercase font-title tracking-widest text-[#c2a675] flex items-center gap-2">
+                                    <i class="ph-fill ${config.icon} ${config.color} text-[22px]"></i> ${config.title}
+                                </label>${btnHtml}</div>`;
+
+                if (data.length === 0) { html += `<div class="text-[16px] text-[#6d7872] italic font-celtic px-2 py-1 mb-2">Nenhum em jogo.</div>`; } 
+                else {
+                    if (config.type === 'array') {
+                        html += `<div class="flex gap-3 overflow-x-auto pb-2 snap-x items-center justify-start">`;
+                        data.forEach((item, index) => {
+                            html += `
+                            <div class="relative w-22 flex-shrink-0 flex flex-col items-center snap-center">
+                                <span class="text-[12px] text-[#8c938f] uppercase font-sans font-bold tracking-widest mb-2 text-center w-full">PADRON ${romanize(index)}</span>
+                                <div class="relative w-20 h-20">
+                                    <div class="grid grid-cols-2 grid-rows-2 gap-1 w-full h-full font-bold">
+                                        <input type="text" class="padron-input rounded-tl-sm" placeholder="-" value="${item[0]}" oninput="updateTrackerArray('${category}', ${index}, 0, this.value)">
+                                        <input type="text" class="padron-input rounded-tr-sm" placeholder="-" value="${item[1]}" oninput="updateTrackerArray('${category}', ${index}, 1, this.value)">
+                                        <input type="text" class="padron-input rounded-bl-sm" placeholder="-" value="${item[2]}" oninput="updateTrackerArray('${category}', ${index}, 2, this.value)">
+                                        <input type="text" class="padron-input rounded-br-sm" placeholder="-" value="${item[3]}" oninput="updateTrackerArray('${category}', ${index}, 3, this.value)">
+                                    </div>
+                                    <div class="absolute inset-0 m-auto w-5 h-5 bg-[#1a211e] border border-[#c2a675] rotate-45 shadow-[0_0_8px_rgba(0,0,0,1)] flex items-center justify-center pointer-events-none">
+                                        <div class="w-1.5 h-1.5 bg-[#c2a675] rounded-full"></div>
+                                    </div>
+                                </div>
+                            </div>`;
+                        });
+                        html += `</div>`;
+                    } else {
+                        html += `<div class="flex flex-col gap-2.5 mb-2 pl-3 border-l border-dashed border-[#1a211e] ml-3">`;
+                        data.forEach((item, index) => {
+                            html += `
+                            <div class="flex items-center gap-2 w-full">
+                                <div class="relative flex-1">
+                                    <input type="text" class="inline-input w-full" placeholder="Nome..." value="${item.name}" 
+                                        onfocus="showSuggestions(this, '${category}', ${index})" oninput="updateTrackerObject('${category}', ${index}, 'name', this.value); showSuggestions(this, '${category}', ${index})"
+                                        onblur="setTimeout(() => { const el = document.getElementById('suggestions-${category}-${index}'); if(el) el.style.display = 'none'; }, 150)">
+                                    <div id="suggestions-${category}-${index}" class="absolute top-full left-0 mt-1 w-full bg-[#070908] border border-[#2b3630] rounded-sm z-50 shadow-[0_4px_12px_rgba(0,0,0,1)] hidden max-h-32 overflow-y-auto"></div>
+                                </div>
+                                <input type="text" class="inline-input w-20 text-center" placeholder="Local" value="${item.loc}" oninput="updateTrackerObject('${category}', ${index}, 'loc', this.value)">
+                                <button onclick="requestRemoveTracker('${category}', ${index}, this)" class="flex items-center justify-center bg-[#0d0f0e] border border-[#2b3630] w-[32px] h-[32px] rounded-sm text-[#6d7872] hover:bg-[#1a0505] hover:text-[#ff3333] hover:border-[#ff3333] transition-all flex-shrink-0">
+                                    <i class="ph-fill ph-trash text-[18px]"></i>
+                                </button>
+                            </div>`;
+                        });
+                        html += `</div>`;
+                    }
+                }
+                container.innerHTML = html;
+            });
+        }
+
+        window.onload = () => {
+            updateUI(); renderTrackers(); renderWorldLocations();
+            renderPhotoGallery('step1'); renderPhotoGallery('step2');
+        };
+    </script>
+</body>
+</html>

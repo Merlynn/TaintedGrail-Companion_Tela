@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Kings of Ruin - Início</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Alegreya+Sans:ital,wght@0,400;0,700;1,400&family=Cinzel:wght@600;700&family=Crimson+Pro:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+
+    <style>
+        :root { 
+            --font-celtic: 'Celtic Garamond', 'Crimson Pro', serif; 
+            --font-title: 'Cinzel', serif;
+            --font-ui: 'Alegreya Sans', sans-serif;
+        }
+
+        body {
+            background-color: transparent;
+            color: #b8b4a7;
+            -webkit-tap-highlight-color: transparent;
+            font-family: var(--font-celtic);
+            overflow-x: hidden;
+            margin: 0; 
+            padding: 0;
+            font-size: 16px;
+        }
+
+        body::after {
+            content: "";
+            position: fixed; 
+            top: 0; left: 0; width: 100vw; height: 100vh;
+            background-image: linear-gradient(rgba(7, 9, 8, 0.82), rgba(7, 9, 8, 0.94)), url('https://lh3.googleusercontent.com/d/1CVTwNLqVBc4Y97ZD82hIaf4wJnPeK4-L');
+            background-size: cover; 
+            background-position: center;
+            pointer-events: none; 
+            z-index: -2;
+        }
+
+        ::-webkit-scrollbar { display: none; }
+
+        h1, h2, h3, .font-title { font-family: var(--font-title) !important; }
+        .font-sans { font-family: var(--font-ui) !important; }
+
+        /* CABEÇALHO */
+        .site-header {
+            background: linear-gradient(180deg, rgba(7, 9, 8, 0.95) 0%, rgba(7, 9, 8, 0.85) 100%);
+            border-bottom: 1px solid rgba(43, 54, 48, 0.5);
+            padding: 10px 16px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            z-index: 25;
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+        }
+
+        .header-logo-img {
+            height: clamp(52px, 14vw, 72px);
+            width: auto;
+            max-width: 300px;
+            object-fit: contain;
+            display: block;
+            filter: drop-shadow(0 2px 8px rgba(0, 0, 0, 0.8));
+        }
+
+        /* BOTÕES PRINCIPAIS */
+        .hub-btn {
+            background: #090b0a;
+            border: 1px solid #1f2722;
+            border-radius: 4px;
+            padding: 16px 18px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            transition: all 0.25s ease;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.6);
+            position: relative;
+            overflow: hidden;
+            text-align: left;
+        }
+
+        .hub-btn:hover, .hub-btn:active {
+            border-color: #c2a675;
+            background: #121814;
+            box-shadow: 0 0 14px rgba(194, 166, 117, 0.22), inset 0 0 15px rgba(0,0,0,0.8);
+        }
+
+        .hub-btn.primary {
+            background: linear-gradient(180deg, #1b0a0a 0%, #0c0505 100%);
+            border-color: #451212;
+        }
+        .hub-btn.primary:hover, .hub-btn.primary:active {
+            border-color: #9e1515;
+            background: linear-gradient(180deg, #2b0f0f 0%, #140707 100%);
+            box-shadow: 0 0 16px rgba(239, 68, 68, 0.25), inset 0 0 15px rgba(0,0,0,0.8);
+        }
+
+        .corner-tl { top: 0; left: 0; border-top: 1px solid #2b3630; border-left: 1px solid #2b3630; }
+        .corner-tr { top: 0; right: 0; border-top: 1px solid #2b3630; border-right: 1px solid #2b3630; }
+        .corner-bl { bottom: 0; left: 0; border-bottom: 1px solid #2b3630; border-left: 1px solid #2b3630; }
+        .corner-br { bottom: 0; right: 0; border-bottom: 1px solid #2b3630; border-right: 1px solid #2b3630; }
+    </style>
+</head>
+<body class="h-screen flex flex-col justify-between">
+
+    <!-- CABEÇALHO COM LOGO CENTRALIZADA -->
+    <header class="site-header flex-shrink-0">
+        <img src="https://lh3.googleusercontent.com/d/1U3juHgIiAcpfSSQiW3nWN20MhMUx7tJR" alt="Kings of Ruin" class="header-logo-img">
+    </header>
+
+    <!-- HUB DE SELEÇÃO INICIAL -->
+    <main class="flex-1 overflow-y-auto w-full max-w-sm mx-auto z-10 flex flex-col justify-center px-4 py-6 space-y-4">
+        
+        <div class="relative bg-[#090b0a]/90 backdrop-blur-sm p-5 shadow-[inset_0_0_20px_rgba(0,0,0,1)] border border-[#141a17] rounded-sm space-y-4">
+            <div class="absolute w-4 h-4 corner-tl opacity-50"></div>
+            <div class="absolute w-4 h-4 corner-tr opacity-50"></div>
+            <div class="absolute w-4 h-4 corner-bl opacity-50"></div>
+            <div class="absolute w-4 h-4 corner-br opacity-50"></div>
+
+            <div class="text-center pb-2 border-b border-[#1a211e]">
+                <h2 class="text-xl text-[#c2a675] tracking-widest font-title font-bold uppercase">
+                    Companion App
+                </h2>
+                <span class="text-[11px] font-sans text-[#6d7872] uppercase tracking-wider block mt-0.5">
+                    Assistente de Campanha & Registro
+                </span>
+            </div>
+
+            <!-- OPÇÃO 1: NOVA CAMPANHA -->
+            <a href="nova_campanha.html" class="hub-btn primary group">
+                <div class="flex items-center gap-3.5">
+                    <div class="w-11 h-11 rounded bg-[#2b0c0c] border border-[#5c1919] flex items-center justify-center text-[#ff6b6b] flex-shrink-0 group-hover:scale-105 transition-transform shadow-md">
+                        <i class="ph-fill ph-plus-circle text-[24px]"></i>
+                    </div>
+                    <div>
+                        <span class="font-title text-[15.5px] text-[#b8b4a7] group-hover:text-[#fff] font-bold block leading-tight">
+                            Nova Campanha
+                        </span>
+                        <span class="font-sans text-[11px] text-[#8c938f] block mt-0.5">
+                            Solo, Multiplayer ou Ficha Individual
+                        </span>
+                    </div>
+                </div>
+                <i class="ph-bold ph-caret-right text-[#6d7872] group-hover:text-[#c2a675] text-[18px]"></i>
+            </a>
+
+            <!-- OPÇÃO 2: CONTINUAR -->
+            <a href="continuar.html" class="hub-btn group">
+                <div class="flex items-center gap-3.5">
+                    <div class="w-11 h-11 rounded bg-[#101613] border border-[#2b3630] flex items-center justify-center text-[#c2a675] flex-shrink-0 group-hover:scale-105 transition-transform shadow-md">
+                        <i class="ph-fill ph-archive text-[24px]"></i>
+                    </div>
+                    <div>
+                        <span class="font-title text-[15.5px] text-[#b8b4a7] group-hover:text-[#c2a675] font-bold block leading-tight">
+                            Continuar
+                        </span>
+                        <span class="font-sans text-[11px] text-[#8c938f] block mt-0.5">
+                            Carregar campanha ou personagem salvo
+                        </span>
+                    </div>
+                </div>
+                <i class="ph-bold ph-caret-right text-[#6d7872] group-hover:text-[#c2a675] text-[18px]"></i>
+            </a>
+
+        </div>
+
+    </main>
+
+    <!-- RODAPÉ -->
+    <footer class="text-center py-3.5 z-10 flex-shrink-0">
+        <span class="text-[10px] font-sans text-[#4a5550] uppercase tracking-widest font-bold">
+            Tainted Grail: Monarcas da Ruína
+        </span>
+    </footer>
+
+</body>
+</html>

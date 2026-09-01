@@ -1,0 +1,834 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Kings of Ruin - Companion</title>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+
+    <style>
+        @font-face {
+            font-family: 'Celtic Garamond';
+            src: local('Celtic Garamond the 2nd'), local('CelticGaramondthe2nd'), local('Celtic Garamond Pro');
+        }
+
+        :root {
+            --font-celtic: 'Celtic Garamond', serif;
+        }
+
+        body {
+            background-color: transparent;
+            color: #b8b4a7;
+            -webkit-tap-highlight-color: transparent;
+            font-family: var(--font-celtic);
+            overflow-x: hidden;
+            position: relative;
+            margin: 0;
+            padding: 0;
+        }
+
+        body::after {
+            content: "";
+            position: fixed;
+            top: 0; left: 0; width: 100vw; height: 100vh;
+            background-image: linear-gradient(rgba(7, 9, 8, 0.75), rgba(7, 9, 8, 0.75)), url('https://lh3.googleusercontent.com/d/1CVTwNLqVBc4Y97ZD82hIaf4wJnPeK4-L');
+            background-size: cover;
+            background-position: center;
+            pointer-events: none;
+            z-index: -2;
+        }
+
+        ::-webkit-scrollbar { display: none; }
+
+        .tab-content { display: none; opacity: 0; transition: opacity 0.3s; }
+        .tab-content.active { display: block; opacity: 1; }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-4px); }
+            50% { transform: translateX(4px); }
+            75% { transform: translateX(-4px); }
+        }
+        .shake-warning {
+            animation: shake 0.3s ease-in-out;
+            color: #9e1515 !important;
+        }
+        
+        @keyframes pulse-red {
+            0%, 100% { box-shadow: inset 0 0 10px rgba(0,0,0,0.8), 0 0 5px rgba(158,21,21,0.3); }
+            50% { box-shadow: inset 0 0 10px rgba(0,0,0,0.8), 0 0 12px rgba(158,21,21,0.8); }
+        }
+
+        /* --- O RELÓGIO COM A IMAGEM --- */
+        .dial-container {
+            position: relative;
+            width: clamp(110px, 35vw, 170px);
+            height: clamp(110px, 35vw, 170px);
+            border-radius: 50%;
+            background-image: url('https://lh3.googleusercontent.com/d/1CsYPx6EHQ0guM14NKt8KxKmhIQccaAs9');
+            background-size: cover;
+            background-position: center;
+            border: 1px solid #1a211e;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.8), inset 0 0 30px rgba(0,0,0,0.9);
+            overflow: hidden;
+        }
+        
+        .dial-container::before {
+            content: "";
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: radial-gradient(circle, transparent 30%, rgba(0,0,0,0.85) 100%);
+            pointer-events: none;
+            z-index: 5;
+        }
+
+        .hotspot {
+            position: absolute;
+            width: clamp(28px, 10vw, 44px); 
+            height: clamp(28px, 10vw, 44px);
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 20;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .hotspot.filled {
+            background: radial-gradient(circle, rgba(220, 20, 20, 0.95) 10%, rgba(150, 0, 0, 0.6) 40%, transparent 70%);
+            mix-blend-mode: color-dodge;
+            border: none;
+            box-shadow: none;
+        }
+
+        .pos-1 { top: 14%; left: 50%; }
+        .pos-2 { top: 20%; left: 80%; }
+        .pos-3 { top: 62%; left: 85%; }
+        .pos-4 { top: 77%; left: 55%; }
+        .pos-5 { top: 63%; left: 20%; }
+        .pos-6 { top: 20%; left: 23%; }
+
+        /* Botões das Condições */
+        .slot-btn {
+            position: relative;
+            width: 28px;
+            height: 28px;
+            background: #070908;
+            border: 1px solid #2b3630;
+            box-shadow: inset 0 2px 4px rgba(0,0,0,1);
+            color: #6d7872;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: var(--font-celtic);
+            font-weight: 700;
+            font-size: 1rem;
+            border-radius: 3px;
+            transition: all 0.15s;
+        }
+        .slot-btn.filled {
+            background: #450606;
+            border-color: #9e1515;
+            color: #b8b4a7;
+            box-shadow: inset 0 0 10px rgba(0,0,0,0.8), 0 0 5px rgba(158,21,21,0.3);
+        }
+        .slot-btn.expanded {
+            border-color: #c2a675;
+            box-shadow: inset 0 0 10px rgba(0,0,0,0.8), 0 0 5px rgba(194,166,117,0.4);
+        }
+        .slot-btn.pending-delete {
+            border-color: #ff3333;
+            animation: pulse-red 1s infinite;
+        }
+
+        /* A MARCA DO ESCRIBA */
+        .note-marker {
+            color: #c2a675 !important;
+            font-style: italic;
+            text-shadow: 0 0 5px rgba(194,166,117,0.4);
+        }
+        .note-marker::after {
+            content: "";
+            position: absolute;
+            top: 0; 
+            right: 0;
+            border-top: 6px solid #c2a675; 
+            border-left: 6px solid transparent;
+            opacity: 0.9;
+        }
+
+        .search-input {
+            background: rgba(7, 9, 8, 0.9);
+            border: 1px solid #2b3630;
+            color: #b8b4a7;
+            width: 100%;
+            padding: 10px 14px 10px 38px;
+            font-size: 1rem;
+            border-radius: 4px;
+            box-shadow: inset 0 2px 6px rgba(0,0,0,0.8);
+            transition: border-color 0.2s;
+            font-family: var(--font-celtic);
+        }
+        .search-input:focus {
+            outline: none;
+            border-color: #6d7872;
+        }
+        
+        .world-add-btn {
+            position: absolute;
+            right: 4px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: #1a211e;
+            border: 1px solid #2b3630;
+            color: #b8b4a7;
+            padding: 4px 10px;
+            border-radius: 3px;
+            font-family: var(--font-celtic);
+            font-size: 0.85rem;
+            transition: all 0.2s;
+            cursor: pointer;
+        }
+        .world-add-btn:active {
+            background: #c2a675;
+            color: #070908;
+        }
+
+        .altar-input {
+            background: transparent;
+            border: none;
+            color: #b8b4a7;
+            outline: none;
+            border-bottom: 1px dashed #2b3630;
+            transition: all 0.3s;
+            padding: 0 4px;
+            margin: 0;
+            font-family: var(--font-celtic);
+            cursor: pointer;
+            text-align: center;
+        }
+        .altar-input:focus {
+            border-bottom-color: #9e1515;
+            border-bottom-style: solid;
+            color: #fff;
+            text-shadow: 0 0 8px rgba(158, 21, 21, 0.6);
+        }
+
+        /* Inputs slim estilo formulário em linha */
+        .inline-input {
+            background: rgba(0,0,0,0.4);
+            border: 1px solid #2b3630;
+            color: #c2a675;
+            outline: none;
+            font-family: var(--font-celtic);
+            font-size: 0.95rem;
+            border-radius: 3px;
+            padding: 2px 6px;
+            transition: all 0.2s;
+            box-shadow: inset 0 1px 3px rgba(0,0,0,0.8);
+        }
+        .inline-input:focus {
+            border-color: #c2a675;
+            background: rgba(0,0,0,0.8);
+        }
+        .inline-input::placeholder {
+            color: #343d38;
+            font-style: italic;
+        }
+
+        /* Botão sutil de adição (+) */
+        .add-tracker-btn {
+            background: transparent;
+            border: 1px solid #2b3630;
+            color: #6d7872;
+            width: 20px;
+            height: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            font-size: 0.8rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .add-tracker-btn:active, .add-tracker-btn:hover {
+            color: #c2a675;
+            border-color: #c2a675;
+        }
+
+        .quest-textarea {
+            background: rgba(7, 9, 8, 0.6);
+            border: 1px dashed #2b3630;
+            color: #b8b4a7;
+            width: 100%;
+            padding: 8px;
+            font-size: 0.95rem;
+            border-radius: 4px;
+            font-family: var(--font-celtic);
+            resize: none;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+        .quest-textarea:focus {
+            border-color: #c2a675;
+        }
+
+        .counter-btn {
+            background: #1a211e;
+            border: 1px solid #2b3630;
+            color: #6d7872;
+            width: 20px;
+            height: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 2px;
+            font-size: 0.8rem;
+            cursor: pointer;
+        }
+        .counter-btn:active {
+            background: #c2a675;
+            color: #000;
+        }
+
+        @keyframes slideDownFade {
+            from { opacity: 0; transform: translateY(-4px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .note-wrapper {
+            animation: slideDownFade 0.2s ease-out forwards;
+        }
+
+        .note-input {
+            background: transparent;
+            border: none;
+            color: #8c938f;
+            outline: none;
+            border-bottom: 1px dashed #2b3630;
+            transition: all 0.3s;
+            width: 100%;
+            font-family: var(--font-celtic);
+            font-size: 0.95rem;
+            padding: 2px 0 2px 4px;
+        }
+        .note-input:focus {
+            border-bottom-color: #c2a675;
+            border-bottom-style: solid;
+            color: #b8b4a7;
+        }
+        
+        .corner-tl { top: 0; left: 0; border-top: 1px solid #2b3630; border-left: 1px solid #2b3630; }
+        .corner-tr { top: 0; right: 0; border-top: 1px solid #2b3630; border-right: 1px solid #2b3630; }
+        .corner-bl { bottom: 0; left: 0; border-bottom: 1px solid #2b3630; border-left: 1px solid #2b3630; }
+        .corner-br { bottom: 0; right: 0; border-bottom: 1px solid #2b3630; border-right: 1px solid #2b3630; }
+        
+        .font-celtic { font-family: var(--font-celtic); }
+    </style>
+</head>
+<body class="h-screen flex flex-col">
+
+    <header class="bg-[#101412]/90 backdrop-blur-md border-b border-[#2b3630] py-3 px-4 z-20 shadow-[0_4px_12px_rgba(0,0,0,0.8)] flex justify-between items-center sticky top-0">
+        <div>
+            <h1 class="font-celtic text-2xl font-bold tracking-[0.1em] text-[#b8b4a7] uppercase leading-none">
+                Kings <span class="text-[#6d7872] font-normal">of Ruin</span>
+            </h1>
+            <span class="text-[9px] font-sans font-bold tracking-widest text-[#6d7872] block mt-0.5">v26</span>
+        </div>
+    </header>
+
+    <main class="flex-1 overflow-y-auto pb-24 w-full max-w-lg mx-auto z-10">
+        
+        <!-- ========================================== -->
+        <!-- ABA 1: A NÉVOA                             -->
+        <!-- ========================================== -->
+        <div id="tab-status" class="tab-content active p-4 space-y-6 mt-2">
+            
+            <div style="padding: 16px; justify-content: space-between; align-items: center;" class="relative bg-[#090b0a]/90 backdrop-blur-sm shadow-[inset_0_0_20px_rgba(0,0,0,1),0_8px_16px_rgba(0,0,0,0.6)] border border-[#141a17] rounded-sm flex flex-row w-full overflow-hidden">
+                <div class="absolute w-4 h-4 corner-tl opacity-50"></div>
+                <div class="absolute w-4 h-4 corner-tr opacity-50"></div>
+                <div class="absolute w-4 h-4 corner-bl opacity-50"></div>
+                <div class="absolute w-4 h-4 corner-br opacity-50"></div>
+                <div class="absolute inset-0 opacity-20 bg-[radial-gradient(ellipse_at_center,rgba(255,255,255,0.08)_0%,transparent_70%)] pointer-events-none"></div>
+
+                <div style="gap: 12px;" class="flex flex-col flex-1 min-w-0 relative z-10">
+                    <div style="gap: 6px;" class="flex items-baseline flex-wrap">
+                        <label for="chapter-display" style="font-size: clamp(12px, 5vw, 26px);" class="font-celtic text-[#b8b4a7] capitalize tracking-wide whitespace-nowrap">
+                            <b>CAPÍTULO:</b>
+                        </label>
+                        <input type="text" id="chapter-display" value="1" onchange="manualChapterChange(this.value)" style="font-size: clamp(10px, 4vw, 26px); width: 35px;" class="altar-input font-bold text-center">
+                    </div>
+                    <div style="gap: 6px;" class="flex items-baseline flex-wrap">
+                        <label for="part-display" style="font-size: clamp(12px, 4.5vw, 26px);" class="font-celtic text-[#b8b4a7] capitalize tracking-wide whitespace-nowrap">
+                            <b>Parte:</b>
+                        </label>
+                        <input type="text" id="part-display" value="A:1" onchange="manualPartChange(this.value)" style="font-size: clamp(12px, 4vw, 26px); width: 50px;" class="altar-input font-bold text-center">
+                    </div>
+                </div>
+
+                <div style="flex-shrink: 0; display: flex; flex-direction: column; align-items: center; gap: 4px;" class="relative z-10">
+                    <span style="font-size: 12px; color: #c2a675; text-shadow: 0 1px 3px rgba(0,0,0,1);" class="font-celtic tracking-wider text-center">
+                        PASSAGEM DO TEMPO
+                    </span>
+                    <div class="dial-container" id="dial-clock">
+                        <div class="hotspot pos-1 time-slot" onclick="toggleTime(1)"></div>
+                        <div class="hotspot pos-2 time-slot" onclick="toggleTime(2)"></div>
+                        <div class="hotspot pos-3 time-slot" onclick="toggleTime(3)"></div>
+                        <div class="hotspot pos-4 time-slot" onclick="toggleTime(4)"></div>
+                        <div class="hotspot pos-5 time-slot" onclick="toggleTime(5)"></div>
+                        <div class="hotspot pos-6 time-slot" onclick="toggleTime(6)"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="space-y-4">
+                <div id="search-container" class="sticky top-[65px] z-10 p-2 bg-[#070908]/95 backdrop-blur-md">
+                    <div class="relative">
+                        <i class="ph ph-magnifying-glass absolute left-3 top-1/2 transform -translate-y-1/2 text-[#6d7872] text-xl"></i>
+                        <input type="text" id="searchInput" oninput="renderConditions()" onfocus="handleSearchFocus()" class="search-input italic" placeholder="Buscar condição (ex: Abastecimento)...">
+                        <button id="clearSearchBtn" onclick="clearSearch()" class="absolute right-3 top-1/2 transform -translate-y-1/2 text-[#6d7872] hidden hover:text-[#b8b4a7]">
+                            <i class="ph-fill ph-x-circle text-xl"></i>
+                        </button>
+                    </div>
+                </div>
+                <div id="conditionsList" class="space-y-3 pb-6">
+                    <!-- Condições renderizadas aqui -->
+                </div>
+            </div>
+        </div>
+
+        <!-- ========================================== -->
+        <!-- ABA 2: O BANDO                             -->
+        <!-- ========================================== -->
+        <div id="tab-chars" class="tab-content p-4 space-y-4 mt-2">
+            <h2 class="text-xs uppercase font-sans tracking-[0.2em] text-[#6d7872] mb-4 text-center">Os Sobreviventes</h2>
+            <div class="bg-[#101412]/90 backdrop-blur-sm p-6 border border-[#2b3630] rounded-sm shadow-[inset_0_2px_10px_rgba(0,0,0,0.8)] text-center text-[#6d7872] text-sm font-celtic italic">
+                Aba em construção...
+            </div>
+        </div>
+
+        <!-- ========================================== -->
+        <!-- ABA 3: O MUNDO                             -->
+        <!-- ========================================== -->
+        <div id="tab-world" class="tab-content p-3 space-y-4 mt-2">
+            
+            <div class="relative bg-[#090b0a]/90 backdrop-blur-sm p-3 shadow-[inset_0_0_20px_rgba(0,0,0,1),0_8px_16px_rgba(0,0,0,0.6)] border border-[#141a17] rounded-sm w-full overflow-hidden">
+                <div class="absolute w-4 h-4 corner-tl opacity-50"></div>
+                <div class="absolute w-4 h-4 corner-tr opacity-50"></div>
+                <div class="absolute w-4 h-4 corner-bl opacity-50"></div>
+                <div class="absolute w-4 h-4 corner-br opacity-50"></div>
+                
+                <div class="flex flex-col gap-4 mb-4 relative z-10 mt-1">
+                    <div id="tracker-padrons"></div>
+                    <div id="tracker-monarcas"></div>
+                    <div id="tracker-companheiros"></div>
+                    <div id="tracker-guardioes"></div>
+                </div>
+
+                <div class="relative z-10 pt-2 border-t border-[#1a211e]">
+                    <label class="text-[10px] uppercase font-sans tracking-widest text-[#6d7872] block mb-2 flex items-center gap-1">
+                        <i class="ph-fill ph-scroll"></i> Diário de Demandas
+                    </label>
+                    <textarea class="quest-textarea h-20" placeholder="Anote aqui as missões ativas, requisitos globais..."></textarea>
+                </div>
+            </div>
+
+            <div class="sticky top-[65px] z-20 pt-2 pb-2 bg-[#070908]/95 backdrop-blur-md">
+                <div class="relative">
+                    <i class="ph ph-map-pin-line absolute left-3 top-1/2 transform -translate-y-1/2 text-[#6d7872] text-xl"></i>
+                    <input type="text" id="new-location-input" onkeypress="handleLocationEnter(event)" class="search-input italic" style="padding-right: 95px;" placeholder="Revelar carta de local (ex: 104)...">
+                    <button onclick="addLocation()" class="world-add-btn">Descobrir</button>
+                </div>
+            </div>
+
+            <div id="world-locations-list" class="space-y-2 pb-6 mt-1">
+                <!-- Locais renderizados aqui -->
+            </div>
+            
+        </div>
+    </main>
+
+    <nav class="fixed bottom-0 w-full z-30 bg-[#070908]/95 backdrop-blur-md border-t border-[#2b3630] pb-safe shadow-[0_-4px_20px_rgba(0,0,0,1)]">
+        <div class="flex justify-around items-center h-16 max-w-lg mx-auto">
+            <button onclick="switchTab('tab-status', this)" class="nav-btn active flex flex-col items-center justify-center w-full h-full text-[#b8b4a7] transition-colors">
+                <i class="ph-fill ph-scroll text-2xl mb-1"></i>
+                <span class="text-[9px] uppercase font-sans font-bold tracking-[0.1em]">A Névoa</span>
+            </button>
+            <button onclick="switchTab('tab-chars', this)" class="nav-btn flex flex-col items-center justify-center w-full h-full text-[#6d7872] hover:text-[#b8b4a7] transition-colors">
+                <i class="ph-fill ph-users-three text-2xl mb-1"></i>
+                <span class="text-[9px] uppercase font-sans font-bold tracking-[0.1em]">GRUPO</span>
+            </button>
+            <button onclick="switchTab('tab-world', this)" class="nav-btn flex flex-col items-center justify-center w-full h-full text-[#6d7872] hover:text-[#b8b4a7] transition-colors">
+                <i class="ph-fill ph-compass text-2xl mb-1"></i>
+                <span class="text-[9px] uppercase font-sans font-bold tracking-[0.1em]">O Mundo</span>
+            </button>
+        </div>
+    </nav>
+
+    <script>
+        // ----------------------------------------------------
+        // LÓGICA GERAL & NÉVOA 
+        // ----------------------------------------------------
+        let currentChapter = "1";
+        let currentPart = "A:1";
+        let timeMarks = new Set(); 
+        let conditionMarks = {}; 
+        let conditionNotes = {}; 
+        let expandedNote = {}; 
+        let pendingDelete = null; 
+
+        const dbConditions = [
+            { id: "c1", name: "Abandonados", nums: [1, 2] },
+            { id: "c2", name: "Abastecimento", nums: [1, 2, 3, 4, 5, 6, 7, 8, 9] },
+            { id: "c3", name: "Coração de Gelo", nums: [2, 1, 3, 4, 5, 6, 7, 8, 9, 10] },
+            { id: "c4", name: "Curiosidades", nums: [2, 1, 7, 9, 10, 3, 4, 5, 8, 6] },
+            { id: "c5", name: "Defensor da Arraia", nums: [2, 3, 4, 5, 6, 7, 1] },
+            { id: "c6", name: "Estranhos Ensinamentos", nums: [4, 1, 2, 3, 8, 9, 7, 5, 6] },
+            { id: "c7", name: "Futuro de Avalon", nums: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11] },
+            { id: "c8", name: "Pequenos Favores", nums: [1, 8, 9, 10, 2, 3, 4, 5, 6, 7] },
+            { id: "c9", name: "Revelações do Vidrestranyo", nums: [1, 2, 9, 10, 11, 3, 4, 5, 6, 7, 8] },
+            { id: "c10", name: "Safra Estranya", nums: [7, 8, 6, 5, 4, 3, 2, 1] },
+            { id: "c11", name: "Topografia", nums: [1, 7, 6, 5, 4, 10, 9, 8, 3, 2] }
+        ];
+
+        dbConditions.forEach(c => { 
+            conditionMarks[c.id] = []; conditionNotes[c.id] = {}; expandedNote[c.id] = null; 
+        });
+
+        // OUVINTE GLOBAL: Cuida do recolhimento, cancelamento de lixeira e limpeza de busca
+        document.addEventListener('click', (e) => {
+            let shouldRender = false;
+            
+            // 1. Cancela a lixeira se clicar fora
+            if (pendingDelete && !e.target.closest('.slot-btn') && !e.target.closest('.note-input')) {
+                pendingDelete = null; 
+                shouldRender = true;
+            }
+
+            // 2. Recolhe a anotação se clicar no vazio
+            const openCond = Object.keys(expandedNote).find(k => expandedNote[k] !== null);
+            if (openCond && !e.target.closest('.slot-btn') && !e.target.closest('.note-input')) {
+                expandedNote[openCond] = null;
+                shouldRender = true;
+            }
+
+            // 3. Limpa a busca (sai do modo Foco) se clicar no vazio e estiver na aba Status
+            const searchInput = document.getElementById('searchInput');
+            if (searchInput && searchInput.value.trim() !== '') {
+                const isStatusTab = document.getElementById('tab-status').classList.contains('active');
+                if (isStatusTab && !e.target.closest('#conditionsList > div') && !e.target.closest('#search-container')) {
+                    searchInput.value = '';
+                    shouldRender = true;
+                }
+            }
+
+            if (shouldRender) renderConditions();
+        });
+
+        function triggerWarning(element) {
+            element.classList.add('shake-warning');
+            setTimeout(() => element.classList.remove('shake-warning'), 300);
+        }
+
+        function handleSearchFocus() {
+            setTimeout(() => {
+                const searchContainer = document.getElementById('search-container');
+                if (searchContainer) {
+                    searchContainer.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
+            }, 300);
+        }
+
+        function manualChapterChange(val) { currentChapter = val; }
+        function manualPartChange(val) { currentPart = val; }
+
+        function toggleTime(num) {
+            const btns = document.querySelectorAll('.time-slot');
+            if (timeMarks.has(num)) {
+                timeMarks.delete(num); btns[num - 1].classList.remove('filled');
+            } else {
+                timeMarks.add(num); btns[num - 1].classList.add('filled');
+            }
+        }
+
+        function switchTab(tabId, btnElement) {
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+            document.getElementById(tabId).classList.add('active');
+            document.querySelectorAll('.nav-btn').forEach(btn => {
+                btn.classList.remove('text-[#b8b4a7]'); btn.classList.add('text-[#6d7872]');
+            });
+            btnElement.classList.remove('text-[#6d7872]'); btnElement.classList.add('text-[#b8b4a7]');
+            if (tabId === 'tab-world') { setTimeout(() => document.getElementById('new-location-input').focus(), 100); }
+        }
+
+        function saveNote(inputElement, condId, num) { conditionNotes[condId][num] = inputElement.value; }
+        
+        function handleBlur(condId, num) {
+            setTimeout(() => {
+                if (expandedNote[condId] === num) { expandedNote[condId] = null; renderConditions(); }
+            }, 150); 
+        }
+
+        // Se o usuário clicar no input para digitar, a lixeira desiste e volta a ser número
+        function handleNoteFocus(condId, num) {
+            if (pendingDelete && pendingDelete.condId === condId && pendingDelete.num === num) {
+                pendingDelete = null;
+                const btn = document.getElementById(`btn-${condId}-${num}`);
+                if(btn) {
+                    btn.classList.remove('pending-delete');
+                    btn.innerHTML = num;
+                }
+            }
+        }
+
+        function toggleStatusMark(event, btn, condId, num) {
+            event.stopPropagation(); 
+            
+            // FOCO CONTEXTUAL: Puxa a condição pra barra de busca e isola a tela
+            const searchInput = document.getElementById('searchInput');
+            const condName = dbConditions.find(c => c.id === condId).name;
+            if (searchInput.value.trim() !== condName) {
+                searchInput.value = condName;
+            }
+
+            const marksArray = conditionMarks[condId]; 
+            const index = marksArray.indexOf(num); 
+            const currentNote = conditionNotes[condId][num] || "";
+
+            if (pendingDelete && (pendingDelete.condId !== condId || pendingDelete.num !== num)) { 
+                pendingDelete = null; 
+            }
+
+            if (index === -1) {
+                // NOVA MARCAÇÃO
+                marksArray.push(num); 
+                conditionNotes[condId][num] = ""; 
+                expandedNote[condId] = num; 
+                pendingDelete = null;
+            } else {
+                if (currentNote.trim() !== "") {
+                    // JÁ TEM TEXTO (Apenas abre/fecha)
+                    expandedNote[condId] = (expandedNote[condId] === num) ? null : num; 
+                    pendingDelete = null;
+                } else {
+                    // JÁ ACESO SEM TEXTO
+                    if (pendingDelete && pendingDelete.condId === condId && pendingDelete.num === num) {
+                        // Confirmação (Segundo clique) -> Apaga
+                        marksArray.splice(index, 1); 
+                        delete conditionNotes[condId][num]; 
+                        expandedNote[condId] = null; 
+                        pendingDelete = null;
+                    } else {
+                        // Primeiro clique -> Prepara pra apagar (Mostra Lixeira) E abre a nota!
+                        pendingDelete = { condId, num };
+                        expandedNote[condId] = num;
+                    }
+                }
+            }
+            renderConditions();
+            
+            // Foca a nota apenas se for marcação nova! Se for pendente de deleção, deixamos a nota lá sem foco, 
+            // para que a Lixeira fique visível e o jogador escolha onde clicar.
+            if (expandedNote[condId] === num && currentNote.trim() === "" && pendingDelete === null) {
+                setTimeout(() => { const el = document.getElementById(`note-${condId}-${num}`); if (el) el.focus(); }, 50);
+            }
+        }
+
+        function renderConditions() {
+            const query = document.getElementById('searchInput').value.toLowerCase().trim();
+            const container = document.getElementById('conditionsList');
+            const clearBtn = document.getElementById('clearSearchBtn');
+            
+            clearBtn.style.display = query.length > 0 ? 'block' : 'none'; 
+            container.innerHTML = '';
+            
+            const toRender = dbConditions.filter(c => { const hasMarks = conditionMarks[c.id].length > 0; if (query === '') return hasMarks; return c.name.toLowerCase().includes(query); });
+
+            if (toRender.length === 0) {
+                if (query === '') {
+                    container.innerHTML = `<div class="text-center p-3 border border-dashed border-[#2b3630] rounded-sm bg-[#101412]/90 backdrop-blur-sm shadow-[inset_0_0_10px_rgba(0,0,0,0.5)]"><i class="ph ph-moon-stars text-4xl text-[#343d38] mb-2"></i><p class="text-lg font-celtic text-[#6d7872] italic">O ermo está silencioso.</p><p class="text-[10px] text-[#6d7872] mt-2 font-sans uppercase tracking-[0.1em]">Busque uma condição para marcá-la</p></div>`;
+                } else {
+                    container.innerHTML = `<p class="text-center font-celtic text-[#6d7872] italic mt-8 text-lg">Nenhum registro encontrado nas brumas.</p>`;
+                } return;
+            }
+
+            toRender.forEach(cond => {
+                let slotsHTML = cond.nums.map(n => {
+                    const isFilled = conditionMarks[cond.id].includes(n); const hasNote = conditionNotes[cond.id][n] && conditionNotes[cond.id][n].trim() !== ""; const isExpanded = (expandedNote[cond.id] === n); const isPendingDelete = (pendingDelete && pendingDelete.condId === cond.id && pendingDelete.num === n);
+                    let classes = "slot-btn "; if (isFilled) classes += "filled "; if (isExpanded) classes += "expanded "; 
+                    let btnContent = n;
+                    if (isPendingDelete) { classes += "pending-delete "; btnContent = `<i class="ph-fill ph-trash text-[#ff3333] text-[16px]"></i>`; } 
+                    else if (isFilled && hasNote && !isExpanded) { classes += "note-marker "; }
+                    return `<button id="btn-${cond.id}-${n}" class="${classes.trim()}" onclick="toggleStatusMark(event, this, '${cond.id}', ${n})">${btnContent}</button>`;
+                }).join('');
+
+                let activeNoteHTML = ''; const activeNum = expandedNote[cond.id];
+                if (activeNum !== null) {
+                    const val = conditionNotes[cond.id][activeNum] || "";
+                    activeNoteHTML = `<div class="note-wrapper flex items-end gap-2 mt-2 pt-2 border-t border-[#1a211e]"><span class="text-[11px] text-[#c2a675] font-bold font-sans mb-1">[${activeNum}]</span><input type="text" id="note-${cond.id}-${activeNum}" class="note-input placeholder-[#343d38] italic" placeholder="Nota..." value="${val}" onfocus="handleNoteFocus('${cond.id}', ${activeNum})" oninput="saveNote(this, '${cond.id}', ${activeNum})" onblur="handleBlur('${cond.id}', ${activeNum})" autocomplete="off"></div>`;
+                }
+
+                container.innerHTML += `<div class="bg-[#101412]/90 backdrop-blur-sm border border-[#2b3630] p-2 rounded-sm shadow-[0_4px_12px_rgba(0,0,0,0.8)]"><span class="font-celtic text-[15px] text-[#b8b4a7] tracking-wide block mb-1.5 leading-none">${cond.name}</span><div class="flex flex-wrap gap-1.5">${slotsHTML}</div>${activeNoteHTML}</div>`;
+            });
+        }
+        function clearSearch() { document.getElementById('searchInput').value = ''; renderConditions(); }
+
+        // ----------------------------------------------------
+        // LÓGICA DA ABA: O MUNDO - RASTREADORES DINÂMICOS
+        // ----------------------------------------------------
+        let trackers = {
+            padrons: [],     
+            monarcas: [],    
+            companheiros: [],
+            guardioes: []
+        };
+
+        const trackerConfig = {
+            padrons: { title: "Padrons Ativos (Waystones)", icon: "ph-magic-wand", color: "text-[#b8b4a7]", max: 3, type: 'array' },
+            monarcas: { title: "Monarcas da Ruína", icon: "ph-crown", color: "text-[#c2a675]", max: 3, type: 'object' },
+            companheiros: { title: "Companheiros", icon: "ph-horse", color: "text-[#c2a675]", max: 99, type: 'object' },
+            guardioes: { title: "Guardiões", icon: "ph-shield-warning", color: "text-[#9e1515]", max: 99, type: 'object' }
+        };
+
+        function addTracker(category) {
+            const config = trackerConfig[category];
+            if (trackers[category].length < config.max) {
+                if (config.type === 'array') trackers[category].push(['', '', '', '']);
+                else trackers[category].push({name: '', loc: ''});
+                renderTrackers();
+            }
+        }
+
+        function removeTracker(category, index) {
+            trackers[category].splice(index, 1);
+            renderTrackers();
+        }
+
+        function updateTrackerArray(category, rowIndex, colIndex, val) {
+            trackers[category][rowIndex][colIndex] = val;
+        }
+
+        function updateTrackerObject(category, rowIndex, field, val) {
+            trackers[category][rowIndex][field] = val;
+        }
+
+        function romanize(num) {
+            const lookup = ['I', 'II', 'III'];
+            return lookup[num] || num + 1;
+        }
+
+        function renderTrackers() {
+            Object.keys(trackerConfig).forEach(category => {
+                const config = trackerConfig[category];
+                const container = document.getElementById(`tracker-${category}`);
+                const data = trackers[category];
+                
+                let html = `
+                    <div class="flex items-center justify-between mb-1">
+                        <label class="text-[10px] uppercase font-sans tracking-widest text-[#6d7872] flex items-center gap-1">
+                            <i class="ph-fill ${config.icon} ${config.color}"></i> ${config.title}
+                        </label>
+                        ${data.length < config.max ? `<button onclick="addTracker('${category}')" class="add-tracker-btn"><i class="ph ph-plus"></i></button>` : ''}
+                    </div>
+                `;
+
+                if (data.length === 0) {
+                    html += `<div class="text-[10px] text-[#4a5550] italic font-celtic px-4 border-l border-[#2b3630]">Nenhum em jogo.</div>`;
+                } else {
+                    html += `<div class="flex flex-col gap-1.5 note-wrapper">`;
+                    data.forEach((item, index) => {
+                        html += `<div class="flex items-center gap-1.5">`;
+                        if (config.type === 'array') {
+                            html += `<span class="text-[11px] text-[#c2a675] font-bold font-sans w-4">${romanize(index)}.</span>`;
+                            for(let i=0; i<4; i++) {
+                                html += `<input type="text" class="inline-input w-10 text-center" placeholder="-" value="${item[i]}" oninput="updateTrackerArray('${category}', ${index}, ${i}, this.value)">`;
+                            }
+                        } else {
+                            html += `<input type="text" class="inline-input flex-1" placeholder="Nome..." value="${item.name}" oninput="updateTrackerObject('${category}', ${index}, 'name', this.value)">`;
+                            html += `<input type="text" class="inline-input w-16 text-center" placeholder="Local" value="${item.loc}" oninput="updateTrackerObject('${category}', ${index}, 'loc', this.value)">`;
+                        }
+                        html += `<button onclick="removeTracker('${category}', ${index})" class="text-[#450606] hover:text-[#ff3333] transition-colors p-1 ml-1"><i class="ph-fill ph-x-circle text-[16px]"></i></button>`;
+                        html += `</div>`;
+                    });
+                    html += `</div>`;
+                }
+                container.innerHTML = html;
+            });
+        }
+
+        // ----------------------------------------------------
+        // LÓGICA DA ABA: O MUNDO (LOCAIS E FICHAS)
+        // ----------------------------------------------------
+        let worldLocations = {}; 
+
+        function handleLocationEnter(event) { if (event.key === 'Enter') addLocation(); }
+
+        function addLocation() {
+            const input = document.getElementById('new-location-input');
+            const locNum = input.value.trim();
+            if (locNum === "") { triggerWarning(input); return; }
+            if (worldLocations.hasOwnProperty(locNum)) { triggerWarning(input); input.value = ""; return; }
+
+            worldLocations[locNum] = { note: "", timeTokens: 0, questTokens: 0 };
+            input.value = ""; 
+            renderWorldLocations();
+        }
+
+        function removeLocation(locNum) { delete worldLocations[locNum]; renderWorldLocations(); }
+        function saveWorldNote(locNum, text) { worldLocations[locNum].note = text; }
+
+        function updateToken(locNum, type, delta) {
+            if (type === 'time') { worldLocations[locNum].timeTokens = Math.max(0, worldLocations[locNum].timeTokens + delta); } 
+            else if (type === 'quest') { worldLocations[locNum].questTokens = Math.max(0, worldLocations[locNum].questTokens + delta); }
+            renderWorldLocations();
+        }
+
+        function renderWorldLocations() {
+            const container = document.getElementById('world-locations-list');
+            const locations = Object.keys(worldLocations);
+            container.innerHTML = '';
+
+            if (locations.length === 0) {
+                container.innerHTML = `<div class="text-center p-6 border border-dashed border-[#2b3630] rounded-sm bg-[#101412]/90 backdrop-blur-sm shadow-[inset_0_0_10px_rgba(0,0,0,0.5)]"><i class="ph ph-map-trifold text-4xl text-[#343d38] mb-2"></i><p class="text-lg font-celtic text-[#6d7872] italic">A névoa encobre tudo.</p><p class="text-[10px] text-[#6d7872] mt-2 font-sans uppercase tracking-[0.1em]">Insira o número de um local revelado acima</p></div>`;
+                return;
+            }
+
+            locations.reverse().forEach(locNum => {
+                const locData = worldLocations[locNum];
+                const card = `
+                    <div class="bg-[#101412]/90 backdrop-blur-sm border border-[#2b3630] p-2 rounded-sm shadow-[0_4px_12px_rgba(0,0,0,0.8)] relative">
+                        <div class="flex justify-between items-center mb-2">
+                            <span class="font-celtic text-[18px] text-[#c2a675] tracking-wide block leading-none pl-1">Local ${locNum}</span>
+                            <div class="flex gap-4 items-center">
+                                <div class="flex items-center gap-1 bg-[#090b0a] p-1 rounded-sm border border-[#1a211e]">
+                                    <i class="ph-fill ph-hourglass-high text-[#6d7872] text-[14px]"></i>
+                                    <button onclick="updateToken('${locNum}', 'time', -1)" class="counter-btn">-</button>
+                                    <span class="font-sans text-[12px] font-bold w-4 text-center text-[#b8b4a7]">${locData.timeTokens}</span>
+                                    <button onclick="updateToken('${locNum}', 'time', 1)" class="counter-btn">+</button>
+                                </div>
+                                <div class="flex items-center gap-1 bg-[#090b0a] p-1 rounded-sm border border-[#1a211e]">
+                                    <i class="ph-fill ph-warning-circle text-[#9e1515] text-[14px]"></i>
+                                    <button onclick="updateToken('${locNum}', 'quest', -1)" class="counter-btn">-</button>
+                                    <span class="font-sans text-[12px] font-bold w-4 text-center text-[#b8b4a7]">${locData.questTokens}</span>
+                                    <button onclick="updateToken('${locNum}', 'quest', 1)" class="counter-btn">+</button>
+                                </div>
+                                <button onclick="removeLocation('${locNum}')" class="text-[#450606] hover:text-[#ff3333] transition-colors pl-2"><i class="ph-fill ph-trash text-[18px]"></i></button>
+                            </div>
+                        </div>
+                        <div class="flex items-end gap-2 mt-1 pt-1 border-t border-[#1a211e]">
+                            <i class="ph-fill ph-feather text-[#6d7872] text-[14px] mb-1"></i>
+                            <input type="text" class="note-input placeholder-[#343d38] italic text-[1rem]" placeholder="Segredos, requisitos, mercadores..." value="${locData.note}" oninput="saveWorldNote('${locNum}', this.value)" autocomplete="off">
+                        </div>
+                    </div>`;
+                container.innerHTML += card;
+            });
+        }
+
+        window.onload = () => {
+            renderConditions();
+            renderTrackers();
+            renderWorldLocations();
+        };
+    </script>
+</body>
+</html>

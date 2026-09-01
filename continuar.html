@@ -1,0 +1,432 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Kings of Ruin - Continuar</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Alegreya+Sans:ital,wght@0,400;0,700;1,400&family=Cinzel:wght@600;700&family=Crimson+Pro:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+
+    <style>
+        :root { 
+            --font-celtic: 'Celtic Garamond', 'Crimson Pro', serif; 
+            --font-title: 'Cinzel', serif;
+            --font-ui: 'Alegreya Sans', sans-serif;
+        }
+
+        body {
+            background-color: transparent;
+            color: #b8b4a7;
+            -webkit-tap-highlight-color: transparent;
+            font-family: var(--font-celtic);
+            overflow-x: hidden;
+            margin: 0; padding: 0;
+            font-size: 16px;
+        }
+
+        body::after {
+            content: "";
+            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+            background-image: linear-gradient(rgba(7, 9, 8, 0.85), rgba(7, 9, 8, 0.95)), url('https://lh3.googleusercontent.com/d/1CVTwNLqVBc4Y97ZD82hIaf4wJnPeK4-L');
+            background-size: cover; background-position: center;
+            pointer-events: none; z-index: -2;
+        }
+
+        ::-webkit-scrollbar { display: none; }
+
+        h1, h2, h3, .font-title { font-family: var(--font-title) !important; }
+        .font-sans { font-family: var(--font-ui) !important; }
+
+        .site-header {
+            background: linear-gradient(180deg, rgba(7, 9, 8, 0.95) 0%, rgba(7, 9, 8, 0.85) 100%);
+            border-bottom: 1px solid rgba(43, 54, 48, 0.5);
+            padding: 8px 16px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: relative;
+            z-index: 25;
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+        }
+        .header-logo-img {
+            height: clamp(44px, 11vw, 54px);
+            width: auto;
+            max-width: 260px;
+            object-fit: contain;
+            display: block;
+            filter: drop-shadow(0 2px 6px rgba(0, 0, 0, 0.7));
+        }
+
+        .back-nav-btn {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 12px;
+            background: rgba(16, 20, 18, 0.7);
+            backdrop-filter: blur(12px);
+            border: 1px solid #2b3630;
+            border-radius: 9999px;
+            color: #8c938f;
+            font-family: var(--font-ui);
+            font-size: clamp(0.75rem, 2.5vw, 0.85rem);
+            font-weight: bold;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            box-shadow: inset 0 1px 3px rgba(0,0,0,0.8);
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        .back-nav-btn:hover {
+            border-color: #c2a675;
+            color: #c2a675;
+            background: rgba(26, 33, 30, 0.9);
+        }
+
+        .save-tab-btn {
+            flex: 1;
+            padding: 9px 10px;
+            background: #060807;
+            border: 1px solid #1f2722;
+            border-radius: 3px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            font-family: var(--font-title);
+            font-size: clamp(11px, 2.8vw, 13px);
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: #6d7872;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        .save-tab-btn.active {
+            background: #141c17;
+            border-color: #c2a675;
+            color: #c2a675;
+            box-shadow: 0 0 10px rgba(194,166,117,0.22);
+        }
+
+        .save-slot-card {
+            background: #090b0a;
+            border: 1px solid #1f2722;
+            border-radius: 3px;
+            padding: 12px 14px;
+            transition: all 0.2s ease;
+            cursor: pointer;
+            position: relative;
+        }
+        .save-slot-card:hover {
+            border-color: #c2a675;
+            background: #101613;
+            box-shadow: 0 0 12px rgba(194,166,117,0.18), inset 0 0 10px rgba(0,0,0,0.9);
+        }
+
+        .delete-btn {
+            background: #0d120f;
+            border: 1px solid #232d27;
+            width: 28px;
+            height: 28px;
+            border-radius: 3px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #6d7872;
+            transition: all 0.2s;
+            flex-shrink: 0;
+        }
+        .delete-btn:hover {
+            background: #2b1111;
+            border-color: #9e1515;
+            color: #ff6b6b;
+        }
+
+        .delete-confirm {
+            background-color: #9e1515 !important;
+            border-color: #ff3333 !important;
+            color: #ffffff !important;
+            animation: pulse-red 1s infinite;
+        }
+        @keyframes pulse-red {
+            0%, 100% { box-shadow: 0 0 0 0 rgba(255, 51, 51, 0.7); }
+            50% { box-shadow: 0 0 0 4px rgba(255, 51, 51, 0); }
+        }
+
+        .corner-tl { top: 0; left: 0; border-top: 1px solid #2b3630; border-left: 1px solid #2b3630; }
+        .corner-tr { top: 0; right: 0; border-top: 1px solid #2b3630; border-right: 1px solid #2b3630; }
+        .corner-bl { bottom: 0; left: 0; border-bottom: 1px solid #2b3630; border-left: 1px solid #2b3630; }
+        .corner-br { bottom: 0; right: 0; border-bottom: 1px solid #2b3630; border-right: 1px solid #2b3630; }
+    </style>
+</head>
+<body class="h-screen flex flex-col">
+
+    <header class="site-header flex-shrink-0">
+        <img src="https://lh3.googleusercontent.com/d/1U3juHgIiAcpfSSQiW3nWN20MhMUx7tJR" alt="Kings of Ruin" class="header-logo-img">
+        <a href="index.html" class="back-nav-btn" title="Voltar ao Início">
+            <i class="ph-bold ph-arrow-left text-sm"></i>
+            <span>Voltar</span>
+        </a>
+    </header>
+
+    <main class="flex-1 overflow-y-auto w-full max-w-lg mx-auto z-10 flex flex-col pb-12 pt-2 px-3 space-y-3.5">
+        
+        <div class="relative bg-[#090b0a]/90 backdrop-blur-sm p-4 shadow-[inset_0_0_20px_rgba(0,0,0,1)] border border-[#141a17] rounded-sm mt-1 space-y-4">
+            <div class="absolute w-4 h-4 corner-tl opacity-50"></div>
+            <div class="absolute w-4 h-4 corner-tr opacity-50"></div>
+            <div class="absolute w-4 h-4 corner-bl opacity-50"></div>
+            <div class="absolute w-4 h-4 corner-br opacity-50"></div>
+
+            <h2 class="text-2xl text-[#c2a675] tracking-wider text-center border-b border-[#2b3630] pb-3 font-title font-bold">
+                Carregar Registro
+            </h2>
+
+            <div class="flex gap-2">
+                <button type="button" onclick="setSaveTab('cronista')" id="tab-btn-cronista" class="save-tab-btn active">
+                    <i class="ph-fill ph-crown text-[16px]"></i>
+                    <span>Campanhas (Mesa)</span>
+                </button>
+                <button type="button" onclick="setSaveTab('jogador')" id="tab-btn-jogador" class="save-tab-btn">
+                    <i class="ph-fill ph-sword text-[16px]"></i>
+                    <span>Fichas (Jogador)</span>
+                </button>
+            </div>
+
+            <div id="saves-container" class="space-y-2.5 pt-1 min-h-[160px]"></div>
+
+        </div>
+
+    </main>
+
+    <script>
+        let currentTab = 'cronista';
+
+        const heroMetadata = {
+            elgan: { name: 'Elgan', title: 'O Erudito Versátil', icon: 'ph-book-bookmark' },
+            gerdwyn: { name: 'Gerdwyn', title: 'A Balestreira Mercenária', icon: 'ph-crosshair' },
+            iunis: { name: 'Iunis', title: 'A Eremita do Ermo', icon: 'ph-feather' },
+            osbert: { name: 'Osbert', title: 'O Duelista Arcano', icon: 'ph-sword' }
+        };
+
+        function getSavedCampaigns() {
+            const raw = localStorage.getItem('all_campaigns');
+            if (raw) return JSON.parse(raw);
+
+            // Mocks demonstrativos: 1 Campanha Solo e 1 Campanha Multiplayer
+            return [
+                {
+                    id: 'camp_demo_solo',
+                    type: 'campaign_host',
+                    name: 'Jornada Solitária no Ermo',
+                    sessionType: 'solo',
+                    chapter: 1,
+                    part: 'A:2',
+                    updatedAt: new Date(Date.now() - 3600000 * 2).toISOString(),
+                    heroes: ['osbert', 'iunis']
+                },
+                {
+                    id: 'camp_demo_multi',
+                    type: 'campaign_host',
+                    name: 'Mesa de Sexta - Avalon',
+                    sessionType: 'multiplayer',
+                    chapter: 2,
+                    part: 'B:2',
+                    updatedAt: new Date().toISOString(),
+                    heroes: [
+                        { id: 'elgan', playerName: 'Carlos' },
+                        { id: 'gerdwyn', playerName: 'Mariana' }
+                    ]
+                }
+            ];
+        }
+
+        function getSavedPlayers() {
+            const raw = localStorage.getItem('all_player_sheets');
+            if (raw) return JSON.parse(raw);
+
+            return [
+                {
+                    id: 'player_demo_1',
+                    type: 'player_client',
+                    playerName: 'Carlos',
+                    heroId: 'elgan',
+                    campaignName: 'Mesa de Sexta - Avalon',
+                    health: 12,
+                    energy: 6,
+                    exp: 4,
+                    updatedAt: new Date().toISOString()
+                }
+            ];
+        }
+
+        function setSaveTab(tab) {
+            currentTab = tab;
+            document.getElementById('tab-btn-cronista').classList.toggle('active', tab === 'cronista');
+            document.getElementById('tab-btn-jogador').classList.toggle('active', tab === 'jogador');
+            renderSavesList();
+        }
+
+        function renderSavesList() {
+            const container = document.getElementById('saves-container');
+            if (!container) return;
+
+            if (currentTab === 'cronista') {
+                const campaigns = getSavedCampaigns();
+                if (campaigns.length === 0) {
+                    container.innerHTML = `
+                        <div class="text-center p-6 border border-dashed border-[#2b3630] rounded bg-[#060807]">
+                            <i class="ph ph-scroll text-3xl text-[#6d7872] mb-1"></i>
+                            <p class="font-celtic text-[#8c938f] text-[15px] italic">Nenhuma campanha de mestre encontrada.</p>
+                        </div>`;
+                    return;
+                }
+
+                let html = '';
+                campaigns.forEach((camp) => {
+                    const formattedDate = new Date(camp.updatedAt).toLocaleDateString('pt-BR');
+                    const isSolo = (camp.sessionType === 'solo');
+                    
+                    const heroesListHtml = (camp.heroes || []).map(hItem => {
+                        const hId = (typeof hItem === 'string') ? hItem : hItem.id;
+                        const pName = (typeof hItem === 'object' && hItem.playerName) ? hItem.playerName : '';
+                        const meta = heroMetadata[hId] || { name: hId };
+
+                        return `
+                            <span class="text-[11px] font-sans bg-[#141a17] text-[#c2a675] px-2 py-0.5 rounded border border-[#2b3630] flex items-center gap-1">
+                                <strong class="font-bold">${meta.name}</strong>
+                                ${pName ? `<span class="text-[#8c938f] italic font-celtic text-[12px]">(${pName})</span>` : ''}
+                            </span>
+                        `;
+                    }).join(' ');
+
+                    html += `
+                        <div class="save-slot-card flex items-center justify-between gap-3" onclick="loadCampaign('${camp.id}')">
+                            <div class="flex-1 min-w-0">
+                                <div class="flex items-center gap-2">
+                                    <h3 class="font-title text-[15.5px] text-[#c2a675] font-bold truncate leading-tight">${camp.name}</h3>
+                                    <span class="text-[9.5px] font-sans font-bold uppercase tracking-wider px-1.5 py-0.5 rounded ${isSolo ? 'bg-[#1a211e] text-[#8c938f] border border-[#2b3630]' : 'bg-[#1b112b] text-[#c084fc] border border-[#581c87]'}">
+                                        ${isSolo ? 'Solo' : 'Multi'}
+                                    </span>
+                                </div>
+                                <div class="flex items-center gap-3 text-[12px] font-sans text-[#8c938f] mt-1">
+                                    <span>Cap. <strong>${camp.chapter || 1}</strong> (${camp.part || 'A:1'})</span>
+                                    <span>•</span>
+                                    <span>${formattedDate}</span>
+                                </div>
+                                <div class="flex items-center gap-1.5 mt-2 flex-wrap">
+                                    ${heroesListHtml}
+                                </div>
+                            </div>
+
+                            <button onclick="requestDeleteSave(event, 'campaign', '${camp.id}', this)" class="delete-btn" title="Excluir save">
+                                <i class="ph-bold ph-trash text-[15px]"></i>
+                            </button>
+                        </div>
+                    `;
+                });
+                container.innerHTML = html;
+
+            } else {
+                const players = getSavedPlayers();
+                if (players.length === 0) {
+                    container.innerHTML = `
+                        <div class="text-center p-6 border border-dashed border-[#2b3630] rounded bg-[#060807]">
+                            <i class="ph ph-user-circle text-3xl text-[#6d7872] mb-1"></i>
+                            <p class="font-celtic text-[#8c938f] text-[15px] italic">Nenhuma ficha individual encontrada.</p>
+                        </div>`;
+                    return;
+                }
+
+                let html = '';
+                players.forEach((p) => {
+                    const hero = heroMetadata[p.heroId] || { name: 'Herói', title: 'Viajante', icon: 'ph-user' };
+                    const formattedDate = new Date(p.updatedAt).toLocaleDateString('pt-BR');
+                    const campName = p.campaignName || 'Campanha Avulsa';
+
+                    html += `
+                        <div class="save-slot-card flex items-center justify-between gap-3" onclick="loadPlayer('${p.id}')">
+                            <div class="flex items-center gap-3 flex-1 min-w-0">
+                                <div class="w-11 h-11 rounded bg-[#141a17] border border-[#2b3630] flex items-center justify-center text-[#c2a675] flex-shrink-0">
+                                    <i class="ph-fill ${hero.icon} text-[22px]"></i>
+                                </div>
+                                <div class="flex-1 min-w-0">
+                                    <div class="flex items-center gap-2">
+                                        <h3 class="font-title text-[15.5px] text-[#c2a675] font-bold leading-tight truncate">${hero.name}</h3>
+                                        <span class="text-[12px] font-celtic italic text-[#b8b4a7]">(${p.playerName})</span>
+                                    </div>
+                                    
+                                    <div class="flex items-center gap-1.5 text-[11px] font-sans text-[#8c938f] mt-0.5">
+                                        <i class="ph-fill ph-shield-chevron text-[#c2a675] text-[12px]"></i>
+                                        <span class="text-[#c2a675] font-bold truncate">${campName}</span>
+                                    </div>
+
+                                    <div class="flex items-center gap-3 text-[12px] font-sans font-bold text-[#8c938f] mt-1">
+                                        <span class="text-[#ef4444] flex items-center gap-1"><i class="ph-fill ph-heart"></i> ${p.health || 12}</span>
+                                        <span class="text-[#eab308] flex items-center gap-1"><i class="ph-fill ph-lightning"></i> ${p.energy || 6}</span>
+                                        <span class="text-[#c2a675] flex items-center gap-1"><i class="ph-fill ph-star"></i> ${p.exp || 0} XP</span>
+                                        <span>•</span>
+                                        <span class="text-[11px] font-normal font-celtic">${formattedDate}</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <button onclick="requestDeleteSave(event, 'player', '${p.id}', this)" class="delete-btn" title="Excluir ficha">
+                                <i class="ph-bold ph-trash text-[15px]"></i>
+                            </button>
+                        </div>
+                    `;
+                });
+                container.innerHTML = html;
+            }
+        }
+
+        function loadCampaign(campId) {
+            const campaigns = getSavedCampaigns();
+            const selected = campaigns.find(c => c.id === campId);
+            if (selected) {
+                localStorage.setItem('active_campaign', JSON.stringify(selected));
+                window.location.href = 'cronica.html';
+            }
+        }
+
+        function loadPlayer(playerId) {
+            const players = getSavedPlayers();
+            const selected = players.find(p => p.id === playerId);
+            if (selected) {
+                localStorage.setItem('active_player', JSON.stringify(selected));
+                window.location.href = 'grupo.html';
+            }
+        }
+
+        function requestDeleteSave(event, type, id, btnEl) {
+            event.stopPropagation();
+            if (btnEl.classList.contains('delete-confirm')) {
+                if (type === 'campaign') {
+                    let list = getSavedCampaigns().filter(c => c.id !== id);
+                    localStorage.setItem('all_campaigns', JSON.stringify(list));
+                } else {
+                    let list = getSavedPlayers().filter(p => p.id !== id);
+                    localStorage.setItem('all_player_sheets', JSON.stringify(list));
+                }
+                renderSavesList();
+            } else {
+                btnEl.classList.add('delete-confirm');
+                btnEl.innerHTML = '<i class="ph-fill ph-trash text-[15px]"></i>';
+                setTimeout(() => {
+                    if (document.body.contains(btnEl)) {
+                        btnEl.classList.remove('delete-confirm');
+                        btnEl.innerHTML = '<i class="ph-bold ph-trash text-[15px]"></i>';
+                    }
+                }, 2500);
+            }
+        }
+
+        window.onload = () => {
+            renderSavesList();
+        };
+    </script>
+</body>
+</html>

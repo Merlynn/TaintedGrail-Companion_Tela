@@ -1,0 +1,1030 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Kings of Ruin - Nova Campanha</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Alegreya+Sans:ital,wght@0,400;0,700;1,400&family=Cinzel:wght@600;700&family=Crimson+Pro:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <!-- Leitor de QR Code leve e confiável -->
+    <script src="https://unpkg.com/html5-qrcode"></script>
+
+    <style>
+        :root { 
+            --font-celtic: 'Celtic Garamond', 'Crimson Pro', serif; 
+            --font-title: 'Cinzel', serif;
+            --font-ui: 'Alegreya Sans', sans-serif;
+        }
+
+        body {
+            background-color: transparent;
+            color: #b8b4a7;
+            -webkit-tap-highlight-color: transparent;
+            font-family: var(--font-celtic);
+            overflow-x: hidden;
+            margin: 0; padding: 0;
+            font-size: 16px;
+        }
+
+        body::after {
+            content: "";
+            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+            background-image: linear-gradient(rgba(7, 9, 8, 0.85), rgba(7, 9, 8, 0.95)), url('https://lh3.googleusercontent.com/d/1CVTwNLqVBc4Y97ZD82hIaf4wJnPeK4-L');
+            background-size: cover; background-position: center;
+            pointer-events: none; z-index: -2;
+        }
+
+        ::-webkit-scrollbar { display: none; }
+
+        h1, h2, h3, .font-title { font-family: var(--font-title) !important; }
+        .font-sans { font-family: var(--font-ui) !important; }
+        .font-celtic { font-family: var(--font-celtic) !important; }
+
+        .site-header {
+            background: linear-gradient(180deg, rgba(7, 9, 8, 0.95) 0%, rgba(7, 9, 8, 0.85) 100%);
+            border-bottom: 1px solid rgba(43, 54, 48, 0.5);
+            padding: 8px 16px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: relative;
+            z-index: 25;
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+        }
+        .header-logo-img {
+            height: clamp(44px, 11vw, 54px);
+            width: auto;
+            max-width: 260px;
+            object-fit: contain;
+            display: block;
+            filter: drop-shadow(0 2px 6px rgba(0, 0, 0, 0.7));
+        }
+
+        .back-nav-btn {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 12px;
+            background: rgba(16, 20, 18, 0.7);
+            backdrop-filter: blur(12px);
+            border: 1px solid #2b3630;
+            border-radius: 9999px;
+            color: #8c938f;
+            font-family: var(--font-ui);
+            font-size: clamp(0.75rem, 2.5vw, 0.85rem);
+            font-weight: bold;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            box-shadow: inset 0 1px 3px rgba(0,0,0,0.8);
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        .back-nav-btn:hover {
+            border-color: #c2a675;
+            color: #c2a675;
+            background: rgba(26, 33, 30, 0.9);
+        }
+
+        .form-input {
+            background: rgba(7, 9, 8, 0.9);
+            border: 1px solid #2b3630;
+            color: #c2a675;
+            width: 100%;
+            padding: 10px 14px;
+            font-size: 1.15rem;
+            border-radius: 4px;
+            box-shadow: inset 0 2px 6px rgba(0,0,0,0.8);
+            transition: border-color 0.2s;
+            font-family: var(--font-celtic);
+            outline: none;
+        }
+        .form-input:focus {
+            border-color: #c2a675;
+            background: #0d120f;
+        }
+
+        .choice-card {
+            background: #090b0a;
+            border: 1px solid #1f2722;
+            border-radius: 3px;
+            padding: 10px 12px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        .choice-card:hover {
+            border-color: #2b3630;
+            background: #0d120f;
+        }
+        .choice-card.selected {
+            background: #141c17;
+            border-color: #c2a675;
+            box-shadow: 0 0 10px rgba(194,166,117,0.2), inset 0 0 12px rgba(0,0,0,0.8);
+        }
+
+        .hero-select-card {
+            background: #090b0a;
+            border: 1px solid #1f2722;
+            border-radius: 3px;
+            padding: 8px 10px;
+            transition: all 0.2s ease;
+        }
+        .hero-select-card.selected {
+            background: #141c17;
+            border-color: #c2a675;
+            box-shadow: 0 0 10px rgba(194,166,117,0.2), inset 0 0 12px rgba(0,0,0,0.8);
+        }
+        .hero-checkbox {
+            width: 18px;
+            height: 18px;
+            border-radius: 3px;
+            border: 1px solid #2b3630;
+            background: #050706;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+            flex-shrink: 0;
+        }
+        .hero-select-card.selected .hero-checkbox {
+            background: #c2a675;
+            border-color: #c2a675;
+            color: #070908;
+        }
+
+        .player-name-input {
+            background: rgba(0,0,0,0.5);
+            border: none;
+            border-bottom: 1px dashed #2b3630;
+            color: #b8b4a7;
+            font-family: var(--font-celtic);
+            font-size: 1rem;
+            width: 100%;
+            padding: 2px 4px;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+        .player-name-input:focus {
+            border-bottom-color: #c2a675;
+            border-bottom-style: solid;
+            color: #c2a675;
+        }
+
+        .qr-action-btn {
+            background: #101613;
+            border: 1px solid #2b3630;
+            padding: 4px 8px;
+            border-radius: 3px;
+            color: #c2a675;
+            font-family: var(--font-ui);
+            font-size: 11px;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            flex-shrink: 0;
+            transition: all 0.2s;
+            cursor: pointer;
+        }
+        .qr-action-btn:hover {
+            border-color: #c2a675;
+            background: #141c17;
+            box-shadow: 0 0 6px rgba(194,166,117,0.3);
+        }
+
+        .mode-tab-btn {
+            flex: 1;
+            padding: 8px 10px;
+            background: #060807;
+            border: 1px solid #1f2722;
+            border-radius: 3px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            font-family: var(--font-title);
+            font-size: clamp(11.5px, 3vw, 13px);
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: #6d7872;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        .mode-tab-btn.active-narrativo {
+            background: #101613;
+            border-color: #c2a675;
+            color: #c2a675;
+            box-shadow: 0 0 10px rgba(194,166,117,0.25);
+        }
+        .mode-tab-btn.active-desafiador {
+            background: #2b1111;
+            border-color: #9e1515;
+            color: #ff6b6b;
+            box-shadow: 0 0 10px rgba(239,68,68,0.25);
+        }
+        .badge-tab-count {
+            font-size: 10px;
+            font-family: var(--font-ui);
+            padding: 1px 5px;
+            border-radius: 9999px;
+            background: #141a17;
+            border: 1px solid #2b3630;
+        }
+
+        .modifier-card {
+            background: #060807;
+            border: 1px solid #1f2722;
+            border-radius: 3px;
+            padding: 10px 12px;
+            transition: all 0.2s ease;
+            cursor: pointer;
+        }
+        .modifier-card:hover { border-color: #2b3630; }
+        .modifier-card.active-narrative {
+            background: #101613;
+            border-color: #c2a675;
+            box-shadow: inset 0 0 10px rgba(0,0,0,0.8);
+        }
+        .modifier-card.active-challenge {
+            background: #1a0a0a;
+            border-color: #9e1515;
+            box-shadow: inset 0 0 10px rgba(0,0,0,0.8);
+        }
+
+        .switch-track {
+            width: 38px;
+            height: 20px;
+            background: #050706;
+            border: 1px solid #2b3630;
+            border-radius: 9999px;
+            position: relative;
+            transition: all 0.2s;
+            flex-shrink: 0;
+        }
+        .switch-thumb {
+            width: 14px;
+            height: 14px;
+            background: #6d7872;
+            border-radius: 50%;
+            position: absolute;
+            top: 2px;
+            left: 2px;
+            transition: transform 0.2s, background-color 0.2s;
+        }
+        .modifier-card.active-narrative .switch-track { background: #2b3630; border-color: #c2a675; }
+        .modifier-card.active-narrative .switch-thumb { transform: translateX(18px); background: #c2a675; }
+        .modifier-card.active-challenge .switch-track { background: #450606; border-color: #9e1515; }
+        .modifier-card.active-challenge .switch-thumb { transform: translateX(18px); background: #ff6b6b; }
+
+        .start-btn {
+            background: #450606;
+            border: 1px solid #9e1515;
+            color: #b8b4a7;
+            padding: 13px 20px;
+            border-radius: 4px;
+            font-family: var(--font-title);
+            font-size: 1rem;
+            text-transform: uppercase;
+            letter-spacing: 0.12em;
+            font-weight: bold;
+            width: 100%;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.8);
+        }
+        .start-btn:hover, .start-btn:active {
+            background: #9e1515;
+            color: #fff;
+            box-shadow: 0 0 15px rgba(255, 51, 51, 0.4);
+        }
+
+        .corner-tl { top: 0; left: 0; border-top: 1px solid #2b3630; border-left: 1px solid #2b3630; }
+        .corner-tr { top: 0; right: 0; border-top: 1px solid #2b3630; border-right: 1px solid #2b3630; }
+        .corner-bl { bottom: 0; left: 0; border-bottom: 1px solid #2b3630; border-left: 1px solid #2b3630; }
+        .corner-br { bottom: 0; right: 0; border-bottom: 1px solid #2b3630; border-right: 1px solid #2b3630; }
+    </style>
+</head>
+<body class="h-screen flex flex-col">
+
+    <header class="site-header flex-shrink-0">
+        <img src="https://lh3.googleusercontent.com/d/1U3juHgIiAcpfSSQiW3nWN20MhMUx7tJR" alt="Kings of Ruin" class="header-logo-img">
+        <a href="index.html" class="back-nav-btn" title="Voltar ao Início">
+            <i class="ph-bold ph-arrow-left text-sm"></i>
+            <span>Voltar</span>
+        </a>
+    </header>
+
+    <main class="flex-1 overflow-y-auto w-full max-w-lg mx-auto z-10 flex flex-col pb-16 pt-2 px-3 space-y-3.5">
+        
+        <div class="relative bg-[#090b0a]/90 backdrop-blur-sm p-4 shadow-[inset_0_0_20px_rgba(0,0,0,1)] border border-[#141a17] rounded-sm mt-1 space-y-4">
+            <div class="absolute w-4 h-4 corner-tl opacity-50"></div>
+            <div class="absolute w-4 h-4 corner-tr opacity-50"></div>
+            <div class="absolute w-4 h-4 corner-bl opacity-50"></div>
+            <div class="absolute w-4 h-4 corner-br opacity-50"></div>
+
+            <h2 class="text-2xl text-[#c2a675] tracking-wider text-center border-b border-[#2b3630] pb-3 font-title font-bold">
+                Nova Sessão
+            </h2>
+
+            <!-- ETAPA 1: MODO SOLO OU MULTIPLAYER -->
+            <div class="space-y-1.5">
+                <label class="text-[13px] uppercase font-title tracking-widest text-[#8c938f] block font-bold">
+                    1. Formato da Mesa
+                </label>
+                <div class="grid grid-cols-2 gap-2">
+                    <div id="btn-mode-solo" class="choice-card selected" onclick="setSessionType('solo')">
+                        <div>
+                            <span class="font-title text-[14px] text-[#c2a675] font-bold block leading-tight">Modo Solo</span>
+                            <span class="font-sans text-[11px] text-[#8c938f]">Controle no app</span>
+                        </div>
+                        <i class="ph-fill ph-user text-[20px] text-[#c2a675]"></i>
+                    </div>
+
+                    <div id="btn-mode-multi" class="choice-card" onclick="setSessionType('multiplayer')">
+                        <div>
+                            <span class="font-title text-[14px] text-[#b8b4a7] font-bold block leading-tight">Multiplayer</span>
+                            <span class="font-sans text-[11px] text-[#8c938f]">Mesa em grupo</span>
+                        </div>
+                        <i class="ph-fill ph-users text-[20px] text-[#6d7872]"></i>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ETAPA 2: PAPEL (SE FOR MULTIPLAYER) -->
+            <div id="section-role" class="space-y-1.5 pt-1 border-t border-[#141a17] hidden">
+                <label class="text-[13px] uppercase font-title tracking-widest text-[#8c938f] block font-bold">
+                    2. Seu Papel na Sessão
+                </label>
+                <div class="grid grid-cols-2 gap-2">
+                    <div id="btn-role-cronista" class="choice-card selected" onclick="setUserRole('cronista')">
+                        <div>
+                            <span class="font-title text-[14px] text-[#c2a675] font-bold block leading-tight">Sou Cronista</span>
+                            <span class="font-sans text-[11px] text-[#8c938f]">Gerenciar campanha</span>
+                        </div>
+                        <i class="ph-fill ph-book-open-user text-[20px] text-[#c2a675]"></i>
+                    </div>
+
+                    <div id="btn-role-jogador" class="choice-card" onclick="setUserRole('jogador')">
+                        <div>
+                            <span class="font-title text-[14px] text-[#b8b4a7] font-bold block leading-tight">Sou Jogador</span>
+                            <span class="font-sans text-[11px] text-[#8c938f]">Apenas minha ficha</span>
+                        </div>
+                        <i class="ph-fill ph-sword text-[20px] text-[#6d7872]"></i>
+                    </div>
+                </div>
+            </div>
+
+            <!-- BLOCO CRONISTA / CAMPANHA -->
+            <div id="section-campaign-details" class="space-y-4 pt-1 border-t border-[#141a17]">
+                
+                <div class="space-y-1.5">
+                    <label class="text-[13px] uppercase font-title tracking-widest text-[#8c938f] block font-bold">
+                        Identificação da Mesa
+                    </label>
+                    <input type="text" id="campaign-name" class="form-input" placeholder="Ex: Campanha Principal, Mesa Sexta..." autocomplete="off">
+                </div>
+
+                <div class="space-y-2">
+                    <div class="flex items-center justify-between">
+                        <label class="text-[13px] uppercase font-title tracking-widest text-[#8c938f] block font-bold">
+                            Heróis Participantes
+                        </label>
+                        <span id="heroes-count-badge" class="text-[11px] font-sans font-bold text-[#c2a675]">1 herói selecionado</span>
+                    </div>
+
+                    <div class="space-y-1.5" id="heroes-selection-list">
+                        
+                        <!-- Elgan (magic-wand) -->
+                        <div id="card-hero-elgan" class="hero-select-card selected">
+                            <div class="flex items-center justify-between cursor-pointer" onclick="toggleHeroSelection('elgan')">
+                                <div class="flex items-center gap-2.5 min-w-0">
+                                    <div class="hero-checkbox"><i class="ph-bold ph-check text-xs"></i></div>
+                                    <div class="flex items-baseline gap-1.5 truncate">
+                                        <span class="font-title text-[15px] text-[#c2a675] font-bold leading-none">Elgan</span>
+                                        <span class="font-celtic text-[13px] text-[#8c938f] italic truncate">• O Candelário</span>
+                                    </div>
+                                </div>
+                                <i class="ph-fill ph-magic-wand text-[#6d7872] text-[18px] flex-shrink-0 ml-2"></i>
+                            </div>
+                            <div id="player-field-elgan" class="mt-2 pt-1.5 border-t border-[#1a211e] items-center justify-between gap-2 hidden">
+                                <div class="flex items-center gap-1.5 flex-1 min-w-0">
+                                    <i class="ph-fill ph-user text-[#c2a675] text-xs"></i>
+                                    <input type="text" id="player-name-elgan" class="player-name-input" placeholder="Nome do jogador..." autocomplete="off">
+                                </div>
+                                <button type="button" onclick="openQrScannerModal('elgan')" class="qr-action-btn">
+                                    <i class="ph-fill ph-qr-code text-sm"></i> Importar
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Gerdwyn (target) -->
+                        <div id="card-hero-gerdwyn" class="hero-select-card">
+                            <div class="flex items-center justify-between cursor-pointer" onclick="toggleHeroSelection('gerdwyn')">
+                                <div class="flex items-center gap-2.5 min-w-0">
+                                    <div class="hero-checkbox"></div>
+                                    <div class="flex items-baseline gap-1.5 truncate">
+                                        <span class="font-title text-[15px] text-[#b8b4a7] font-bold leading-none">Gerdwyn</span>
+                                        <span class="font-celtic text-[13px] text-[#8c938f] italic truncate">• A Mercenária</span>
+                                    </div>
+                                </div>
+                                <i class="ph-fill ph-target text-[#6d7872] text-[18px] flex-shrink-0 ml-2"></i>
+                            </div>
+                            <div id="player-field-gerdwyn" class="mt-2 pt-1.5 border-t border-[#1a211e] items-center justify-between gap-2 hidden">
+                                <div class="flex items-center gap-1.5 flex-1 min-w-0">
+                                    <i class="ph-fill ph-user text-[#c2a675] text-xs"></i>
+                                    <input type="text" id="player-name-gerdwyn" class="player-name-input" placeholder="Nome do jogador..." autocomplete="off">
+                                </div>
+                                <button type="button" onclick="openQrScannerModal('gerdwyn')" class="qr-action-btn">
+                                    <i class="ph-fill ph-qr-code text-sm"></i> Importar
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Iunis (sword) -->
+                        <div id="card-hero-iunis" class="hero-select-card">
+                            <div class="flex items-center justify-between cursor-pointer" onclick="toggleHeroSelection('iunis')">
+                                <div class="flex items-center gap-2.5 min-w-0">
+                                    <div class="hero-checkbox"></div>
+                                    <div class="flex items-baseline gap-1.5 truncate">
+                                        <span class="font-title text-[15px] text-[#b8b4a7] font-bold leading-none">Iunis</span>
+                                        <span class="font-celtic text-[13px] text-[#8c938f] italic truncate">• A Gladiatrix Fomoriana</span>
+                                    </div>
+                                </div>
+                                <i class="ph-fill ph-sword text-[#6d7872] text-[18px] flex-shrink-0 ml-2"></i>
+                            </div>
+                            <div id="player-field-iunis" class="mt-2 pt-1.5 border-t border-[#1a211e] items-center justify-between gap-2 hidden">
+                                <div class="flex items-center gap-1.5 flex-1 min-w-0">
+                                    <i class="ph-fill ph-user text-[#c2a675] text-xs"></i>
+                                    <input type="text" id="player-name-iunis" class="player-name-input" placeholder="Nome do jogador..." autocomplete="off">
+                                </div>
+                                <button type="button" onclick="openQrScannerModal('iunis')" class="qr-action-btn">
+                                    <i class="ph-fill ph-qr-code text-sm"></i> Importar
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Osbert (clover) -->
+                        <div id="card-hero-osbert" class="hero-select-card">
+                            <div class="flex items-center justify-between cursor-pointer" onclick="toggleHeroSelection('osbert')">
+                                <div class="flex items-center gap-2.5 min-w-0">
+                                    <div class="hero-checkbox"></div>
+                                    <div class="flex items-baseline gap-1.5 truncate">
+                                        <span class="font-title text-[15px] text-[#b8b4a7] font-bold leading-none">Osbert</span>
+                                        <span class="font-celtic text-[13px] text-[#8c938f] italic truncate">• O Bufão Itinerante</span>
+                                    </div>
+                                </div>
+                                <i class="ph-fill ph-clover text-[#6d7872] text-[18px] flex-shrink-0 ml-2"></i>
+                            </div>
+                            <div id="player-field-osbert" class="mt-2 pt-1.5 border-t border-[#1a211e] items-center justify-between gap-2 hidden">
+                                <div class="flex items-center gap-1.5 flex-1 min-w-0">
+                                    <i class="ph-fill ph-user text-[#c2a675] text-xs"></i>
+                                    <input type="text" id="player-name-osbert" class="player-name-input" placeholder="Nome do jogador..." autocomplete="off">
+                                </div>
+                                <button type="button" onclick="openQrScannerModal('osbert')" class="qr-action-btn">
+                                    <i class="ph-fill ph-qr-code text-sm"></i> Importar
+                                </button>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+                <!-- MODIFICADORES DE REGRA -->
+                <div class="space-y-3 pt-2 border-t border-[#141a17]">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <label class="text-[13.5px] uppercase font-title tracking-widest text-[#c2a675] block font-bold flex items-center gap-1.5">
+                                <i class="ph-fill ph-sliders-horizontal"></i> Modificadores de Regra
+                            </label>
+                            <span class="text-[11px] font-sans text-[#8c938f]">Ajustes de dificuldade</span>
+                        </div>
+                        <button type="button" onclick="toggleAllCurrentModifiers()" id="btn-toggle-tab-mods" class="text-[10px] font-sans font-bold uppercase tracking-wider text-[#8c938f] hover:text-[#c2a675] px-2 py-1 bg-[#070908] border border-[#2b3630] rounded">
+                            Ativar Modo
+                        </button>
+                    </div>
+
+                    <div class="flex gap-2">
+                        <button type="button" onclick="setModifierTab('narrativo')" id="tab-btn-narrativo" class="mode-tab-btn active-narrativo">
+                            <i class="ph-fill ph-book-open"></i>
+                            <span>Narrativo</span>
+                            <span id="badge-count-narrativo" class="badge-tab-count">0/7</span>
+                        </button>
+                        <button type="button" onclick="setModifierTab('desafiador')" id="tab-btn-desafiador" class="mode-tab-btn">
+                            <i class="ph-fill ph-skull"></i>
+                            <span>Desafiador</span>
+                            <span id="badge-count-desafiador" class="badge-tab-count">0/8</span>
+                        </button>
+                    </div>
+
+                    <div id="modifiers-container" class="space-y-2 pt-1 min-h-[120px]"></div>
+                </div>
+
+            </div>
+
+            <!-- BLOCO JOGADOR INDIVIDUAL -->
+            <div id="section-player-only" class="space-y-4 pt-1 border-t border-[#141a17] hidden">
+                
+                <div class="space-y-1.5">
+                    <label class="text-[13px] uppercase font-title tracking-widest text-[#8c938f] block font-bold">
+                        Seu Nome de Jogador
+                    </label>
+                    <input type="text" id="single-player-name" class="form-input" placeholder="Ex: Carlos, Mariana..." autocomplete="off">
+                </div>
+
+                <div class="space-y-2">
+                    <label class="text-[13px] uppercase font-title tracking-widest text-[#8c938f] block font-bold">
+                        Escolha seu Herói
+                    </label>
+
+                    <div class="space-y-1.5">
+                        <div id="player-hero-elgan" class="choice-card selected" onclick="setSingleHero('elgan')">
+                            <div class="flex items-baseline gap-1.5 truncate">
+                                <span class="font-title text-[15px] text-[#c2a675] font-bold block leading-none">Elgan</span>
+                                <span class="font-celtic text-[13px] text-[#8c938f] italic truncate">• O Candelário</span>
+                            </div>
+                            <i class="ph-fill ph-magic-wand text-[#c2a675] text-[18px] flex-shrink-0 ml-2"></i>
+                        </div>
+
+                        <div id="player-hero-gerdwyn" class="choice-card" onclick="setSingleHero('gerdwyn')">
+                            <div class="flex items-baseline gap-1.5 truncate">
+                                <span class="font-title text-[15px] text-[#b8b4a7] font-bold block leading-none">Gerdwyn</span>
+                                <span class="font-celtic text-[13px] text-[#8c938f] italic truncate">• A Mercenária</span>
+                            </div>
+                            <i class="ph-fill ph-target text-[#6d7872] text-[18px] flex-shrink-0 ml-2"></i>
+                        </div>
+
+                        <div id="player-hero-iunis" class="choice-card" onclick="setSingleHero('iunis')">
+                            <div class="flex items-baseline gap-1.5 truncate">
+                                <span class="font-title text-[15px] text-[#b8b4a7] font-bold block leading-none">Iunis</span>
+                                <span class="font-celtic text-[13px] text-[#8c938f] italic truncate">• A Gladiatrix Fomoriana</span>
+                            </div>
+                            <i class="ph-fill ph-sword text-[#6d7872] text-[18px] flex-shrink-0 ml-2"></i>
+                        </div>
+
+                        <div id="player-hero-osbert" class="choice-card" onclick="setSingleHero('osbert')">
+                            <div class="flex items-baseline gap-1.5 truncate">
+                                <span class="font-title text-[15px] text-[#b8b4a7] font-bold block leading-none">Osbert</span>
+                                <span class="font-celtic text-[13px] text-[#8c938f] italic truncate">• O Bufão Itinerante</span>
+                            </div>
+                            <i class="ph-fill ph-clover text-[#6d7872] text-[18px] flex-shrink-0 ml-2"></i>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- BOTÃO DE INICIAR -->
+            <div class="pt-3">
+                <button type="button" onclick="startNewSession()" id="btn-submit-start" class="start-btn flex items-center justify-center gap-2">
+                    <i class="ph-fill ph-shield-chevron text-lg"></i>
+                    <span id="lbl-btn-start">Iniciar Jornada Solo</span>
+                </button>
+            </div>
+
+        </div>
+
+    </main>
+
+    <!-- MODAL DE IMPORTAÇÃO (CAMERA QR / CODIGO) -->
+    <div id="qr-modal" class="fixed inset-0 z-50 bg-[#000000]/85 backdrop-blur-sm flex items-center justify-center p-4 hidden" onclick="if(event.target === this) closeQrModal()">
+        <div class="bg-[#090b0a] border border-[#2b3630] rounded-sm p-4 w-full max-w-sm space-y-3 relative shadow-2xl" onclick="event.stopPropagation()">
+            <div class="flex items-center justify-between border-b border-[#1a211e] pb-2">
+                <span class="font-title text-[14px] text-[#c2a675] font-bold flex items-center gap-2">
+                    <i class="ph-fill ph-qr-code text-[18px]"></i> Importar Ficha (<span id="modal-hero-target-name">Herói</span>)
+                </span>
+                <button type="button" onclick="closeQrModal()" class="text-[#8c938f] hover:text-[#c2a675] p-1 transition-colors" title="Fechar">
+                    <i class="ph-bold ph-x text-xl pointer-events-none"></i>
+                </button>
+            </div>
+
+            <!-- Opção Câmera -->
+            <div id="reader-container" class="rounded overflow-hidden border border-[#1f2722] bg-[#050706]">
+                <div id="qr-reader" style="width: 100%;"></div>
+            </div>
+
+            <!-- Opção Colar Código Manual -->
+            <div class="space-y-1.5 pt-1">
+                <label class="text-[11px] font-sans uppercase font-bold text-[#8c938f] block">Ou cole o código da ficha:</label>
+                <div class="flex gap-2">
+                    <input type="text" id="manual-payload-input" class="player-name-input !border !border-[#2b3630] !bg-[#050706] p-2 rounded text-xs" placeholder="Cole aqui o payload JSON..." autocomplete="off">
+                    <button type="button" onclick="applyManualImport()" class="qr-action-btn">
+                        Aplicar
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let sessionType = 'solo';
+        let userRole = 'cronista';
+        let selectedHeroes = new Set(['elgan']);
+        let singlePlayerHero = 'elgan';
+        let activeTab = 'narrativo';
+        let currentTargetImportHero = null;
+        let html5QrScanner = null;
+        
+        const narrativeModifiers = [
+            { id: 'n_itensIniciais', name: 'Itens Iniciais', desc: 'Durante a preparação do mundo, cada personagem ganha 1 Item "A".' },
+            { id: 'n_genioTatico', name: 'Gênio Tático', desc: 'Receba a carta de Segredo 49 para baixar cartas extras sem receber bônus de energia.' },
+            { id: 'n_conflitosIncidentes', name: 'Conflitos e Incidentes', desc: 'Ao preparar Conflitos ou Incidentes, trate a mesa como se houvesse 1 Personagem a menos (mín. 1).' },
+            { id: 'n_limitadorSaude', name: 'Limitador de Saúde', desc: 'Remove a peça plástica limitadora; sua Saúde não reduz mais sua Energia máxima.' },
+            { id: 'n_custoPadrons', name: 'Custo dos Padrons', desc: 'Ativação alternativa: pague 1 Magia ou Tributo de Sangue (2 Saúde e 1 Pavor) por personagem.' },
+            { id: 'n_evolucaoPersonagem', name: 'Evolução do Personagem', desc: 'Compre 1 carta a mais ao evoluir Combate ou Diplomacia para escolher entre elas.' },
+            { id: 'n_passagemTempo', name: 'Passagem do Tempo', desc: 'Ao receber Passagem do Tempo pela primeira vez em cada capítulo, receba 1 parte a menos.' }
+        ];
+
+        const challengeModifiers = [
+            { id: 'c_conflitosReforcados', name: 'Conflitos Reforçados', desc: 'Receba a carta de Segredo 48 (+1 efeito a todo Ataque e Resposta do Inimigo).' },
+            { id: 'c_escaparEvitar', name: 'Escapar & Evitar', desc: 'Escapar de Combate exige rolar 4-6 no dado; Evitar Diplomacia resolve a derrota automaticamente.' },
+            { id: 'c_incidentes', name: 'Incidentes Aumentados', desc: 'Ao colocar Incidentes Aleatórios, trate a mesa como se houvesse 1 Personagem a mais.' },
+            { id: 'c_custoPadrons', name: 'Custo dos Padrons (+1)', desc: 'Ativar um padrom custa 1 de Energia a mais por personagem (afeta pagamento normal e Tributo).' },
+            { id: 'c_evolucaoPersonagem', name: 'Evolução Encarecida', desc: 'Custos maiores de XP: 3 Exp para cartas, 3+1 Exp para atributos opostos, 5+5 Exp para perícias.' },
+            { id: 'c_limiteItens', name: 'Limite de Itens', desc: 'Cada Personagem pode carregar no máximo até 5 Itens (não afeta Segredos).' },
+            { id: 'c_descansoClassico', name: 'Descanso Clássico', desc: 'Recuperação no Fim do Dia exige 1 Comida para curar; penalidades em Saúde/Energia se não pagar.' },
+            { id: 'c_estabilidadeLimitada', name: 'Estabilidade Limitada', desc: 'Ao receber Passagem do Tempo, desvaneça o padrom que estiver mais distante dos heróis.' }
+        ];
+
+        let modifiersState = {};
+        narrativeModifiers.forEach(m => modifiersState[m.id] = false);
+        challengeModifiers.forEach(m => modifiersState[m.id] = false);
+
+        function setSessionType(type) {
+            sessionType = type;
+            const btnSolo = document.getElementById('btn-mode-solo');
+            const btnMulti = document.getElementById('btn-mode-multi');
+            const sectionRole = document.getElementById('section-role');
+
+            if (type === 'solo') {
+                btnSolo.className = 'choice-card selected';
+                btnMulti.className = 'choice-card';
+                btnSolo.querySelector('i').className = 'ph-fill ph-user text-[20px] text-[#c2a675]';
+                btnSolo.querySelector('.font-title').className = 'font-title text-[14px] text-[#c2a675] font-bold block leading-tight';
+                btnMulti.querySelector('i').className = 'ph-fill ph-users text-[20px] text-[#6d7872]';
+                btnMulti.querySelector('.font-title').className = 'font-title text-[14px] text-[#b8b4a7] font-bold block leading-tight';
+                
+                sectionRole.classList.add('hidden');
+                userRole = 'cronista';
+            } else {
+                btnMulti.className = 'choice-card selected';
+                btnSolo.className = 'choice-card';
+                btnMulti.querySelector('i').className = 'ph-fill ph-users text-[20px] text-[#c2a675]';
+                btnMulti.querySelector('.font-title').className = 'font-title text-[14px] text-[#c2a675] font-bold block leading-tight';
+                btnSolo.querySelector('i').className = 'ph-fill ph-user text-[20px] text-[#6d7872]';
+                btnSolo.querySelector('.font-title').className = 'font-title text-[14px] text-[#b8b4a7] font-bold block leading-tight';
+                
+                sectionRole.classList.remove('hidden');
+            }
+
+            updateLayoutFlow();
+            renderHeroCards();
+        }
+
+        function setUserRole(role) {
+            userRole = role;
+            const btnCronista = document.getElementById('btn-role-cronista');
+            const btnJogador = document.getElementById('btn-role-jogador');
+
+            if (role === 'cronista') {
+                btnCronista.className = 'choice-card selected';
+                btnJogador.className = 'choice-card';
+                btnCronista.querySelector('i').className = 'ph-fill ph-book-open-user text-[20px] text-[#c2a675]';
+                btnCronista.querySelector('.font-title').className = 'font-title text-[14px] text-[#c2a675] font-bold block leading-tight';
+                btnJogador.querySelector('i').className = 'ph-fill ph-sword text-[20px] text-[#6d7872]';
+                btnJogador.querySelector('.font-title').className = 'font-title text-[14px] text-[#b8b4a7] font-bold block leading-tight';
+            } else {
+                btnJogador.className = 'choice-card selected';
+                btnCronista.className = 'choice-card';
+                btnJogador.querySelector('i').className = 'ph-fill ph-sword text-[20px] text-[#c2a675]';
+                btnJogador.querySelector('.font-title').className = 'font-title text-[14px] text-[#c2a675] font-bold block leading-tight';
+                btnCronista.querySelector('i').className = 'ph-fill ph-book-open-user text-[20px] text-[#6d7872]';
+                btnCronista.querySelector('.font-title').className = 'font-title text-[14px] text-[#b8b4a7] font-bold block leading-tight';
+            }
+
+            updateLayoutFlow();
+            renderHeroCards();
+        }
+
+        function updateLayoutFlow() {
+            const secCampaign = document.getElementById('section-campaign-details');
+            const secPlayer = document.getElementById('section-player-only');
+            const btnLabel = document.getElementById('lbl-btn-start');
+
+            if (userRole === 'cronista') {
+                secCampaign.classList.remove('hidden');
+                secPlayer.classList.add('hidden');
+                btnLabel.innerText = sessionType === 'solo' 
+                    ? 'Iniciar Jornada Solo' 
+                    : 'Iniciar Mesa (Cronista)';
+            } else {
+                secCampaign.classList.add('hidden');
+                secPlayer.classList.remove('hidden');
+                btnLabel.innerText = 'Criar Minha Ficha de Jogador';
+            }
+        }
+
+        function toggleHeroSelection(heroId) {
+            if (selectedHeroes.has(heroId)) {
+                if (selectedHeroes.size > 1) {
+                    selectedHeroes.delete(heroId);
+                } else {
+                    alert("A expedição precisa de pelo menos 1 herói!");
+                    return;
+                }
+            } else {
+                if (selectedHeroes.size < 4) {
+                    selectedHeroes.add(heroId);
+                } else {
+                    alert("O grupo pode ter no máximo 4 heróis!");
+                    return;
+                }
+            }
+            renderHeroCards();
+        }
+
+        function renderHeroCards() {
+            const countLabel = document.getElementById('heroes-count-badge');
+            if (countLabel) {
+                countLabel.innerText = `${selectedHeroes.size} herói${selectedHeroes.size > 1 ? 's' : ''} selecionado${selectedHeroes.size > 1 ? 's' : ''}`;
+            }
+
+            const isMultiplayerCronista = (sessionType === 'multiplayer' && userRole === 'cronista');
+            const heroes = ['elgan', 'gerdwyn', 'iunis', 'osbert'];
+
+            heroes.forEach(h => {
+                const card = document.getElementById(`card-hero-${h}`);
+                const playerField = document.getElementById(`player-field-${h}`);
+                
+                if (card) {
+                    const isSelected = selectedHeroes.has(h);
+                    card.classList.toggle('selected', isSelected);
+                    const checkbox = card.querySelector('.hero-checkbox');
+                    const titleSpan = card.querySelector('.font-title');
+                    
+                    if (isSelected) {
+                        checkbox.innerHTML = '<i class="ph-bold ph-check text-xs"></i>';
+                        titleSpan.classList.add('text-[#c2a675]');
+                        titleSpan.classList.remove('text-[#b8b4a7]');
+                        
+                        if (playerField) {
+                            if (isMultiplayerCronista) {
+                                playerField.classList.remove('hidden');
+                                playerField.classList.add('flex');
+                            } else {
+                                playerField.classList.add('hidden');
+                                playerField.classList.remove('flex');
+                            }
+                        }
+                    } else {
+                        checkbox.innerHTML = '';
+                        titleSpan.classList.remove('text-[#c2a675]');
+                        titleSpan.classList.add('text-[#b8b4a7]');
+                        if (playerField) {
+                            playerField.classList.add('hidden');
+                            playerField.classList.remove('flex');
+                        }
+                    }
+                }
+            });
+        }
+
+        function setSingleHero(heroId) {
+            singlePlayerHero = heroId;
+            const heroes = ['elgan', 'gerdwyn', 'iunis', 'osbert'];
+            heroes.forEach(h => {
+                const card = document.getElementById(`player-hero-${h}`);
+                const isSelected = (h === heroId);
+                card.className = isSelected ? 'choice-card selected' : 'choice-card';
+                card.querySelector('.font-title').className = isSelected 
+                    ? 'font-title text-[15px] text-[#c2a675] font-bold block leading-none' 
+                    : 'font-title text-[15px] text-[#b8b4a7] font-bold block leading-none';
+                card.querySelector('i').className = isSelected 
+                    ? card.querySelector('i').className.replace('text-[#6d7872]', 'text-[#c2a675]') 
+                    : card.querySelector('i').className.replace('text-[#c2a675]', 'text-[#6d7872]');
+            });
+        }
+
+        function setModifierTab(tab) {
+            activeTab = tab;
+            const btnNarrativo = document.getElementById('tab-btn-narrativo');
+            const btnDesafiador = document.getElementById('tab-btn-desafiador');
+
+            if (tab === 'narrativo') {
+                btnNarrativo.className = 'mode-tab-btn active-narrativo';
+                btnDesafiador.className = 'mode-tab-btn';
+            } else {
+                btnNarrativo.className = 'mode-tab-btn';
+                btnDesafiador.className = 'mode-tab-btn active-desafiador';
+            }
+
+            renderModifiersList();
+        }
+
+        function toggleModifier(modId) {
+            modifiersState[modId] = !modifiersState[modId];
+            renderModifiersList();
+        }
+
+        function toggleAllCurrentModifiers() {
+            const currentList = (activeTab === 'narrativo') ? narrativeModifiers : challengeModifiers;
+            const allActive = currentList.every(m => modifiersState[m.id]);
+            const target = !allActive;
+
+            currentList.forEach(m => modifiersState[m.id] = target);
+            renderModifiersList();
+        }
+
+        function renderModifiersList() {
+            const container = document.getElementById('modifiers-container');
+            if (!container) return;
+
+            const currentList = (activeTab === 'narrativo') ? narrativeModifiers : challengeModifiers;
+            const isNarrative = (activeTab === 'narrativo');
+
+            let html = '';
+            currentList.forEach(m => {
+                const isActive = modifiersState[m.id];
+                const activeCardClass = isActive 
+                    ? (isNarrative ? 'active-narrative' : 'active-challenge') 
+                    : '';
+                const titleColor = isActive 
+                    ? (isNarrative ? 'text-[#c2a675]' : 'text-[#ff6b6b]') 
+                    : (isNarrative ? 'text-[#c2a675]' : 'text-[#e57373]');
+
+                html += `
+                    <div class="modifier-card ${activeCardClass}" onclick="toggleModifier('${m.id}')">
+                        <div class="flex items-start justify-between gap-3">
+                            <div>
+                                <span class="font-title text-[13.5px] ${titleColor} font-bold block leading-tight">${m.name}</span>
+                                <p class="text-[13px] font-celtic text-[#8c938f] leading-snug mt-0.5">${m.desc}</p>
+                            </div>
+                            <div class="switch-track mt-0.5"><div class="switch-thumb"></div></div>
+                        </div>
+                    </div>
+                `;
+            });
+
+            container.innerHTML = html;
+
+            const narrActiveCount = narrativeModifiers.filter(m => modifiersState[m.id]).length;
+            const chalActiveCount = challengeModifiers.filter(m => modifiersState[m.id]).length;
+
+            const badgeNarr = document.getElementById('badge-count-narrativo');
+            const badgeChal = document.getElementById('badge-count-desafiador');
+            if (badgeNarr) badgeNarr.innerText = `${narrActiveCount}/7`;
+            if (badgeChal) badgeChal.innerText = `${chalActiveCount}/8`;
+
+            const allActive = currentList.every(m => modifiersState[m.id]);
+            const btnToggle = document.getElementById('btn-toggle-tab-mods');
+            if (btnToggle) {
+                btnToggle.innerText = allActive ? 'Desativar Modo' : 'Ativar Modo';
+                btnToggle.classList.toggle('text-[#c2a675]', allActive && isNarrative);
+                btnToggle.classList.toggle('text-[#ff6b6b]', allActive && !isNarrative);
+            }
+        }
+
+        // CONTROLE DO MODAL E LEITOR QR CODE
+        function openQrScannerModal(heroId) {
+            currentTargetImportHero = heroId;
+            document.getElementById('modal-hero-target-name').innerText = heroId.toUpperCase();
+            document.getElementById('manual-payload-input').value = '';
+            document.getElementById('qr-modal').classList.remove('hidden');
+
+            try {
+                if (!html5QrScanner) {
+                    html5QrScanner = new Html5Qrcode("qr-reader");
+                }
+                
+                html5QrScanner.start(
+                    { facingMode: "environment" },
+                    { fps: 10, qrbox: 200 },
+                    (decodedText) => {
+                        handleImportPayload(decodedText);
+                        closeQrModal();
+                    },
+                    () => {}
+                ).catch((err) => {
+                    console.warn("Câmera indisponível ou permissão não concedida:", err);
+                });
+            } catch (e) {
+                console.warn("Erro ao iniciar leitor:", e);
+            }
+        }
+
+        function closeQrModal() {
+            // 1. Fecha a interface imediatamente
+            const modal = document.getElementById('qr-modal');
+            if (modal) modal.classList.add('hidden');
+
+            // 2. Encerra a câmera com segurança sem travar o script
+            if (html5QrScanner) {
+                try {
+                    if (html5QrScanner.isScanning) {
+                        html5QrScanner.stop().then(() => {
+                            html5QrScanner.clear();
+                        }).catch(() => {
+                            html5QrScanner.clear();
+                        });
+                    } else {
+                        html5QrScanner.clear();
+                    }
+                } catch (err) {
+                    console.warn("Scanner limpo com ressalvas:", err);
+                }
+            }
+        }
+
+        // Fechamento pelo teclado (Esc)
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') closeQrModal();
+        });
+
+        function applyManualImport() {
+            const val = document.getElementById('manual-payload-input').value.trim();
+            if (!val) return;
+            handleImportPayload(val);
+            closeQrModal();
+        }
+
+        function handleImportPayload(payloadString) {
+            try {
+                const data = JSON.parse(payloadString);
+                if (data.playerName) {
+                    const input = document.getElementById(`player-name-${currentTargetImportHero}`);
+                    if (input) input.value = data.playerName;
+                }
+                alert(`Ficha de ${currentTargetImportHero.toUpperCase()} importada com sucesso!`);
+            } catch (e) {
+                // Caso seja apenas o nome puro do jogador
+                const input = document.getElementById(`player-name-${currentTargetImportHero}`);
+                if (input) input.value = payloadString;
+                alert(`Nome importado com sucesso!`);
+            }
+        }
+
+        function startNewSession() {
+            if (userRole === 'cronista') {
+                const nameInput = document.getElementById('campaign-name');
+                const campaignName = nameInput.value.trim() || `Expedição ${new Date().toLocaleDateString('pt-BR')}`;
+
+                const heroesArray = Array.from(selectedHeroes).map(heroId => {
+                    const playerInput = document.getElementById(`player-name-${heroId}`);
+                    const pName = (sessionType === 'multiplayer' && playerInput && playerInput.value.trim() !== '') 
+                        ? playerInput.value.trim() 
+                        : '';
+                    return {
+                        id: heroId,
+                        playerName: pName
+                    };
+                });
+
+                const newCampaignData = {
+                    id: 'camp_' + Date.now(),
+                    type: 'campaign_host',
+                    sessionType: sessionType,
+                    name: campaignName,
+                    modifiers: modifiersState,
+                    heroes: heroesArray,
+                    createdAt: new Date().toISOString(),
+                    chapter: 1,
+                    part: 'A:1'
+                };
+
+                localStorage.removeItem('active_player');
+                localStorage.setItem('active_campaign', JSON.stringify(newCampaignData));
+                window.location.href = 'cronica.html';
+            } else {
+                const playerNameInput = document.getElementById('single-player-name');
+                const playerName = playerNameInput.value.trim() || 'Jogador';
+
+                const newPlayerData = {
+                    id: 'player_' + Date.now(),
+                    type: 'player_client',
+                    playerName: playerName,
+                    heroId: singlePlayerHero,
+                    createdAt: new Date().toISOString()
+                };
+
+                localStorage.removeItem('active_campaign');
+                localStorage.setItem('active_player', JSON.stringify(newPlayerData));
+                window.location.href = 'grupo.html';
+            }
+        }
+
+        window.onload = () => {
+            renderHeroCards();
+            renderModifiersList();
+            updateLayoutFlow();
+        };
+    </script>
+</body>
+</html>
