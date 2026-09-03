@@ -98,7 +98,7 @@
             box-shadow: 0 0 12px rgba(194,166,117,0.18), inset 0 0 15px rgba(0,0,0,0.9);
         }
 
-        /* COMBOBOX CUSTOMIZADO */
+        /* COMBOBOX CUSTOMIZADO (Usado nos atributos) */
         .stat-select {
             background: #050706;
             border: 1px solid #2b3630;
@@ -120,6 +120,47 @@
             box-shadow: 0 0 6px rgba(194,166,117,0.4);
         }
 
+        /* CONTROLE STEPPER (- N +) PARA AS TRILHAS LADO A LADO */
+        .stepper-container {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: #090b0a;
+            border: 1px solid #2b3630;
+            border-radius: 3px;
+            flex: 1;
+            height: 28px;
+            box-shadow: inset 0 1px 3px rgba(0,0,0,0.9);
+            overflow: hidden;
+        }
+        .stepper-btn {
+            width: 24px;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #6d7872;
+            font-size: 12px;
+            cursor: pointer;
+            transition: all 0.2s;
+            background: transparent;
+            border: none;
+            outline: none;
+        }
+        .stepper-btn:hover { color: #c2a675; background: rgba(194, 166, 117, 0.1); }
+        .stepper-btn:active { background: rgba(194, 166, 117, 0.2); }
+        .stepper-val {
+            font-family: var(--font-title);
+            font-size: 1.15rem;
+            font-weight: bold;
+            color: #c2a675;
+            flex: 1;
+            text-align: center;
+            line-height: 1;
+            user-select: none;
+        }
+
+        /* INPUTS NUMÉRICOS PADRÃO */
         .stat-input {
             background: #050706;
             border: 1px solid #2b3630;
@@ -190,7 +231,6 @@
             max-height: 100%;
             object-fit: contain;
             display: block;
-            filter: brightness(0) saturate(100%) invert(67%) sepia(23%) saturate(600%) hue-rotate(5deg) brightness(92%) contrast(87%);
         }
 
         /* BINGO DE CARTAS 1 A 20 */
@@ -207,7 +247,7 @@
             justify-content: center;
             font-family: var(--font-title);
             font-weight: bold;
-            font-size: 11px;
+            font-size: 15px; 
             border-radius: 2px;
             transition: all 0.15s ease;
             cursor: pointer;
@@ -215,17 +255,21 @@
             flex-shrink: 0;
             line-height: 1;
         }
+        
+        /* Paleta Brasa/Cobre para Combate */
         .card-slot-btn.combat-active {
-            background: #450606;
-            border-color: #9e1515;
-            color: #b8b4a7;
-            box-shadow: inset 0 0 8px rgba(0,0,0,0.8), 0 0 5px rgba(158,21,21,0.4);
+            background: #3d170b;
+            border-color: #ba4a1a;
+            color: #e0d5c1;
+            box-shadow: inset 0 0 8px rgba(0,0,0,0.8), 0 0 6px rgba(186, 74, 26, 0.4);
         }
+        
+        /* Paleta Latão Antigo/Ouro Pálido para Diplomacia */
         .card-slot-btn.diplo-active {
-            background: #0c2538;
-            border-color: #0284c7;
-            color: #b8b4a7;
-            box-shadow: inset 0 0 8px rgba(0,0,0,0.8), 0 0 5px rgba(2,132,199,0.4);
+            background: #2a2015; 
+            border-color: #b59263; 
+            color: #e0d5c1;
+            box-shadow: inset 0 0 8px rgba(0,0,0,0.8), 0 0 6px rgba(181, 146, 99, 0.4);
         }
 
         /* CARDS DE ITEM E SEGREDO */
@@ -525,14 +569,20 @@
             renderHeroes();
         }
 
+        function changeHeroTrack(heroId, trackKey, delta) {
+            const hero = heroesData.find(h => h.id === heroId);
+            if (hero && hero.tracks) {
+                let newVal = hero.tracks[trackKey] + delta;
+                if (newVal < 0) newVal = 0;
+                if (newVal > 15) newVal = 15;
+                hero.tracks[trackKey] = newVal;
+                renderHeroes();
+            }
+        }
+
         function updateHeroResource(heroId, res, val) {
             const hero = heroesData.find(h => h.id === heroId);
             if (hero && hero.resources) hero.resources[res] = parseInt(val, 10) || 0;
-        }
-
-        function updateHeroTrack(heroId, track, val) {
-            const hero = heroesData.find(h => h.id === heroId);
-            if (hero && hero.tracks) hero.tracks[track] = parseInt(val, 10) || 0;
         }
 
         function updateHeroAttr(heroId, attr, val) {
@@ -719,38 +769,44 @@
                             </div>
                         </div>
 
-                        <!-- 1. TRILHAS VITAIS COM ÍCONES E SELECT (0 a 15) -->
+                        <!-- 1. TRILHAS VITAIS COM STEPPER LADO A LADO (- N +) -->
                         <div>
                             <span class="text-[11px] font-title text-[#8c938f] uppercase tracking-wider block mb-1.5 font-bold">
                                 Trilhas Vitais
                             </span>
-                            <div class="grid grid-cols-3 gap-2">
+                            <div class="grid grid-cols-3 gap-1.5">
                                 <!-- Saúde -->
-                                <div class="bg-[#050706] border border-[#1e2621] p-1.5 rounded flex items-center gap-2">
-                                    <img src="asset/icons/health.png" alt="Saúde" class="w-6 h-6 object-contain flex-shrink-0" onerror="this.src='https://placehold.co/24x24/111/ef4444?text=S'">
-                                    <select onchange="updateHeroTrack('${h.id}', 'health', this.value)" class="stat-select">
-                                        ${createOptionOptions(15, h.tracks.health)}
-                                    </select>
+                                <div class="bg-[#050706] border border-[#1e2621] px-1 py-1.5 rounded flex items-center gap-1 shadow-sm">
+                                    <img src="asset/icons/health.png" alt="Saúde" class="w-7 h-7 object-contain flex-shrink-0" onerror="this.src='https://placehold.co/28x28/111/ef4444?text=S'">
+                                    <div class="stepper-container">
+                                        <button onclick="changeHeroTrack('${h.id}', 'health', -1)" class="stepper-btn"><i class="ph-bold ph-minus"></i></button>
+                                        <span class="stepper-val">${h.tracks.health}</span>
+                                        <button onclick="changeHeroTrack('${h.id}', 'health', 1)" class="stepper-btn"><i class="ph-bold ph-plus"></i></button>
+                                    </div>
                                 </div>
                                 <!-- Energia -->
-                                <div class="bg-[#050706] border border-[#1e2621] p-1.5 rounded flex items-center gap-2">
-                                    <img src="asset/icons/energy.png" alt="Energia" class="w-6 h-6 object-contain flex-shrink-0" onerror="this.src='https://placehold.co/24x24/111/eab308?text=E'">
-                                    <select onchange="updateHeroTrack('${h.id}', 'energy', this.value)" class="stat-select">
-                                        ${createOptionOptions(15, h.tracks.energy)}
-                                    </select>
+                                <div class="bg-[#050706] border border-[#1e2621] px-1 py-1.5 rounded flex items-center gap-1 shadow-sm">
+                                    <img src="asset/icons/energy.png" alt="Energia" class="w-7 h-7 object-contain flex-shrink-0" onerror="this.src='https://placehold.co/28x28/111/eab308?text=E'">
+                                    <div class="stepper-container">
+                                        <button onclick="changeHeroTrack('${h.id}', 'energy', -1)" class="stepper-btn"><i class="ph-bold ph-minus"></i></button>
+                                        <span class="stepper-val">${h.tracks.energy}</span>
+                                        <button onclick="changeHeroTrack('${h.id}', 'energy', 1)" class="stepper-btn"><i class="ph-bold ph-plus"></i></button>
+                                    </div>
                                 </div>
                                 <!-- Pavor -->
-                                <div class="bg-[#050706] border border-[#1e2621] p-1.5 rounded flex items-center gap-2">
-                                    <img src="asset/icons/terror.png" alt="Pavor" class="w-6 h-6 object-contain flex-shrink-0" onerror="this.src='https://placehold.co/24x24/111/a855f7?text=P'">
-                                    <select onchange="updateHeroTrack('${h.id}', 'terror', this.value)" class="stat-select">
-                                        ${createOptionOptions(15, h.tracks.terror)}
-                                    </select>
+                                <div class="bg-[#050706] border border-[#1e2621] px-1 py-1.5 rounded flex items-center gap-1 shadow-sm">
+                                    <img src="asset/icons/terror.png" alt="Pavor" class="w-7 h-7 object-contain flex-shrink-0" onerror="this.src='https://placehold.co/28x28/111/a855f7?text=P'">
+                                    <div class="stepper-container">
+                                        <button onclick="changeHeroTrack('${h.id}', 'terror', -1)" class="stepper-btn"><i class="ph-bold ph-minus"></i></button>
+                                        <span class="stepper-val">${h.tracks.terror}</span>
+                                        <button onclick="changeHeroTrack('${h.id}', 'terror', 1)" class="stepper-btn"><i class="ph-bold ph-plus"></i></button>
+                                    </div>
                                 </div>
                             </div>
                         </div>
 
                         <!-- 2. RECURSOS PESSOAIS -->
-                        <div>
+                        <div class="pt-1">
                             <span class="text-[11px] font-title text-[#8c938f] uppercase tracking-wider block mb-1.5 font-bold">
                                 Recursos Pessoais
                             </span>
@@ -777,7 +833,7 @@
                         <!-- 3. GAVETAS EXPANSÍVEIS -->
                         <div class="space-y-2 pt-1 border-t border-[#141a17]">
                             
-                            <!-- GAVETA A: ATRIBUTOS & PERÍCIAS COM ÍCONES PADRONIZADOS EM BASE BRANCA -->
+                            <!-- GAVETA A: ATRIBUTOS & PERÍCIAS -->
                             <div>
                                 <button onclick="toggleHeroModule('${h.id}', 'attributes')" class="module-toggle-btn ${h.openModules.attributes ? 'open' : ''}">
                                     <span class="font-title text-[12.5px] text-[#b8b4a7] uppercase tracking-wider font-bold flex items-center gap-1.5">
@@ -791,7 +847,6 @@
                                         
                                         <div class="space-y-1.5">
                                             <div class="grid grid-cols-2 gap-2">
-                                                <!-- Agressividade (agression.png) -->
                                                 <div class="attr-pill">
                                                     <div class="flex items-center gap-2 min-w-0">
                                                         <div class="attr-icon-badge">
@@ -803,8 +858,6 @@
                                                         ${createOptionOptions(9, h.attributes.aggressiveness)}
                                                     </select>
                                                 </div>
-
-                                                <!-- Empatia (empathy.png) -->
                                                 <div class="attr-pill">
                                                     <div class="flex items-center gap-2 min-w-0">
                                                         <div class="attr-icon-badge">
@@ -819,7 +872,6 @@
                                             </div>
 
                                             <div class="grid grid-cols-2 gap-2">
-                                                <!-- Coragem (courage.png) -->
                                                 <div class="attr-pill">
                                                     <div class="flex items-center gap-2 min-w-0">
                                                         <div class="attr-icon-badge">
@@ -831,8 +883,6 @@
                                                         ${createOptionOptions(9, h.attributes.courage)}
                                                     </select>
                                                 </div>
-
-                                                <!-- Cautela (caution.png) -->
                                                 <div class="attr-pill">
                                                     <div class="flex items-center gap-2 min-w-0">
                                                         <div class="attr-icon-badge">
@@ -847,7 +897,6 @@
                                             </div>
 
                                             <div class="grid grid-cols-2 gap-2">
-                                                <!-- Praticidade (practicality.png) -->
                                                 <div class="attr-pill">
                                                     <div class="flex items-center gap-2 min-w-0">
                                                         <div class="attr-icon-badge">
@@ -859,8 +908,6 @@
                                                         ${createOptionOptions(9, h.attributes.practicality)}
                                                     </select>
                                                 </div>
-
-                                                <!-- Espiritualidade (spirituality.png) -->
                                                 <div class="attr-pill">
                                                     <div class="flex items-center gap-2 min-w-0">
                                                         <div class="attr-icon-badge">
@@ -875,7 +922,6 @@
                                             </div>
                                         </div>
 
-                                        <!-- PERÍCIAS VINCULADAS -->
                                         <div class="pt-2 border-t border-[#141a17] space-y-1.5">
                                             <span class="text-[10.5px] font-title text-[#8c938f] uppercase tracking-wider block font-bold">Cartas de Perícia Adquiridas</span>
                                             <div class="grid grid-cols-2 gap-1.5">
@@ -910,7 +956,7 @@
                                 ` : ''}
                             </div>
 
-                            <!-- GAVETA B: BARALHOS (1 A 20) & INVENTÁRIO COM CARDS INDIVIDUAIS -->
+                            <!-- GAVETA B: BARALHOS & INVENTÁRIO -->
                             <div>
                                 <button onclick="toggleHeroModule('${h.id}', 'inventory')" class="module-toggle-btn ${h.openModules.inventory ? 'open' : ''}">
                                     <span class="font-title text-[12.5px] text-[#b8b4a7] uppercase tracking-wider font-bold flex items-center gap-1.5">
@@ -922,14 +968,14 @@
                                 ${h.openModules.inventory ? `
                                     <div class="mt-2.5 p-2.5 bg-[#060807] border border-[#1a211e] rounded space-y-3">
                                         
-                                        <!-- COMBATE (1 A 20) -->
+                                        <!-- COMBATE -->
                                         <div>
                                             <div class="flex items-center justify-between mb-1.5">
-                                                <span class="font-sans text-[12px] font-bold text-[#ef4444] uppercase flex items-center gap-1">
+                                                <span class="font-sans text-[12px] font-bold text-[#ba4a1a] uppercase flex items-center gap-1">
                                                     <i class="ph-fill ph-sword"></i> Baralho de Combate (1-20)
                                                 </span>
                                                 <span class="font-sans text-[11px] font-bold text-[#8c938f]">
-                                                    <strong class="text-[#ef4444]">${h.decks.combat.length}</strong> ativas
+                                                    <strong class="text-[#ba4a1a]">${h.decks.combat.length}</strong> ativas
                                                 </span>
                                             </div>
                                             <div class="flex flex-wrap gap-1">
@@ -937,14 +983,14 @@
                                             </div>
                                         </div>
 
-                                        <!-- DIPLOMACIA (1 A 20) -->
+                                        <!-- DIPLOMACIA (Nova Paleta) -->
                                         <div class="pt-2 border-t border-[#141a17]">
                                             <div class="flex items-center justify-between mb-1.5">
-                                                <span class="font-sans text-[12px] font-bold text-[#38bdf8] uppercase flex items-center gap-1">
+                                                <span class="font-sans text-[12px] font-bold text-[#b59263] uppercase flex items-center gap-1">
                                                     <i class="ph-fill ph-chats-circle"></i> Baralho de Diplomacia (1-20)
                                                 </span>
                                                 <span class="font-sans text-[11px] font-bold text-[#8c938f]">
-                                                    <strong class="text-[#38bdf8]">${h.decks.diplomacy.length}</strong> ativas
+                                                    <strong class="text-[#b59263]">${h.decks.diplomacy.length}</strong> ativas
                                                 </span>
                                             </div>
                                             <div class="flex flex-wrap gap-1">

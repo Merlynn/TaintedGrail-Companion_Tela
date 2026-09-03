@@ -1,0 +1,995 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Kings of Ruin - Diário</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Alegreya+Sans:ital,wght@0,400;0,700;1,400&family=Cinzel:wght@600;700&family=Crimson+Pro:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+
+    <style>
+        :root { 
+            --font-celtic: 'Celtic Garamond', 'Crimson Pro', serif; 
+            --font-title: 'Cinzel', serif;
+            --font-ui: 'Alegreya Sans', sans-serif;
+        }
+
+        body {
+            background-color: transparent;
+            color: #b8b4a7;
+            -webkit-tap-highlight-color: transparent;
+            font-family: var(--font-celtic);
+            overflow-x: hidden;
+            position: relative;
+            margin: 0; padding: 0;
+            font-size: 16px;
+        }
+
+        body::after {
+            content: "";
+            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+            background-image: linear-gradient(rgba(7, 9, 8, 0.9), rgba(7, 9, 8, 0.96)), url('https://lh3.googleusercontent.com/d/1CVTwNLqVBc4Y97ZD82hIaf4wJnPeK4-L');
+            background-size: cover; background-position: center;
+            pointer-events: none; z-index: -2;
+        }
+
+        ::-webkit-scrollbar { display: none; }
+
+        h1, h2, h3, .font-title { font-family: var(--font-title) !important; }
+        .font-sans { font-family: var(--font-ui) !important; }
+        .font-celtic { font-family: var(--font-celtic) !important; }
+
+        .site-header {
+            background: linear-gradient(180deg, rgba(7, 9, 8, 0.95) 0%, rgba(7, 9, 8, 0.85) 100%);
+            border-bottom: 1px solid rgba(43, 54, 48, 0.5);
+            padding: 8px 16px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: relative;
+            z-index: 25;
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+        }
+        .header-logo-img {
+            height: clamp(44px, 11vw, 54px);
+            width: auto;
+            max-width: 260px;
+            object-fit: contain;
+            display: block;
+            filter: drop-shadow(0 2px 6px rgba(0, 0, 0, 0.7));
+        }
+
+        .ost-player-slot {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 12px;
+            background: rgba(16, 20, 18, 0.7);
+            backdrop-filter: blur(12px);
+            border: 1px solid #2b3630;
+            border-radius: 9999px;
+            color: #c2a675;
+            font-family: var(--font-ui);
+            font-size: clamp(0.75rem, 2.5vw, 0.85rem);
+            font-weight: bold;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            box-shadow: inset 0 1px 3px rgba(0,0,0,0.8), 0 2px 6px rgba(0,0,0,0.6);
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        /* BUSCA (A BARRA FICA POR CIMA DOS FITILHOS) */
+        .search-container {
+            position: relative;
+            margin: 12px 16px 0 16px;
+        }
+        .search-input-classic {
+            background: transparent;
+            border: none;
+            border-bottom: 1px solid #2b3630;
+            color: #c2a675;
+            font-family: var(--font-celtic);
+            font-size: 1.15rem;
+            width: 100%;
+            padding: 6px 32px 6px 4px;
+            outline: none;
+            transition: border-color 0.3s, box-shadow 0.3s;
+            border-radius: 0;
+            text-align: center;
+        }
+        .search-input-classic::placeholder { color: #3a453f; font-style: italic; }
+        .search-input-classic:focus { border-bottom-color: #c2a675; box-shadow: 0 1px 0 0 #c2a675; }
+        .search-icon-classic {
+            position: absolute;
+            right: 4px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #4a5550;
+            font-size: 1.1rem;
+        }
+
+        /* SISTEMA TÁTIL DE FITILHOS (FILTROS) */
+        .ribbon-filters {
+            display: flex;
+            justify-content: center;
+            gap: 6px;
+            padding: 0 12px;
+            margin-top: -2px; 
+            filter: drop-shadow(0 4px 6px rgba(0,0,0,0.7));
+        }
+        .filter-ribbon {
+            width: clamp(56px, 18vw, 70px);
+            padding: 12px 2px 18px 2px; 
+            clip-path: polygon(0 0, 100% 0, 100% 100%, 50% 82%, 0 100%);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            transform: translateY(-12px); 
+            opacity: 0.5;
+            border: none;
+        }
+        .filter-ribbon.active {
+            transform: translateY(0); 
+            opacity: 1;
+        }
+        .filter-ribbon i { 
+            color: #c2a675; 
+            font-size: 18px; 
+            margin-bottom: 2px;
+        }
+        .filter-ribbon span { 
+            color: #b8b4a7; 
+            font-size: 9px; 
+            font-family: var(--font-ui); 
+            text-transform: uppercase; 
+            letter-spacing: 0.05em; 
+            font-weight: bold;
+        }
+        
+        /* Cores Grimdark das Fitas */
+        .ribbon-all { background: linear-gradient(180deg, #1f2722, #0d120f); }
+        .ribbon-local { background: linear-gradient(180deg, #1e3a5f, #0d1b2e); }
+        .ribbon-npc { background: linear-gradient(180deg, #243b29, #102115); }
+        .ribbon-demanda { background: linear-gradient(180deg, #5c4022, #291a0c); }
+        .ribbon-personagem { background: linear-gradient(180deg, #3d284a, #1d1024); }
+
+
+        /* ESTÉTICA DE CÓDICE (LIVRO) PARA NOTAS */
+        .journal-container {
+            padding: 24px 12px 0 12px; 
+        }
+        
+        .chapter-divider {
+            position: relative;
+            text-align: center;
+            margin: 16px 0 20px 0;
+        }
+        .chapter-divider::before {
+            content: "";
+            position: absolute;
+            top: 50%;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: #1f2722;
+            z-index: 1;
+        }
+        .chapter-title-box {
+            position: relative;
+            z-index: 2;
+            background: #070908;
+            padding: 0 12px;
+            display: inline-block;
+            font-family: var(--font-title);
+            font-size: 16px;
+            font-weight: bold;
+            color: #c2a675;
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+        }
+        .chapter-title-box::before, .chapter-title-box::after {
+            content: "✦";
+            font-size: 10px;
+            color: #4a5550;
+            vertical-align: middle;
+            margin: 0 6px;
+        }
+
+        .journal-entry {
+            background: rgba(9, 11, 10, 0.4);
+            border-left: 2px solid #1a211e;
+            padding: 14px 14px 44px 14px;
+            margin-bottom: 24px;
+            position: relative;
+            transition: border-color 0.3s;
+        }
+        .journal-entry:hover { border-left-color: #2b3630; }
+        
+        /* FITILHOS DAS TAGS (DENTRO DA NOTA) */
+        .tags-container {
+            position: absolute;
+            top: -1px;
+            right: 16px;
+            display: flex;
+            gap: 6px;
+            filter: drop-shadow(0 2px 3px rgba(0,0,0,0.8));
+            z-index: 5;
+        }
+        .fitilho {
+            width: 24px;
+            height: 32px;
+            display: flex;
+            justify-content: center;
+            padding-top: 5px;
+            clip-path: polygon(0 0, 100% 0, 100% 100%, 50% 82%, 0 100%);
+            border-top: 1px solid rgba(194, 166, 117, 0.4);
+        }
+        .fitilho i {
+            color: #c2a675;
+            font-size: 14px;
+            opacity: 0.95;
+        }
+        .fitilho-local { background: linear-gradient(180deg, #1e3a5f, #112238); }
+        .fitilho-npc { background: linear-gradient(180deg, #243b29, #132417); }
+        .fitilho-demanda { background: linear-gradient(180deg, #5c4022, #382410); }
+        .fitilho-personagem { background: linear-gradient(180deg, #3d284a, #23152e); }
+
+        .entry-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+            border-bottom: 1px solid #141a17;
+            padding-bottom: 6px;
+            margin-bottom: 10px;
+            padding-right: 60px;
+        }
+        
+        .journal-actions {
+            position: absolute;
+            bottom: 8px;
+            right: 8px;
+            display: flex;
+            gap: 6px;
+            opacity: 0.6;
+            transition: opacity 0.2s;
+        }
+        .journal-entry:hover .journal-actions { opacity: 1; }
+        
+        .action-btn {
+            color: #6d7872;
+            transition: all 0.2s;
+            display: flex; align-items: center; justify-content: center;
+            border-radius: 3px;
+            width: 28px; height: 28px;
+            border: 1px solid transparent;
+            background: transparent;
+        }
+        .action-btn:hover { color: #c2a675; background: rgba(0,0,0,0.4); }
+        .action-btn.del:hover { color: #ff6b6b; background: rgba(69, 6, 6, 0.4); }
+
+        /* Aninhamento (Desdobramentos) */
+        .reply-card {
+            background: transparent;
+            border-left: 1px solid #2b3630;
+            padding-left: 12px;
+            margin-top: 14px;
+            margin-left: 8px;
+            padding-bottom: 34px;
+            position: relative;
+        }
+        
+        .reply-action-btn {
+            position: absolute;
+            bottom: 12px;
+            left: 14px;
+            font-size: 11.5px;
+            font-family: var(--font-ui);
+            font-weight: bold;
+            color: #6d7872;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            cursor: pointer;
+            transition: color 0.2s;
+            background: transparent;
+            border: none;
+            padding: 0;
+        }
+        .reply-action-btn:hover { color: #c2a675; }
+
+        .delete-confirm {
+            background-color: #9e1515 !important;
+            border-color: #ff3333 !important;
+            color: #ffffff !important;
+            animation: pulse-red 1s infinite;
+        }
+        @keyframes pulse-red {
+            0%, 100% { box-shadow: 0 0 0 0 rgba(255, 51, 51, 0.7); }
+            50% { box-shadow: 0 0 0 4px rgba(255, 51, 51, 0); }
+        }
+
+        /* FAB */
+        .fab-btn {
+            position: fixed;
+            bottom: 80px; 
+            right: 16px;
+            width: 56px;
+            height: 56px;
+            background: #090b0a;
+            border: 1px solid #c2a675;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #c2a675;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.9), inset 0 0 10px rgba(0,0,0,0.6);
+            cursor: pointer;
+            z-index: 40;
+            transition: all 0.2s;
+        }
+        .fab-btn:hover, .fab-btn:active {
+            background: #141c17;
+            color: #fff;
+            transform: scale(1.05);
+            box-shadow: 0 4px 20px rgba(194, 166, 117, 0.3);
+        }
+
+        /* MODAL */
+        .modal-input-small {
+            background: rgba(0,0,0,0.5);
+            border: 1px solid #2b3630;
+            color: #c2a675;
+            font-family: var(--font-title);
+            font-size: 1.05rem;
+            padding: 6px 8px;
+            border-radius: 3px;
+            outline: none;
+            width: 100%;
+            text-align: center;
+        }
+        .modal-input-small:focus { border-color: #c2a675; }
+
+        .modal-textarea {
+            width: 100%;
+            background: rgba(0,0,0,0.5);
+            border: 1px solid #2b3630;
+            color: #b8b4a7;
+            font-family: var(--font-celtic);
+            font-size: 1.15rem;
+            padding: 10px 12px;
+            border-radius: 3px;
+            outline: none;
+            resize: none;
+            min-height: 140px;
+            transition: border-color 0.2s;
+            line-height: 1.4;
+        }
+        .modal-textarea:focus { border-color: #c2a675; background: rgba(0,0,0,0.8); }
+
+        /* TAGS NO MODAL - Estilo "Entalhe Escuro" */
+        .tag-toggle-btn {
+            background: #060807;
+            border: 1px solid #1f2722;
+            color: #4a5550;
+            padding: 8px 10px;
+            border-radius: 3px;
+            font-family: var(--font-ui);
+            font-size: 11.5px;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            flex: 1;
+        }
+        .tag-toggle-btn.active {
+            background: #0a0d0b;
+            border-color: #c2a675;
+            color: #b8b4a7;
+            box-shadow: inset 0 0 10px rgba(0,0,0,0.8);
+        }
+        .tag-toggle-btn.active.tgt-local i { color: #8fa3b0; }
+        .tag-toggle-btn.active.tgt-npc i { color: #8e9e8f; }
+        .tag-toggle-btn.active.tgt-demanda i { color: #b59a82; }
+        .tag-toggle-btn.active.tgt-personagem i { color: #a38ea8; }
+        .tag-toggle-btn i { font-size: 14px; transition: color 0.2s; }
+
+        /* NAVEGAÇÃO INFERIOR */
+        .bottom-nav-container {
+            display: flex; justify-content: center; align-items: center;
+            height: 4rem; width: 100%; max-width: 512px; margin: 0 auto;
+            gap: clamp(2px, 1.5vw, 12px); padding: 0 4px;
+        }
+        .bottom-nav-item {
+            width: clamp(54px, 18vw, 76px); flex-shrink: 1; display: flex; flex-direction: column;
+            align-items: center; justify-content: center; height: 100%; padding: 0 2px; transition: color 0.2s;
+        }
+        .bottom-nav-label {
+            font-size: clamp(10px, 2.7vw, 12px); font-family: var(--font-ui); text-transform: uppercase;
+            font-weight: 700; letter-spacing: 0.01em; white-space: nowrap; overflow: hidden;
+            text-overflow: ellipsis; width: 100%; text-align: center; margin-top: 2px; line-height: 1;
+        }
+    </style>
+</head>
+<body class="h-screen flex flex-col">
+
+    <header class="site-header flex-shrink-0">
+        <img src="https://lh3.googleusercontent.com/d/1U3juHgIiAcpfSSQiW3nWN20MhMUx7tJR" alt="Kings of Ruin" class="header-logo-img">
+        <div class="ost-player-slot" title="Trilha Sonora">
+            <i class="ph-fill ph-music-notes text-base"></i>
+            <span>OST</span>
+        </div>
+    </header>
+
+    <main class="flex-1 overflow-y-auto w-full max-w-lg mx-auto z-10 flex flex-col pb-24">
+        
+        <!-- CABEÇALHO DO DIÁRIO (Busca + Fitilhos de Filtro) -->
+        <div class="sticky top-0 z-20">
+            <!-- Camada 1: A barra de busca com fundo escuro e opaco -->
+            <div class="bg-[#070908]/95 backdrop-blur-md pt-1 pb-3 relative z-10 border-b border-[#1a211e] shadow-[0_4px_12px_rgba(0,0,0,0.5)]">
+                <div class="search-container">
+                    <input type="text" id="search-diary" class="search-input-classic" placeholder="Pesquisar nas memórias..." oninput="renderDiary()">
+                    <i class="ph-bold ph-magnifying-glass search-icon-classic"></i>
+                </div>
+            </div>
+            
+            <!-- Camada 2: Os fitilhos que ficam parcialmente escondidos por baixo da barra superior -->
+            <div class="ribbon-filters hide-scrollbar relative z-0">
+                <button onclick="setFilter('all')" id="flt-all" class="filter-ribbon ribbon-all active" title="Todos os Registros">
+                    <i class="ph-bold ph-circles-four"></i>
+                    <span>Todos</span>
+                </button>
+                <button onclick="setFilter('local')" id="flt-local" class="filter-ribbon ribbon-local" title="Locais">
+                    <i class="ph-bold ph-map-pin"></i>
+                    <span>Local</span>
+                </button>
+                <button onclick="setFilter('npc')" id="flt-npc" class="filter-ribbon ribbon-npc" title="NPCs">
+                    <i class="ph-bold ph-users"></i>
+                    <span>NPC</span>
+                </button>
+                <button onclick="setFilter('demanda')" id="flt-demanda" class="filter-ribbon ribbon-demanda" title="Demandas">
+                    <i class="ph-bold ph-scroll"></i>
+                    <span>Demanda</span>
+                </button>
+                <button onclick="setFilter('personagem')" id="flt-personagem" class="filter-ribbon ribbon-personagem" title="Personagens">
+                    <i class="ph-bold ph-user"></i>
+                    <span>Personagem</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- FEED ESTILO CÓDICE/LIVRO -->
+        <div id="diary-timeline" class="journal-container">
+            <!-- Renderizado via JS -->
+        </div>
+
+    </main>
+
+    <!-- BOTÃO FLUTUANTE (FAB) -->
+    <button onclick="openNoteModal()" class="fab-btn" title="Nova Anotação">
+        <i class="ph-bold ph-feather text-[28px]"></i>
+    </button>
+
+    <!-- NAVEGAÇÃO INFERIOR -->
+    <nav class="fixed bottom-0 w-full z-30 bg-[#070908]/95 backdrop-blur-md border-t border-[#1a211e] pb-safe shadow-[0_-4px_20px_rgba(0,0,0,1)] flex-shrink-0">
+        <div id="bottom-nav-bar" class="bottom-nav-container"></div>
+    </nav>
+
+    <!-- MODAL DE TEXTO -->
+    <div id="note-modal" class="fixed inset-0 z-50 bg-[#000000]/85 backdrop-blur-sm flex items-center justify-center p-4 hidden" onclick="if(event.target === this) closeNoteModal()">
+        <div class="bg-[#090b0a] border border-[#2b3630] rounded-sm p-4 w-full max-w-sm space-y-3 relative shadow-2xl" onclick="event.stopPropagation()">
+            
+            <div class="flex items-center justify-between border-b border-[#1a211e] pb-2">
+                <span id="modal-title" class="font-title text-[15px] text-[#c2a675] font-bold flex items-center gap-2">
+                    <i class="ph-fill ph-feather text-[18px]"></i> Registro de Jornada
+                </span>
+                <button onclick="closeNoteModal()" class="text-[#6d7872] hover:text-[#c2a675] transition-colors">
+                    <i class="ph-bold ph-x text-lg pointer-events-none"></i>
+                </button>
+            </div>
+
+            <!-- Edição de Capítulo/Parte -->
+            <div id="modal-time-context" class="flex items-center gap-2">
+                <div class="flex-1">
+                    <label class="text-[10px] font-sans uppercase font-bold text-[#8c938f] block mb-1">Capítulo</label>
+                    <input type="number" id="input-chapter" class="modal-input-small" min="1" value="1">
+                </div>
+                <div class="flex-1">
+                    <label class="text-[10px] font-sans uppercase font-bold text-[#8c938f] block mb-1">Parte</label>
+                    <input type="text" id="input-part" class="modal-input-small" placeholder="ex: A:1">
+                </div>
+            </div>
+
+            <!-- Campo de Texto -->
+            <textarea id="note-text-input" class="modal-textarea" placeholder="O que aconteceu?..."></textarea>
+
+            <!-- Tags Selecionáveis -->
+            <div id="modal-tags-section">
+                <span class="text-[10px] font-sans uppercase font-bold text-[#8c938f] block mb-1.5">Anexar Fitilho (Opcional)</span>
+                <div class="grid grid-cols-2 gap-2">
+                    <button type="button" onclick="toggleModalTag('local', this)" class="tag-toggle-btn tgt-local" data-tag="local">
+                        <i class="ph-bold ph-map-pin"></i> Local
+                    </button>
+                    <button type="button" onclick="toggleModalTag('npc', this)" class="tag-toggle-btn tgt-npc" data-tag="npc">
+                        <i class="ph-bold ph-users"></i> NPC
+                    </button>
+                    <button type="button" onclick="toggleModalTag('demanda', this)" class="tag-toggle-btn tgt-demanda" data-tag="demanda">
+                        <i class="ph-bold ph-scroll"></i> Demanda
+                    </button>
+                    <button type="button" onclick="toggleModalTag('personagem', this)" class="tag-toggle-btn tgt-personagem" data-tag="personagem">
+                        <i class="ph-bold ph-user"></i> Personagem
+                    </button>
+                </div>
+            </div>
+
+            <div class="pt-2 border-t border-[#141a17]">
+                <button type="button" onclick="saveNote()" class="w-full bg-[#101613] hover:bg-[#141c17] border border-[#2b3630] hover:border-[#c2a675] text-[#c2a675] font-title font-bold uppercase tracking-widest py-2.5 rounded-sm transition-all shadow-md flex items-center justify-center gap-2">
+                    <i class="ph-bold ph-floppy-disk text-lg"></i> Salvar Registro
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const storedPlayer = localStorage.getItem('active_player');
+        const storedCampaign = localStorage.getItem('active_campaign');
+
+        let userRole = 'cronista';
+        let currentCampaignChapter = 1;
+        let currentCampaignPart = 'A:1';
+
+        if (storedCampaign) {
+            try {
+                const cData = JSON.parse(storedCampaign);
+                currentCampaignChapter = cData.chapter || 1;
+                currentCampaignPart = cData.part || 'A:1';
+            } catch(e) {}
+        } else if (storedPlayer) {
+            userRole = 'jogador';
+        }
+
+        let diaryEntries = [];
+        let currentFilter = 'all';
+        let modalSelectedTags = new Set();
+        
+        let modalMode = 'create'; 
+        let targetNoteId = null;
+        let targetReplyId = null;
+
+        function loadDiary() {
+            const contextDataRaw = userRole === 'cronista' ? storedCampaign : storedPlayer;
+            if (contextDataRaw) {
+                try {
+                    const data = JSON.parse(contextDataRaw);
+                    if (data.diary && Array.isArray(data.diary)) {
+                        diaryEntries = data.diary.map(n => ({
+                            ...n,
+                            replies: n.replies || [],
+                            updatedAt: n.updatedAt || n.date
+                        }));
+                    } else {
+                        // Mock Demonstrativo
+                        diaryEntries = [
+                            {
+                                id: 'note_demo_1',
+                                text: 'Encontramos um item suspeito escondido. Ele sumiu ao toque. Melhor voltarmos aqui depois.',
+                                tags: ['local', 'personagem'],
+                                chapter: 1,
+                                part: '115',
+                                date: new Date(Date.now() - 172800000).toISOString(),
+                                updatedAt: new Date(Date.now() - 86400000).toISOString(),
+                                replies: [
+                                    {
+                                        id: 'reply_demo_1',
+                                        text: 'Ao dormir hoje, sonhei com o item do local 115 pegando fogo.',
+                                        chapter: 2,
+                                        part: 'B:1',
+                                        date: new Date(Date.now() - 86400000).toISOString()
+                                    }
+                                ]
+                            },
+                            {
+                                id: 'note_demo_2',
+                                text: 'A velha deste casebre é muda, mas parece esconder algo sobre o cavaleiro de ontem. O olhar dela me causou calafrios.',
+                                tags: ['npc'],
+                                chapter: 1,
+                                part: '132',
+                                date: new Date().toISOString(),
+                                updatedAt: new Date().toISOString(),
+                                replies: []
+                            }
+                        ];
+                    }
+                } catch(e) {}
+            }
+        }
+
+        function saveDiaryToStorage() {
+            const storageKey = userRole === 'cronista' ? 'active_campaign' : 'active_player';
+            const contextDataRaw = localStorage.getItem(storageKey);
+            if (contextDataRaw) {
+                try {
+                    const data = JSON.parse(contextDataRaw);
+                    data.diary = diaryEntries;
+                    localStorage.setItem(storageKey, JSON.stringify(data));
+                } catch(e) {}
+            }
+        }
+
+        function renderBottomNav() {
+            const navContainer = document.getElementById('bottom-nav-bar');
+            if (!navContainer) return;
+
+            if (userRole === 'cronista') {
+                navContainer.innerHTML = `
+                    <a href="cronica.html" class="bottom-nav-item text-[#6d7872] hover:text-[#b8b4a7]">
+                        <i class="ph-fill ph-book-open text-[23px]"></i>
+                        <span class="bottom-nav-label">Crônica</span>
+                    </a>
+                    <a href="grupo.html" class="bottom-nav-item text-[#6d7872] hover:text-[#b8b4a7]">
+                        <i class="ph-fill ph-users-three text-[23px]"></i>
+                        <span class="bottom-nav-label">Grupo</span>
+                    </a>
+                    <a href="diario.html" class="bottom-nav-item text-[#c2a675]">
+                        <i class="ph-fill ph-feather text-[23px]"></i>
+                        <span class="bottom-nav-label">Diário</span>
+                    </a>
+                    <a href="salvar.html" class="bottom-nav-item text-[#6d7872] hover:text-[#b8b4a7]">
+                        <i class="ph-fill ph-archive text-[23px]"></i>
+                        <span class="bottom-nav-label">Salvar</span>
+                    </a>
+                    <a href="config.html" class="bottom-nav-item text-[#6d7872] hover:text-[#b8b4a7]">
+                        <i class="ph-fill ph-gear-six text-[23px]"></i>
+                        <span class="bottom-nav-label">Config.</span>
+                    </a>
+                `;
+            } else {
+                navContainer.innerHTML = `
+                    <a href="grupo.html" class="bottom-nav-item text-[#6d7872] hover:text-[#b8b4a7]">
+                        <i class="ph-fill ph-user-circle text-[23px]"></i>
+                        <span class="bottom-nav-label">Grupo</span>
+                    </a>
+                    <a href="diario.html" class="bottom-nav-item text-[#c2a675]">
+                        <i class="ph-fill ph-feather text-[23px]"></i>
+                        <span class="bottom-nav-label">Diário</span>
+                    </a>
+                    <a href="exportar.html" class="bottom-nav-item text-[#6d7872] hover:text-[#b8b4a7]">
+                        <i class="ph-fill ph-share-network text-[23px]"></i>
+                        <span class="bottom-nav-label">Exportar</span>
+                    </a>
+                    <a href="config.html" class="bottom-nav-item text-[#6d7872] hover:text-[#b8b4a7]">
+                        <i class="ph-fill ph-gear-six text-[23px]"></i>
+                        <span class="bottom-nav-label">Config.</span>
+                    </a>
+                `;
+            }
+        }
+
+        function setFilter(tag) {
+            currentFilter = tag;
+            const filters = ['all', 'local', 'npc', 'demanda', 'personagem'];
+            filters.forEach(f => {
+                const el = document.getElementById(`flt-${f}`);
+                if (el) {
+                    if (f === tag) el.classList.add('active');
+                    else el.classList.remove('active');
+                }
+            });
+            renderDiary();
+        }
+
+        function getTagMarkup(tag) {
+            switch(tag) {
+                case 'local': return '<div class="fitilho fitilho-local" title="Local"><i class="ph-bold ph-map-pin"></i></div>';
+                case 'npc': return '<div class="fitilho fitilho-npc" title="NPC"><i class="ph-bold ph-users"></i></div>';
+                case 'demanda': return '<div class="fitilho fitilho-demanda" title="Demanda"><i class="ph-bold ph-scroll"></i></div>';
+                case 'personagem': return '<div class="fitilho fitilho-personagem" title="Personagem"><i class="ph-bold ph-user"></i></div>';
+                default: return '';
+            }
+        }
+
+        function renderDiary() {
+            const container = document.getElementById('diary-timeline');
+            const searchVal = document.getElementById('search-diary').value.toLowerCase();
+            if (!container) return;
+
+            let filtered = [...diaryEntries];
+
+            if (currentFilter !== 'all') {
+                filtered = filtered.filter(n => n.tags.includes(currentFilter));
+            }
+            if (searchVal.trim() !== '') {
+                filtered = filtered.filter(n => 
+                    n.text.toLowerCase().includes(searchVal) || 
+                    n.replies.some(r => r.text.toLowerCase().includes(searchVal))
+                );
+            }
+
+            if (filtered.length === 0) {
+                container.innerHTML = `
+                    <div class="text-center p-6 border border-dashed border-[#1a211e] rounded bg-[#070908] mt-4 mx-2">
+                        <i class="ph-fill ph-book-open text-4xl text-[#2b3630] mb-2"></i>
+                        <p class="font-celtic text-[#6d7872] text-[16px] italic">As páginas estão em branco...</p>
+                    </div>`;
+                return;
+            }
+
+            const grouped = {};
+            filtered.forEach(note => {
+                const ch = parseInt(note.chapter) || 1;
+                if (!grouped[ch]) grouped[ch] = [];
+                grouped[ch].push(note);
+            });
+
+            const chapters = Object.keys(grouped).map(Number).sort((a, b) => b - a);
+            let html = '';
+
+            chapters.forEach(ch => {
+                html += `
+                    <div class="chapter-divider">
+                        <span class="chapter-title-box">Capítulo ${ch}</span>
+                    </div>
+                `;
+
+                const notes = grouped[ch].sort((a, b) => new Date(b.updatedAt) - new Date(a.updatedAt));
+
+                notes.forEach(note => {
+                    const dateObj = new Date(note.date);
+                    const dateStr = dateObj.toLocaleDateString('pt-BR', { day: '2-digit', month: 'short' });
+                    
+                    let tagsHtml = '';
+                    if (note.tags && note.tags.length > 0) {
+                        tagsHtml = `<div class="tags-container">${note.tags.map(t => getTagMarkup(t)).join('')}</div>`;
+                    }
+
+                    let repliesHtml = '';
+                    if (note.replies && note.replies.length > 0) {
+                        note.replies.forEach(reply => {
+                            const rDate = new Date(reply.date).toLocaleDateString('pt-BR', { day: '2-digit', month: 'short' });
+                            repliesHtml += `
+                                <div class="reply-card">
+                                    <div class="journal-actions !top-0 !right-0">
+                                        <button onclick="openNoteModal('edit_reply', '${note.id}', '${reply.id}')" class="action-btn" title="Editar">
+                                            <i class="ph-bold ph-pencil-simple text-xs"></i>
+                                        </button>
+                                        <button onclick="requestDeleteReply(event, '${note.id}', '${reply.id}', this)" class="action-btn del" title="Apagar">
+                                            <i class="ph-bold ph-trash text-xs pointer-events-none"></i>
+                                        </button>
+                                    </div>
+                                    <div class="mb-1.5 flex items-baseline gap-1.5 pr-12">
+                                        <span class="font-title text-[12px] text-[#c2a675] font-bold tracking-widest uppercase">Capítulo ${reply.chapter}</span>
+                                        <span class="font-sans text-[11px] text-[#8c938f] font-bold uppercase tracking-wider">• Parte ${reply.part}</span>
+                                        <span class="text-[10px] font-celtic text-[#6d7872] italic ml-auto mr-12">${rDate}</span>
+                                    </div>
+                                    <p class="font-celtic text-[#b8b4a7] text-[15px] leading-snug whitespace-pre-wrap">${reply.text}</p>
+                                </div>
+                            `;
+                        });
+                    }
+
+                    html += `
+                        <div class="journal-entry">
+                            ${tagsHtml}
+                            
+                            <div class="entry-header">
+                                <span class="font-title text-[14px] text-[#8c938f] tracking-widest uppercase font-bold">Parte ${note.part}</span>
+                                <div class="text-[11.5px] font-celtic text-[#6d7872] italic">${dateStr}</div>
+                            </div>
+
+                            <p class="font-celtic text-[#b8b4a7] text-[16.5px] leading-relaxed whitespace-pre-wrap">${note.text}</p>
+                            
+                            ${repliesHtml}
+
+                            <button onclick="openNoteModal('reply', '${note.id}')" class="reply-action-btn">
+                                <i class="ph-bold ph-arrow-bend-down-right text-sm"></i> Adicionar Desdobramento
+                            </button>
+                            
+                            <div class="journal-actions">
+                                <button onclick="openNoteModal('edit_note', '${note.id}')" class="action-btn" title="Editar Nota">
+                                    <i class="ph-bold ph-pencil-simple text-sm"></i>
+                                </button>
+                                <button onclick="requestDeleteNote(event, '${note.id}', this)" class="action-btn del" title="Apagar Página">
+                                    <i class="ph-bold ph-trash text-sm pointer-events-none"></i>
+                                </button>
+                            </div>
+                        </div>
+                    `;
+                });
+            });
+
+            container.innerHTML = html;
+        }
+
+        function requestDeleteNote(event, noteId, btnEl) {
+            event.stopPropagation();
+            if (btnEl.classList.contains('delete-confirm')) {
+                diaryEntries = diaryEntries.filter(n => n.id !== noteId);
+                saveDiaryToStorage();
+                renderDiary();
+            } else {
+                btnEl.classList.add('delete-confirm');
+                setTimeout(() => {
+                    if (document.body.contains(btnEl)) btnEl.classList.remove('delete-confirm');
+                }, 2500);
+            }
+        }
+
+        function requestDeleteReply(event, parentId, replyId, btnEl) {
+            event.stopPropagation();
+            if (btnEl.classList.contains('delete-confirm')) {
+                const parent = diaryEntries.find(n => n.id === parentId);
+                if (parent) {
+                    parent.replies = parent.replies.filter(r => r.id !== replyId);
+                    saveDiaryToStorage();
+                    renderDiary();
+                }
+            } else {
+                btnEl.classList.add('delete-confirm');
+                setTimeout(() => {
+                    if (document.body.contains(btnEl)) btnEl.classList.remove('delete-confirm');
+                }, 2500);
+            }
+        }
+
+        function openNoteModal(mode = 'create', noteId = null, replyId = null) {
+            modalMode = mode;
+            targetNoteId = noteId;
+            targetReplyId = replyId;
+            
+            modalSelectedTags.clear();
+            document.querySelectorAll('.tag-toggle-btn').forEach(btn => btn.classList.remove('active'));
+
+            const titleEl = document.getElementById('modal-title');
+            const tagsSec = document.getElementById('modal-tags-section');
+            const timeCtx = document.getElementById('modal-time-context');
+            const inputChap = document.getElementById('input-chapter');
+            const inputPart = document.getElementById('input-part');
+            const inputText = document.getElementById('note-text-input');
+
+            inputChap.value = currentCampaignChapter;
+            inputPart.value = currentCampaignPart;
+            inputText.value = '';
+
+            if (mode === 'create') {
+                titleEl.innerHTML = `<i class="ph-fill ph-feather text-[18px]"></i> Nova Anotação`;
+                tagsSec.classList.remove('hidden');
+                inputText.placeholder = "O que aconteceu?...";
+            
+            } else if (mode === 'reply') {
+                titleEl.innerHTML = `<i class="ph-fill ph-arrow-bend-down-right text-[18px]"></i> Desdobramento`;
+                tagsSec.classList.add('hidden');
+                inputText.placeholder = "O que descobriu depois?...";
+            
+            } else if (mode === 'edit_note') {
+                titleEl.innerHTML = `<i class="ph-fill ph-pencil-simple text-[18px]"></i> Editar Anotação`;
+                tagsSec.classList.remove('hidden');
+                
+                const note = diaryEntries.find(n => n.id === noteId);
+                if (note) {
+                    inputChap.value = note.chapter;
+                    inputPart.value = note.part;
+                    inputText.value = note.text;
+                    note.tags.forEach(t => {
+                        modalSelectedTags.add(t);
+                        const btn = document.querySelector(`.tgt-${t}`);
+                        if(btn) btn.classList.add('active');
+                    });
+                }
+            } else if (mode === 'edit_reply') {
+                titleEl.innerHTML = `<i class="ph-fill ph-pencil-simple text-[18px]"></i> Editar Desdobramento`;
+                tagsSec.classList.add('hidden');
+
+                const parent = diaryEntries.find(n => n.id === noteId);
+                if (parent) {
+                    const reply = parent.replies.find(r => r.id === replyId);
+                    if (reply) {
+                        inputChap.value = reply.chapter;
+                        inputPart.value = reply.part;
+                        inputText.value = reply.text;
+                    }
+                }
+            }
+
+            document.getElementById('note-modal').classList.remove('hidden');
+            setTimeout(() => inputText.focus(), 100);
+        }
+
+        function closeNoteModal() {
+            document.getElementById('note-modal').classList.add('hidden');
+        }
+
+        function toggleModalTag(tag, btnEl) {
+            if (modalSelectedTags.has(tag)) {
+                modalSelectedTags.delete(tag);
+                btnEl.classList.remove('active');
+            } else {
+                modalSelectedTags.add(tag);
+                btnEl.classList.add('active');
+            }
+        }
+
+        function saveNote() {
+            const textVal = document.getElementById('note-text-input').value.trim();
+            const chapVal = parseInt(document.getElementById('input-chapter').value) || 1;
+            const partVal = document.getElementById('input-part').value || 'A:1';
+
+            if (!textVal) {
+                alert("O texto não pode estar vazio.");
+                return;
+            }
+
+            const currentIsoDate = new Date().toISOString();
+
+            if (modalMode === 'create') {
+                diaryEntries.push({
+                    id: 'note_' + Date.now(),
+                    text: textVal,
+                    tags: Array.from(modalSelectedTags),
+                    chapter: chapVal,
+                    part: partVal,
+                    date: currentIsoDate,
+                    updatedAt: currentIsoDate,
+                    replies: []
+                });
+            } else if (modalMode === 'reply') {
+                const parent = diaryEntries.find(n => n.id === targetNoteId);
+                if (parent) {
+                    parent.replies.push({
+                        id: 'reply_' + Date.now(),
+                        text: textVal,
+                        chapter: chapVal,
+                        part: partVal,
+                        date: currentIsoDate
+                    });
+                    parent.updatedAt = currentIsoDate;
+                }
+            } else if (modalMode === 'edit_note') {
+                const note = diaryEntries.find(n => n.id === targetNoteId);
+                if (note) {
+                    note.text = textVal;
+                    note.chapter = chapVal;
+                    note.part = partVal;
+                    note.tags = Array.from(modalSelectedTags);
+                }
+            } else if (modalMode === 'edit_reply') {
+                const parent = diaryEntries.find(n => n.id === targetNoteId);
+                if (parent) {
+                    const reply = parent.replies.find(r => r.id === targetReplyId);
+                    if (reply) {
+                        reply.text = textVal;
+                        reply.chapter = chapVal;
+                        reply.part = partVal;
+                    }
+                }
+            }
+
+            saveDiaryToStorage();
+            closeNoteModal();
+            renderDiary();
+            
+            if (modalMode === 'create' || modalMode === 'reply') {
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            }
+        }
+
+        window.onload = () => {
+            loadDiary();
+            renderBottomNav();
+            renderDiary();
+        };
+    </script>
+</body>
+</html>
