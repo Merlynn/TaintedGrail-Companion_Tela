@@ -1,0 +1,814 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Kings of Ruin - Configurações</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Alegreya+Sans:ital,wght@0,400;0,700;1,400&family=Cinzel:wght@600;700&family=Crimson+Pro:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+
+    <style>
+        :root { 
+            --font-celtic: 'Celtic Garamond', 'Crimson Pro', serif; 
+            --font-title: 'Cinzel', serif;
+            --font-ui: 'Alegreya Sans', sans-serif;
+            --zoom-level: 16px; 
+        }
+
+        html {
+            font-size: var(--zoom-level);
+            transition: font-size 0.2s ease;
+        }
+
+        body {
+            background-color: transparent;
+            color: #b8b4a7;
+            -webkit-tap-highlight-color: transparent;
+            font-family: var(--font-celtic);
+            overflow-x: hidden;
+            position: relative;
+            margin: 0;
+            padding: 0;
+        }
+
+        body::after {
+            content: "";
+            position: fixed;
+            top: 0; left: 0; width: 100vw; height: 100vh;
+            background-image: linear-gradient(rgba(7, 9, 8, 0.85), rgba(7, 9, 8, 0.92)), url('https://lh3.googleusercontent.com/d/1CVTwNLqVBc4Y97ZD82hIaf4wJnPeK4-L');
+            background-size: cover;
+            background-position: center;
+            pointer-events: none;
+            z-index: -2;
+        }
+
+        ::-webkit-scrollbar { display: none; }
+
+        h1, h2, h3, .font-title { font-family: var(--font-title) !important; }
+        .font-sans { font-family: var(--font-ui) !important; }
+        .font-celtic { font-family: var(--font-celtic) !important; }
+
+        .site-header {
+            background: linear-gradient(180deg, rgba(7, 9, 8, 0.95) 0%, rgba(7, 9, 8, 0.85) 100%);
+            border-bottom: 1px solid rgba(43, 54, 48, 0.5);
+            padding: 8px 16px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: relative;
+            z-index: 50; /* Aumentado para o botão ficar acima do overlay */
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+        }
+        .header-logo-img {
+            height: clamp(44px, 11vw, 54px);
+            width: auto;
+            max-width: 260px;
+            object-fit: contain;
+            display: block;
+            filter: drop-shadow(0 2px 6px rgba(0, 0, 0, 0.7));
+        }
+
+        /* BOTÃO ECOS NO CABEÇALHO */
+        .music-player-slot {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 4px 12px 4px 6px;
+            background: #060807;
+            border: 1px solid #2b3630;
+            border-radius: 9999px;
+            color: #c2a675;
+            font-family: var(--font-ui);
+            font-size: clamp(0.7rem, 2.5vw, 0.8rem);
+            font-weight: bold;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            box-shadow: inset 0 1px 3px rgba(0,0,0,0.9), 0 2px 6px rgba(0,0,0,0.6);
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        .music-player-slot:hover { border-color: #c2a675; background: #0a0d0b; }
+        .music-player-icon {
+            background: #1a211e;
+            color: #c2a675;
+            width: 26px;
+            height: 26px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 1px solid #2b3630;
+        }
+
+        /* CARDS DE CONFIGURAÇÃO */
+        .config-card {
+            background: #090b0a;
+            border: 1px solid #1f2722;
+            border-radius: 3px;
+            padding: 16px;
+            box-shadow: inset 0 1px 3px rgba(0,0,0,0.6), 0 2px 6px rgba(0,0,0,0.4);
+            margin-bottom: 16px;
+        }
+
+        .config-header {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            border-bottom: 1px solid #141a17;
+            padding-bottom: 8px;
+            margin-bottom: 12px;
+            color: #c2a675;
+            font-family: var(--font-title);
+            font-size: 1.1rem;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .config-select {
+            background: #050706;
+            border: 1px solid #2b3630;
+            color: #b8b4a7;
+            outline: none;
+            font-family: var(--font-celtic);
+            font-size: 1.1rem;
+            width: 100%;
+            height: 38px;
+            border-radius: 3px;
+            box-shadow: inset 0 1px 3px rgba(0,0,0,0.9);
+            padding: 0 10px;
+            appearance: none;
+            transition: all 0.2s;
+        }
+        .config-select:focus { border-color: #c2a675; }
+
+        .btn-action {
+            background: #101613;
+            border: 1px solid #2b3630;
+            color: #c2a675;
+            font-family: var(--font-title);
+            font-size: 0.9rem;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            padding: 10px 16px;
+            border-radius: 3px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            width: 100%;
+            cursor: pointer;
+            transition: all 0.2s;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.5);
+        }
+        .btn-action:hover { background: #141a17; border-color: #c2a675; }
+        .btn-action.danger { color: #ff6b6b; border-color: #450606; }
+        .btn-action.danger:hover { background: #1f0a0a; border-color: #9e1515; }
+
+        /* SLIDER CUSTOMIZADO GEOMÉTRICO (LOSANGO TÁTIL) */
+        .custom-slider {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 100%;
+            background: transparent; 
+            outline: none;
+            margin: 0;
+            padding: 10px 0; 
+        }
+        .custom-slider::-webkit-slider-runnable-track {
+            width: 100%;
+            height: 8px; 
+            background: #050706;
+            border: 1px solid #7a6345; 
+            border-radius: 4px;
+            box-shadow: inset 0 1px 4px rgba(0,0,0,1), 0 1px 2px rgba(194, 166, 117, 0.15); 
+        }
+        .custom-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            background: linear-gradient(135deg, #d4b886 0%, #9c7f4c 100%);
+            border: 2px solid #111613; 
+            border-radius: 3px;
+            cursor: pointer;
+            transform: rotate(45deg); 
+            box-shadow: 3px 3px 6px rgba(0,0,0,0.8), inset 1px 1px 2px rgba(255,255,255,0.4);
+            margin-top: -7px; 
+            transition: transform 0.1s;
+        }
+        .custom-slider::-webkit-slider-thumb:active {
+            transform: rotate(45deg) scale(0.9);
+        }
+        .custom-slider::-moz-range-track {
+            width: 100%;
+            height: 8px;
+            background: #050706;
+            border: 1px solid #7a6345;
+            border-radius: 4px;
+            box-shadow: inset 0 1px 4px rgba(0,0,0,1), 0 1px 2px rgba(194, 166, 117, 0.15);
+        }
+        .custom-slider::-moz-range-thumb {
+            width: 20px;
+            height: 20px;
+            background: linear-gradient(135deg, #d4b886 0%, #9c7f4c 100%);
+            border: 2px solid #111613; 
+            border-radius: 3px;
+            cursor: pointer;
+            transform: rotate(45deg);
+            box-shadow: 3px 3px 6px rgba(0,0,0,0.8), inset 1px 1px 2px rgba(255,255,255,0.4);
+            transition: transform 0.1s;
+        }
+        .custom-slider::-moz-range-thumb:active {
+            transform: rotate(45deg) scale(0.9);
+        }
+
+        /* PLAYLIST CARDS */
+        .playlist-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: #050706;
+            border: 1px solid #1e2621;
+            padding: 10px 12px;
+            border-radius: 3px;
+            transition: border-color 0.2s;
+        }
+        .playlist-row:hover { border-color: #2b3630; }
+        
+        .playlist-icon-box {
+            width: 36px;
+            height: 36px;
+            border-radius: 3px;
+            background: #0a0d0b;
+            border: 1px solid #2b3630;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #c2a675;
+            flex-shrink: 0;
+        }
+
+        .playlist-action-btn {
+            color: #8c938f;
+            background: transparent;
+            border: none;
+            padding: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 3px;
+        }
+        .playlist-action-btn:hover { color: #c2a675; background: rgba(194, 166, 117, 0.1); }
+        .playlist-action-btn.delete-mode { color: #6d7872; }
+        .playlist-action-btn.delete-mode:hover { color: #ff6b6b; background: rgba(255, 107, 107, 0.1); }
+
+        /* PLAYER FLUTUANTE (POPOVER) */
+        .player-popover {
+            background: linear-gradient(180deg, #111613 0%, #050706 100%);
+            border: 1px solid #2b3630;
+            border-top: 1px solid #3a453f;
+            border-radius: 4px;
+            width: 320px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.9), 0 0 15px rgba(194, 166, 117, 0.05);
+            position: absolute;
+            top: 70px;
+            right: 16px;
+            z-index: 60;
+            overflow: hidden;
+            transform-origin: top right;
+            transition: all 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        
+        .player-artwork-glow {
+            width: 72px;
+            height: 72px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(194, 166, 117, 0.15) 0%, transparent 70%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 1px solid rgba(194, 166, 117, 0.2);
+            box-shadow: 0 0 15px rgba(0,0,0,0.5);
+            flex-shrink: 0;
+        }
+
+        .player-ctrl-btn {
+            color: #8c938f;
+            background: transparent;
+            border: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.2s;
+            padding: 0;
+        }
+        .player-ctrl-btn:hover { color: #c2a675; transform: scale(1.05); }
+        .player-ctrl-btn:active { transform: scale(0.95); }
+        
+        .player-play-btn {
+            width: 52px;
+            height: 52px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #d4b886 0%, #9c7f4c 100%);
+            color: #060807;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.6), inset 1px 1px 2px rgba(255,255,255,0.4);
+            border: 2px solid #111613;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .player-play-btn:hover { filter: brightness(1.1); box-shadow: 0 4px 15px rgba(194,166,117,0.4); }
+        .player-play-btn:active { transform: scale(0.95); }
+
+        .player-muffle-btn {
+            padding: 4px 12px;
+            border: 1px solid #2b3630;
+            border-radius: 999px;
+            font-family: var(--font-ui);
+            font-size: 10px;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: #8c938f;
+            background: #090b0a;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .player-muffle-btn.active {
+            background: #1a211e;
+            color: #c2a675;
+            border-color: #c2a675;
+            box-shadow: 0 0 8px rgba(194,166,117,0.2);
+        }
+
+        /* Overlay invisível para clicar fora e fechar */
+        .player-overlay {
+            position: fixed;
+            inset: 0;
+            z-index: 45; /* Abaixo do header e do player, acima do app */
+            display: none;
+        }
+
+        /* NAVEGAÇÃO INFERIOR */
+        .bottom-nav-container {
+            display: flex; justify-content: center; align-items: center;
+            height: 4rem; width: 100%; max-width: 512px; margin: 0 auto;
+            gap: clamp(2px, 1.5vw, 12px); padding: 0 4px;
+        }
+        .bottom-nav-item {
+            width: clamp(54px, 18vw, 76px); flex-shrink: 1; display: flex; flex-direction: column;
+            align-items: center; justify-content: center; height: 100%; padding: 0 2px; transition: color 0.2s;
+        }
+        .bottom-nav-label {
+            font-size: clamp(10px, 2.7vw, 12px); font-family: var(--font-ui); text-transform: uppercase;
+            font-weight: 700; letter-spacing: 0.01em; white-space: nowrap; overflow: hidden;
+            text-overflow: ellipsis; width: 100%; text-align: center; margin-top: 2px; line-height: 1;
+        }
+    </style>
+</head>
+<body class="h-screen flex flex-col">
+
+    <header class="site-header flex-shrink-0">
+        <img src="https://lh3.googleusercontent.com/d/1U3juHgIiAcpfSSQiW3nWN20MhMUx7tJR" alt="Kings of Ruin" class="header-logo-img">
+        <div class="music-player-slot" title="Controle de Áudio" onclick="togglePlayerMenu()">
+            <div class="music-player-icon"><i class="ph-bold ph-waveform text-[12px] animate-pulse"></i></div>
+            <span>Ecos</span>
+        </div>
+    </header>
+
+    <!-- OVERLAY PARA FECHAR O MENU DE MÚSICA AO CLICAR FORA -->
+    <div id="player-overlay" class="player-overlay" onclick="togglePlayerMenu()"></div>
+
+    <!-- PLAYER DE ECOS (MENU FLUTUANTE POPOVER) -->
+    <div id="player-panel" class="player-popover opacity-0 scale-95 pointer-events-none">
+        <div class="p-5 flex flex-col items-center">
+            
+            <!-- Linha 1: Artwork + Seleção de Playlist e Faixa -->
+            <div class="flex items-center w-full gap-4 mb-5">
+                <div class="player-artwork-glow">
+                    <i class="ph-fill ph-speaker-hifi text-[32px] text-[#c2a675] opacity-80"></i>
+                </div>
+                
+                <div class="flex-1 min-w-0 flex flex-col gap-1.5">
+                    <label class="text-[9px] font-sans uppercase font-bold text-[#6d7872]">Playlist Ativa</label>
+                    <div class="relative w-full">
+                        <select class="config-select !h-[30px] !text-[14px] !pr-8 !font-title !bg-[#060807] !border-[#2b3630]">
+                            <option>Ecos de Ruína</option>
+                            <option>Sangue e Gelo</option>
+                            <option>Névoa Espessa</option>
+                            <option>Taverna do Chifre</option>
+                        </select>
+                        <i class="ph-bold ph-caret-down absolute right-2.5 top-1/2 -translate-y-1/2 text-[#4a5550] pointer-events-none text-[12px]"></i>
+                    </div>
+                    <span class="font-sans text-[12px] text-[#e0d5c1] font-bold truncate mt-1">♪ Faixa 1: Vento Gélido</span>
+                </div>
+            </div>
+
+            <!-- Linha 2: Barra de Progresso -->
+            <div class="w-full mb-5 px-1">
+                <div class="w-full h-1 bg-[#1a211e] rounded-full overflow-hidden">
+                    <div class="w-1/3 h-full bg-[#c2a675] rounded-full"></div>
+                </div>
+                <div class="flex justify-between mt-1.5">
+                    <span class="font-sans text-[10px] text-[#6d7872] font-bold">1:24</span>
+                    <span class="font-sans text-[10px] text-[#6d7872] font-bold">-2:15</span>
+                </div>
+            </div>
+
+            <!-- Linha 3: Controles Simétricos (Prev, Play, Next) -->
+            <div class="flex items-center justify-center gap-8 mb-6">
+                <button class="player-ctrl-btn" title="Anterior">
+                    <i class="ph-fill ph-skip-back text-[28px]"></i>
+                </button>
+
+                <button class="player-play-btn" id="main-play-btn" onclick="togglePlayState()" title="Play/Pause">
+                    <i id="play-icon" class="ph-fill ph-play text-[24px] ml-1"></i>
+                </button>
+
+                <button class="player-ctrl-btn" title="Próxima">
+                    <i class="ph-fill ph-skip-forward text-[28px]"></i>
+                </button>
+            </div>
+
+            <!-- Linha 4: Volume e Atenuar -->
+            <div class="w-full pt-4 border-t border-[#141a17] space-y-4">
+                <div class="flex items-center gap-3">
+                    <i class="ph-fill ph-speaker-low text-[#6d7872] text-[18px]"></i>
+                    <input type="range" id="vol-slider" min="0" max="100" value="80" class="custom-slider flex-1" oninput="updateVolume(this.value)">
+                    <i class="ph-fill ph-speaker-high text-[#c2a675] text-[18px]"></i>
+                </div>
+
+                <div class="flex justify-center">
+                    <button id="muffle-btn" class="player-muffle-btn" onclick="toggleMuffle()" title="Reduz a música para narrar">
+                        <i class="ph-bold ph-microphone-stage mr-1 text-[12px]"></i> Atenuar P/ Narrar
+                    </button>
+                </div>
+            </div>
+
+        </div>
+    </div>
+    <!-- FIM DO PLAYER -->
+
+    <main class="flex-1 overflow-y-auto w-full max-w-lg mx-auto z-10 flex flex-col pb-24 pt-4 px-3">
+        
+        <div class="flex items-center justify-center mb-5">
+            <h1 class="font-title text-[20px] text-[#b8b4a7] uppercase tracking-widest font-bold">Configurações</h1>
+        </div>
+
+        <!-- MÓDULO 1: ÁUDIO & TRILHAS (CATÁLOGO DE DOWNLOADS) -->
+        <div class="config-card">
+            <div class="config-header">
+                <i class="ph-bold ph-download-simple"></i> Catálogo de Ecos
+            </div>
+            <div class="space-y-2">
+                <p class="text-[12.5px] font-sans text-[#6d7872] mb-3 leading-snug">Faça o download das trilhas para o seu dispositivo para tocá-las offline durante a sessão.</p>
+
+                <!-- Trilha 1 -->
+                <div class="playlist-row">
+                    <div class="flex items-center gap-3 min-w-0">
+                        <div class="playlist-icon-box">
+                            <i class="ph-fill ph-speaker-hifi text-[20px]"></i>
+                        </div>
+                        <div class="flex flex-col min-w-0">
+                            <span class="font-title text-[15px] text-[#b8b4a7] font-bold leading-none truncate">Ecos de Ruína</span>
+                            <span class="font-sans text-[10.5px] text-[#8c938f] uppercase tracking-wider mt-1 truncate">Trilha Padrão Geral</span>
+                        </div>
+                    </div>
+                    <button class="playlist-action-btn" onclick="togglePlaylistState(this, 'Ecos de Ruína')" title="Baixar Trilha">
+                        <i class="ph-bold ph-cloud-arrow-down text-[22px]"></i>
+                    </button>
+                </div>
+
+                <!-- Trilha 2 -->
+                <div class="playlist-row">
+                    <div class="flex items-center gap-3 min-w-0">
+                        <div class="playlist-icon-box !border-[#450606] !text-[#ff6b6b]">
+                            <i class="ph-fill ph-sword text-[20px]"></i>
+                        </div>
+                        <div class="flex flex-col min-w-0">
+                            <span class="font-title text-[15px] text-[#b8b4a7] font-bold leading-none truncate">Sangue e Gelo</span>
+                            <span class="font-sans text-[10.5px] text-[#8c938f] uppercase tracking-wider mt-1 truncate">Foco em Combate</span>
+                        </div>
+                    </div>
+                    <button class="playlist-action-btn" onclick="togglePlaylistState(this, 'Sangue e Gelo')" title="Baixar Trilha">
+                        <i class="ph-bold ph-cloud-arrow-down text-[22px]"></i>
+                    </button>
+                </div>
+
+                <!-- Trilha 3 -->
+                <div class="playlist-row">
+                    <div class="flex items-center gap-3 min-w-0">
+                        <div class="playlist-icon-box !border-[#1a3845] !text-[#38bdf8]">
+                            <i class="ph-fill ph-compass text-[20px]"></i>
+                        </div>
+                        <div class="flex flex-col min-w-0">
+                            <span class="font-title text-[15px] text-[#b8b4a7] font-bold leading-none truncate">Névoa Espessa</span>
+                            <span class="font-sans text-[10.5px] text-[#8c938f] uppercase tracking-wider mt-1 truncate">Exploração / Tensão</span>
+                        </div>
+                    </div>
+                    <button class="playlist-action-btn delete-mode" onclick="togglePlaylistState(this, 'Névoa Espessa', true)" title="Excluir do Dispositivo">
+                        <i class="ph-bold ph-trash text-[20px]"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- MÓDULO 2: INTERFACE & ZOOM -->
+        <div class="config-card">
+            <div class="config-header">
+                <i class="ph-bold ph-text-aa"></i> Interface & Leitura
+            </div>
+            
+            <div class="mt-2 mb-1">
+                <div class="flex items-center justify-between mb-4">
+                    <label class="text-[11px] font-sans uppercase font-bold text-[#8c938f]">Zoom do Sistema</label>
+                    <span id="zoom-display" class="font-title font-bold text-[#c2a675] text-[15px]">100%</span>
+                </div>
+                
+                <div class="flex items-center gap-4 px-1 pb-2">
+                    <span class="text-[12px] font-title font-bold text-[#6d7872] select-none">A</span>
+                    <input type="range" id="zoom-slider" min="0" max="4" value="2" step="1" class="custom-slider flex-1" oninput="handleZoomSlider(this.value)">
+                    <span class="text-[22px] font-title font-bold text-[#6d7872] select-none">A</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- MÓDULO 3: IDIOMA -->
+        <div class="config-card">
+            <div class="config-header">
+                <i class="ph-bold ph-translate"></i> Idioma do Sistema
+            </div>
+            <div class="space-y-3">
+                <div class="flex flex-col gap-1.5">
+                    <div class="relative">
+                        <select id="language-select" class="config-select">
+                            <option value="pt-BR" selected>Português (Brasil)</option>
+                            <option value="en-US">English (US)</option>
+                            <option value="es-ES">Español</option>
+                        </select>
+                        <i class="ph-bold ph-caret-down absolute right-3 top-1/2 -translate-y-1/2 text-[#4a5550] pointer-events-none"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- MÓDULO 4: DADOS (BACKUP / RESTORE) -->
+        <div class="config-card">
+            <div class="config-header">
+                <i class="ph-bold ph-database"></i> Gerenciamento de Dados
+            </div>
+            <div class="space-y-3">
+                <p class="text-[13px] font-celtic text-[#8c938f] leading-snug mb-2">
+                    Faça o download do seu progresso para evitar perdas caso o navegador limpe o cache.
+                </p>
+                <button type="button" class="btn-action" onclick="exportData()">
+                    <i class="ph-bold ph-download text-lg"></i> Exportar Backup (Salvar)
+                </button>
+                
+                <div class="relative mt-2">
+                    <input type="file" id="import-file" accept=".json" class="hidden" onchange="importData(event)">
+                    <button type="button" class="btn-action danger" onclick="document.getElementById('import-file').click()">
+                        <i class="ph-bold ph-upload text-lg"></i> Restaurar Backup (Carregar)
+                    </button>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- NAVEGAÇÃO INFERIOR -->
+    <nav class="fixed bottom-0 w-full z-30 bg-[#070908]/95 backdrop-blur-md border-t border-[#1a211e] pb-safe shadow-[0_-4px_20px_rgba(0,0,0,1)] flex-shrink-0">
+        <div id="bottom-nav-bar" class="bottom-nav-container"></div>
+    </nav>
+
+    <script>
+        const storedPlayer = localStorage.getItem('active_player');
+        const storedCampaign = localStorage.getItem('active_campaign');
+        let userRole = 'cronista';
+
+        if (storedPlayer && !storedCampaign) {
+            userRole = 'jogador';
+        }
+
+        function renderBottomNav() {
+            const navContainer = document.getElementById('bottom-nav-bar');
+            if (!navContainer) return;
+
+            if (userRole === 'cronista') {
+                navContainer.innerHTML = `
+                    <a href="cronica.html" class="bottom-nav-item text-[#6d7872] hover:text-[#b8b4a7]">
+                        <i class="ph-fill ph-book-open text-[23px]"></i>
+                        <span class="bottom-nav-label">Crônica</span>
+                    </a>
+                    <a href="grupo.html" class="bottom-nav-item text-[#6d7872] hover:text-[#b8b4a7]">
+                        <i class="ph-fill ph-users-three text-[23px]"></i>
+                        <span class="bottom-nav-label">Grupo</span>
+                    </a>
+                    <a href="diario.html" class="bottom-nav-item text-[#6d7872] hover:text-[#b8b4a7]">
+                        <i class="ph-fill ph-feather text-[23px]"></i>
+                        <span class="bottom-nav-label">Diário</span>
+                    </a>
+                    <a href="salvar.html" class="bottom-nav-item text-[#6d7872] hover:text-[#b8b4a7]">
+                        <i class="ph-fill ph-archive text-[23px]"></i>
+                        <span class="bottom-nav-label">Salvar</span>
+                    </a>
+                    <a href="config.html" class="bottom-nav-item text-[#c2a675]">
+                        <i class="ph-fill ph-gear-six text-[23px]"></i>
+                        <span class="bottom-nav-label">Config.</span>
+                    </a>
+                `;
+            } else {
+                navContainer.innerHTML = `
+                    <a href="grupo.html" class="bottom-nav-item text-[#6d7872] hover:text-[#b8b4a7]">
+                        <i class="ph-fill ph-user-circle text-[23px]"></i>
+                        <span class="bottom-nav-label">Grupo</span>
+                    </a>
+                    <a href="diario.html" class="bottom-nav-item text-[#6d7872] hover:text-[#b8b4a7]">
+                        <i class="ph-fill ph-feather text-[23px]"></i>
+                        <span class="bottom-nav-label">Diário</span>
+                    </a>
+                    <a href="exportar.html" class="bottom-nav-item text-[#6d7872] hover:text-[#b8b4a7]">
+                        <i class="ph-fill ph-share-network text-[23px]"></i>
+                        <span class="bottom-nav-label">Exportar</span>
+                    </a>
+                    <a href="config.html" class="bottom-nav-item text-[#c2a675]">
+                        <i class="ph-fill ph-gear-six text-[23px]"></i>
+                        <span class="bottom-nav-label">Config.</span>
+                    </a>
+                `;
+            }
+        }
+
+        // --- SISTEMA DE ZOOM ---
+        const zoomLevels = [
+            { label: '80%', value: '12.8px' },
+            { label: '90%', value: '14.4px' },
+            { label: '100%', value: '16px' },
+            { label: '110%', value: '17.6px' },
+            { label: '125%', value: '20px' }
+        ];
+
+        function loadZoom() {
+            const savedZoom = localStorage.getItem('app_zoom_index');
+            let index = 2; 
+            if (savedZoom !== null) {
+                index = parseInt(savedZoom, 10);
+            }
+            document.getElementById('zoom-slider').value = index;
+            applyZoom(index);
+        }
+
+        function handleZoomSlider(val) {
+            const index = parseInt(val, 10);
+            localStorage.setItem('app_zoom_index', index);
+            applyZoom(index);
+        }
+
+        function applyZoom(index) {
+            const level = zoomLevels[index];
+            document.documentElement.style.setProperty('--zoom-level', level.value);
+            document.getElementById('zoom-display').innerText = level.label;
+        }
+
+        // --- MÓDULO: PLAYER FLUTUANTE (POPOVER) ---
+        let isPlaying = false;
+        let isMuffled = false;
+        let preMuffleVolume = 80;
+
+        function togglePlayerMenu() {
+            const panel = document.getElementById('player-panel');
+            const overlay = document.getElementById('player-overlay');
+            
+            // Se estiver fechado (opaco)
+            if (panel.classList.contains('opacity-0')) {
+                overlay.style.display = 'block';
+                panel.classList.remove('opacity-0', 'scale-95', 'pointer-events-none');
+                panel.classList.add('opacity-100', 'scale-100', 'pointer-events-auto');
+            } else {
+                // Se estiver aberto, fecha
+                overlay.style.display = 'none';
+                panel.classList.remove('opacity-100', 'scale-100', 'pointer-events-auto');
+                panel.classList.add('opacity-0', 'scale-95', 'pointer-events-none');
+            }
+        }
+
+        function togglePlayState() {
+            isPlaying = !isPlaying;
+            const icon = document.getElementById('play-icon');
+            if(isPlaying) {
+                icon.className = "ph-fill ph-pause text-[24px]";
+            } else {
+                icon.className = "ph-fill ph-play text-[24px] ml-1";
+            }
+        }
+
+        function toggleMuffle() {
+            const muffleBtn = document.getElementById('muffle-btn');
+            const volSlider = document.getElementById('vol-slider');
+            
+            isMuffled = !isMuffled;
+            
+            if(isMuffled) {
+                preMuffleVolume = volSlider.value;
+                volSlider.value = 15; 
+                muffleBtn.classList.add('active');
+            } else {
+                volSlider.value = preMuffleVolume; 
+                muffleBtn.classList.remove('active');
+            }
+        }
+
+        function updateVolume(val) {
+            if(isMuffled) {
+                isMuffled = false;
+                document.getElementById('muffle-btn').classList.remove('active');
+            }
+        }
+
+        // --- SISTEMA DE PLAYLIST (CATÁLOGO/DOWNLOADS) ---
+        function togglePlaylistState(btnElement, playlistName, isInitialDeleteMode = false) {
+            const isDeleteMode = btnElement.classList.contains('delete-mode');
+            
+            if (isDeleteMode) {
+                if(confirm(`Remover "${playlistName}" do dispositivo para liberar espaço?`)) {
+                    btnElement.classList.remove('delete-mode');
+                    btnElement.innerHTML = `<i class="ph-bold ph-cloud-arrow-down text-[22px]"></i>`;
+                    btnElement.title = "Baixar Trilha";
+                }
+            } else {
+                btnElement.innerHTML = `<i class="ph-bold ph-spinner animate-spin text-[20px]"></i>`;
+                
+                setTimeout(() => {
+                    btnElement.classList.add('delete-mode');
+                    btnElement.innerHTML = `<i class="ph-bold ph-trash text-[20px]"></i>`;
+                    btnElement.title = "Excluir do Dispositivo";
+                }, 1500);
+            }
+        }
+
+        // --- SISTEMA DE BACKUP E RESTORE ---
+        function exportData() {
+            const exportObj = {
+                app_version: "1.0",
+                export_date: new Date().toISOString(),
+                active_campaign: JSON.parse(localStorage.getItem('active_campaign') || 'null'),
+                active_player: JSON.parse(localStorage.getItem('active_player') || 'null')
+            };
+
+            const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(exportObj, null, 2));
+            const downloadAnchorNode = document.createElement('a');
+            downloadAnchorNode.setAttribute("href", dataStr);
+            
+            const dateStr = new Date().toISOString().split('T')[0];
+            downloadAnchorNode.setAttribute("download", `KingsOfRuin_Backup_${dateStr}.json`);
+            
+            document.body.appendChild(downloadAnchorNode);
+            downloadAnchorNode.click();
+            downloadAnchorNode.remove();
+        }
+
+        function importData(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const importedData = JSON.parse(e.target.result);
+                    
+                    if (importedData.active_campaign) {
+                        localStorage.setItem('active_campaign', JSON.stringify(importedData.active_campaign));
+                    }
+                    if (importedData.active_player) {
+                        localStorage.setItem('active_player', JSON.stringify(importedData.active_player));
+                    }
+                    
+                    alert("Backup restaurado com sucesso! Os dados foram recarregados.");
+                    window.location.reload();
+
+                } catch (err) {
+                    alert("Erro ao restaurar o backup. O arquivo selecionado parece ser inválido ou corrompido.");
+                }
+                
+                event.target.value = '';
+            };
+            reader.readAsText(file);
+        }
+
+        window.onload = () => {
+            renderBottomNav();
+            loadZoom();
+        };
+    </script>
+</body>
+</html>

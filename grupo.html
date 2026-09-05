@@ -41,7 +41,7 @@
 
         ::-webkit-scrollbar { display: none; }
 
-        h1, h2, h3, .font-title { font-family: var(--font-title) !important; }
+        h1, h2, h3, h4, .font-title { font-family: var(--font-title) !important; }
         .font-sans { font-family: var(--font-ui) !important; }
         .font-celtic { font-family: var(--font-celtic) !important; }
 
@@ -144,21 +144,6 @@
             box-shadow: 0 0 6px rgba(194,166,117,0.4);
         }
 
-        .module-toggle-btn {
-            background: #0d120f;
-            border: 1px solid #1f2722;
-            padding: 7px 10px;
-            border-radius: 3px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            width: 100%;
-            cursor: pointer;
-            transition: all 0.2s ease;
-        }
-        .module-toggle-btn:hover { border-color: #2b3630; background: #121814; }
-        .module-toggle-btn.open { border-color: #c2a675; background: #141c17; }
-
         .attr-pill {
             background: #060807;
             border: 1px solid #1f2722;
@@ -194,11 +179,11 @@
             display: block;
         }
 
-        /* BINGO DE CARTAS 1 A 20 */
+        /* BINGO DE CARTAS ALFANUMÉRICAS */
         .card-slot-btn {
             position: relative;
-            width: clamp(25px, 6.8vw, 31px);
-            height: clamp(25px, 6.8vw, 31px);
+            width: clamp(23px, 6.5vw, 28px);
+            height: clamp(23px, 6.5vw, 28px);
             background: #070908;
             border: 1px solid #232d27;
             box-shadow: inset 0 1px 3px rgba(0,0,0,0.8);
@@ -208,7 +193,7 @@
             justify-content: center;
             font-family: var(--font-title);
             font-weight: bold;
-            font-size: 15px; 
+            font-size: 14px; 
             border-radius: 2px;
             transition: all 0.15s ease;
             cursor: pointer;
@@ -231,7 +216,6 @@
             box-shadow: inset 0 0 8px rgba(0,0,0,0.8), 0 0 6px rgba(181, 146, 99, 0.4);
         }
 
-        /* CARDS DE ITEM E SEGREDO */
         .entity-item-card {
             background: #060807;
             border: 1px solid #1f2722;
@@ -286,6 +270,24 @@
             color: #b8b4a7;
         }
 
+        .skill-input {
+            background: transparent;
+            border: none;
+            border-bottom: 1px dashed #2b3630;
+            font-family: var(--font-celtic);
+            font-size: 13.5px;
+            width: 100%;
+            outline: none;
+            padding: 2px 0 2px 20px;
+            transition: all 0.2s;
+        }
+        .skill-input::placeholder { color: #4a5550; font-style: italic; }
+        .skill-input:focus {
+            border-bottom-style: solid;
+            border-bottom-color: #c2a675;
+            color: #e0d5c1;
+        }
+
         .bottom-nav-container {
             display: flex;
             justify-content: center;
@@ -336,7 +338,7 @@
 
     <main id="main-scroll" class="flex-1 overflow-y-auto w-full max-w-lg mx-auto z-10 flex flex-col pb-20 pt-2 px-3 space-y-3.5">
         
-        <div class="flex items-center justify-between px-1 mt-1">
+        <div class="flex items-center justify-between px-1 mt-1 mb-1">
             <label id="screen-title-label" class="text-[15px] uppercase font-title tracking-widest text-[#6d7872] flex items-center gap-2 font-bold">
                 <i class="ph-fill ph-shield-chevron text-[20px]"></i> Integrantes da Expedição
             </label>
@@ -344,7 +346,25 @@
         </div>
 
         <!-- LISTA DE HERÓIS -->
-        <div id="heroes-list" class="space-y-3.5"></div>
+        <div id="heroes-list" class="space-y-4"></div>
+
+        <!-- SEÇÃO GLOBAL DE EXPANSÕES (ENVELOPES) -->
+        <div id="global-unlocks-section" class="mt-6 mb-2 pt-4 border-t border-[#141a17]">
+            <h4 class="font-title text-[12px] text-[#6d7872] uppercase tracking-widest font-bold mb-3 text-center">Expansões da Campanha</h4>
+            <div class="space-y-2">
+                
+                <div class="flex items-center justify-between p-3 bg-[#060807] border border-[#1f2722] rounded-sm cursor-pointer transition-all hover:border-[#ffffff] shadow-sm" onclick="toggleGlobalUnlock('ecos')">
+                    <span class="font-title text-[14.5px] text-[#ffffff] tracking-wider font-bold">Cartas de "Ecos da Ruína"</span>
+                    <i id="icon-ecos" class="ph-bold ph-envelope text-[#ffffff] text-[22px]"></i>
+                </div>
+
+                <div class="flex items-center justify-between p-3 bg-[#060807] border border-[#1f2722] rounded-sm cursor-pointer transition-all hover:border-[#c2a675] shadow-sm" onclick="toggleGlobalUnlock('segredos')">
+                    <span class="font-title text-[14.5px] text-[#c2a675] tracking-wider font-bold">Cartas "Segredos"</span>
+                    <i id="icon-segredos" class="ph-bold ph-envelope text-[#c2a675] text-[22px]"></i>
+                </div>
+
+            </div>
+        </div>
 
     </main>
 
@@ -372,7 +392,41 @@
             }
         }
 
-        const initialDeck = Array.from({ length: 15 }, (_, i) => i + 1);
+        // Variável de Estado das Expansões
+        let globalUnlocks = JSON.parse(localStorage.getItem('global_unlocks')) || { ecos: false, segredos: false };
+
+        function toggleGlobalUnlock(type) {
+            globalUnlocks[type] = !globalUnlocks[type];
+            localStorage.setItem('global_unlocks', JSON.stringify(globalUnlocks));
+            renderGlobalUnlocks();
+            renderHeroes();
+        }
+
+        function renderGlobalUnlocks() {
+            const iconEcos = document.getElementById('icon-ecos');
+            const iconSegredos = document.getElementById('icon-segredos');
+            
+            if(iconEcos) {
+                iconEcos.className = globalUnlocks.ecos ? "ph-bold ph-envelope-open text-[#ffffff] text-[22px]" : "ph-bold ph-envelope text-[#ffffff] text-[22px]";
+            }
+            if(iconSegredos) {
+                iconSegredos.className = globalUnlocks.segredos ? "ph-bold ph-envelope-open text-[#c2a675] text-[22px]" : "ph-bold ph-envelope text-[#c2a675] text-[22px]";
+            }
+        }
+
+        const skillCatalogs = {
+            gerdwyn: {
+                aggressiveness: ['Magistral', 'Linha de Frente', 'Foco', 'Sono Pesado'],
+                empathy: ['Alívio de Tensão', 'Aprendizado Acelerado', 'Caçadora de Recompensas', 'Líder Nata'],
+                courage: ['Domínio do Escudo', 'Caçadora', 'Reconhecimento', 'Protetora'],
+                caution: ['Donzela Escudeira', 'Presença', 'Fortalecer', 'Bem Preparada'],
+                practicality: ['Contratática', 'Audácia', 'Pechinchar', 'Saque Rápido'],
+                spirituality: ['Disparo a Esmo', 'Esperança Exemplar', 'Pressentimento', 'Suprimentos Mágicos']
+            }
+        };
+
+        // Cartas Iniciais Padrão (De B1 a B10)
+        const initialDeckB = Array.from({ length: 10 }, (_, i) => 'B' + (i + 1));
 
         const heroesData = [
             {
@@ -385,12 +439,10 @@
                 resources: { food: 0, wealth: 0, exp: 0, magic: 0 },
                 tracks: { health: 12, energy: 6, terror: 0 },
                 attributes: { aggressiveness: 1, empathy: 1, courage: 0, caution: 1, practicality: 2, spirituality: 1 },
-                decks: { combat: [...initialDeck], diplomacy: [...initialDeck] },
-                skills: Array(6).fill().map(() => ({ attr: 'none', name: '' })),
+                decks: { combat: [...initialDeckB], diplomacy: [...initialDeckB] },
+                skills: { aggressiveness: ['', ''], empathy: ['', ''], courage: ['', ''], caution: ['', ''], practicality: ['', ''], spirituality: ['', ''] },
                 itemsList: [],
-                secretsList: [],
-                notes: '',
-                openModules: { attributes: false, inventory: false }
+                secretsList: []
             },
             {
                 id: 'gerdwyn',
@@ -402,12 +454,10 @@
                 resources: { food: 0, wealth: 0, exp: 0, magic: 0 },
                 tracks: { health: 14, energy: 5, terror: 0 },
                 attributes: { aggressiveness: 2, empathy: 0, courage: 2, caution: 1, practicality: 1, spirituality: 0 },
-                decks: { combat: [...initialDeck], diplomacy: [...initialDeck] },
-                skills: Array(6).fill().map(() => ({ attr: 'none', name: '' })),
+                decks: { combat: [...initialDeckB], diplomacy: [...initialDeckB] },
+                skills: { aggressiveness: ['', ''], empathy: ['', ''], courage: ['', ''], caution: ['', ''], practicality: ['', ''], spirituality: ['', ''] },
                 itemsList: [],
-                secretsList: [],
-                notes: '',
-                openModules: { attributes: false, inventory: false }
+                secretsList: []
             },
             {
                 id: 'iunis',
@@ -419,12 +469,10 @@
                 resources: { food: 0, wealth: 0, exp: 0, magic: 0 },
                 tracks: { health: 11, energy: 7, terror: 0 },
                 attributes: { aggressiveness: 0, empathy: 2, courage: 0, caution: 2, practicality: 1, spirituality: 2 },
-                decks: { combat: [...initialDeck], diplomacy: [...initialDeck] },
-                skills: Array(6).fill().map(() => ({ attr: 'none', name: '' })),
+                decks: { combat: [...initialDeckB], diplomacy: [...initialDeckB] },
+                skills: { aggressiveness: ['', ''], empathy: ['', ''], courage: ['', ''], caution: ['', ''], practicality: ['', ''], spirituality: ['', ''] },
                 itemsList: [],
-                secretsList: [],
-                notes: '',
-                openModules: { attributes: false, inventory: false }
+                secretsList: []
             },
             {
                 id: 'osbert',
@@ -436,31 +484,26 @@
                 resources: { food: 0, wealth: 0, exp: 0, magic: 0 },
                 tracks: { health: 13, energy: 6, terror: 0 },
                 attributes: { aggressiveness: 1, empathy: 1, courage: 1, caution: 0, practicality: 2, spirituality: 1 },
-                decks: { combat: [...initialDeck], diplomacy: [...initialDeck] },
-                skills: Array(6).fill().map(() => ({ attr: 'none', name: '' })),
+                decks: { combat: [...initialDeckB], diplomacy: [...initialDeckB] },
+                skills: { aggressiveness: ['', ''], empathy: ['', ''], courage: ['', ''], caution: ['', ''], practicality: ['', ''], spirituality: ['', ''] },
                 itemsList: [],
-                secretsList: [],
-                notes: '',
-                openModules: { attributes: false, inventory: false }
+                secretsList: []
             }
         ];
 
+        // MIGRATION SCRIPT: Prevenção de erro para formatos antigos
         heroesData.forEach(h => {
             if (h.isExpanded === undefined) h.isExpanded = false;
             if (h.playerName === undefined) h.playerName = '';
             if (h.location === undefined) h.location = '';
-
-            if (h.skills && !Array.isArray(h.skills)) {
-                const oldSkills = h.skills;
-                h.skills = Array(6).fill().map(() => ({ attr: 'none', name: '' }));
-                let idx = 0;
-                for (const [key, val] of Object.entries(oldSkills)) {
-                    if (val && idx < 6) {
-                        const attrMap = { aggressiveness: 'agr', empathy: 'emp', courage: 'cor', caution: 'cau', practicality: 'pra', spirituality: 'esp' };
-                        h.skills[idx] = { attr: attrMap[key] || 'none', name: val };
-                        idx++;
-                    }
-                }
+            
+            // Migra para Alfanumérico e força os iniciais B
+            if (h.decks.combat.length > 0 && typeof h.decks.combat[0] === 'number') {
+                h.decks.combat = [...initialDeckB];
+                h.decks.diplomacy = [...initialDeckB];
+            }
+            if (Array.isArray(h.skills)) {
+                h.skills = { aggressiveness: ['', ''], empathy: ['', ''], courage: ['', ''], caution: ['', ''], practicality: ['', ''], spirituality: ['', ''] };
             }
         });
 
@@ -529,13 +572,6 @@
             }
         }
 
-        function toggleHeroModule(heroId, moduleKey) {
-            const hero = heroesData.find(h => h.id === heroId);
-            if (!hero) return;
-            hero.openModules[moduleKey] = !hero.openModules[moduleKey];
-            renderHeroes();
-        }
-
         function updateHeroField(heroId, field, val) {
             const hero = heroesData.find(h => h.id === heroId);
             if (hero) {
@@ -559,30 +595,33 @@
             if (hero && hero.attributes) hero.attributes[attr] = parseInt(val, 10) || 0;
         }
 
-        function updateHeroSkillAttr(heroId, index, val) {
+        function updateHeroSkill(heroId, attrKey, slotIndex, val, el) {
             const hero = heroesData.find(h => h.id === heroId);
-            if (hero && hero.skills && hero.skills[index]) {
-                hero.skills[index].attr = val;
+            if (hero && hero.skills && hero.skills[attrKey]) {
+                hero.skills[attrKey][slotIndex] = val;
+            }
+            
+            if (el && el.tagName === 'SELECT') {
+                if (val === '') {
+                    el.classList.add('text-[#4a5550]', 'italic');
+                    el.classList.remove('text-[#c2a675]');
+                } else {
+                    el.classList.remove('text-[#4a5550]', 'italic');
+                    el.classList.add('text-[#c2a675]');
+                }
             }
         }
 
-        function updateHeroSkillName(heroId, index, val) {
-            const hero = heroesData.find(h => h.id === heroId);
-            if (hero && hero.skills && hero.skills[index]) {
-                hero.skills[index].name = val;
-            }
-        }
-
-        function toggleDeckCard(heroId, deckType, cardNum) {
+        function toggleDeckCard(heroId, deckType, cardId) {
             const hero = heroesData.find(h => h.id === heroId);
             if (!hero || !hero.decks) return;
 
             const list = hero.decks[deckType];
-            const idx = list.indexOf(cardNum);
+            const idx = list.indexOf(cardId);
 
             if (idx === -1) {
-                list.push(cardNum);
-                list.sort((a, b) => a - b);
+                list.push(cardId);
+                list.sort(); // Mantém a ordem alfanumérica
             } else {
                 list.splice(idx, 1);
             }
@@ -593,12 +632,7 @@
         function addItem(heroId) {
             const hero = heroesData.find(h => h.id === heroId);
             if (!hero) return;
-            hero.itemsList.push({
-                id: 'item_' + Date.now(),
-                name: '',
-                equipped: true,
-                spent: false
-            });
+            hero.itemsList.push({ id: 'item_' + Date.now(), name: '', equipped: true, spent: false });
             renderHeroes();
         }
 
@@ -635,11 +669,7 @@
         function addSecret(heroId) {
             const hero = heroesData.find(h => h.id === heroId);
             if (!hero) return;
-            hero.secretsList.push({
-                id: 'sec_' + Date.now(),
-                number: '',
-                desc: ''
-            });
+            hero.secretsList.push({ id: 'sec_' + Date.now(), number: '', desc: '' });
             renderHeroes();
         }
 
@@ -655,6 +685,66 @@
             if (!hero) return;
             const sec = hero.secretsList.find(s => s.id === secId);
             if (sec) sec[field] = val;
+        }
+
+        function renderSkillSlot(hero, attrKey, slotIndex) {
+            const val = hero.skills[attrKey][slotIndex] || '';
+            const catalog = skillCatalogs[hero.id]?.[attrKey];
+
+            if (catalog) {
+                let opts = `<option value="" class="bg-[#090b0a] text-[#4a5550] italic">Perícia...</option>`;
+                catalog.forEach(s => {
+                    opts += `<option value="${s}" ${s === val ? 'selected' : ''} class="bg-[#090b0a] text-[#c2a675] not-italic">${s}</option>`;
+                });
+                
+                const colorClass = val === '' ? 'text-[#4a5550] italic' : 'text-[#c2a675]';
+
+                return `
+                    <div class="relative">
+                        <i class="ph-fill ph-sparkle text-[#4a5550] text-[11px] absolute left-1 top-1/2 -translate-y-1/2 z-10"></i>
+                        <select class="skill-input ${colorClass} !pl-[18px] !pr-4 appearance-none relative z-0 cursor-pointer" onchange="updateHeroSkill('${hero.id}', '${attrKey}', ${slotIndex}, this.value, this)">
+                            ${opts}
+                        </select>
+                        <i class="ph-bold ph-caret-down absolute right-1 top-1/2 -translate-y-1/2 text-[#4a5550] pointer-events-none text-[10px] z-10"></i>
+                    </div>
+                `;
+            } else {
+                return `
+                    <div class="relative">
+                        <i class="ph-fill ph-sparkle text-[#4a5550] text-[11px] absolute left-1 top-1/2 -translate-y-1/2"></i>
+                        <input type="text" class="skill-input !pl-[18px]" placeholder="Perícia..." value="${val}" oninput="updateHeroSkill('${hero.id}', '${attrKey}', ${slotIndex}, this.value, this)">
+                    </div>
+                `;
+            }
+        }
+
+        // Função universal de renderização de Decks
+        function buildDeckHtml(hero, deckType) {
+            const renderRow = (letter, max, color) => {
+                let rowHtml = `<div class="flex flex-wrap items-center gap-1"><span class="w-[20px] text-center ${color} font-title font-bold text-[14px]">${letter}</span>`;
+                for(let i = 1; i <= max; i++) {
+                    let cardId = letter + i;
+                    let isActive = hero.decks[deckType].includes(cardId);
+                    let activeClass = isActive ? (deckType === 'combat' ? 'combat-active' : 'diplo-active') : '';
+                    rowHtml += `<button onclick="toggleDeckCard('${hero.id}', '${deckType}', '${cardId}')" class="card-slot-btn ${activeClass}">${i}</button>`;
+                }
+                rowHtml += `</div>`;
+                return rowHtml;
+            };
+
+            let html = `<div class="space-y-1.5">`;
+            html += renderRow('B', 10, 'text-[#c2a675]');
+            html += renderRow('E', 10, 'text-[#c2a675]');
+            
+            if (globalUnlocks.segredos) {
+                // Letra D em dourado âmbar marcante para diferenciar
+                html += renderRow('D', 5, 'text-[#fbbf24]');
+            }
+            if (globalUnlocks.ecos) {
+                html += renderRow('F', 5, 'text-[#ffffff]');
+            }
+            html += `</div>`;
+            return html;
         }
 
         function renderHeroes() {
@@ -677,27 +767,9 @@
             let html = '';
 
             heroesToRender.forEach(h => {
-                const isAnyModuleOpen = h.openModules.attributes || h.openModules.inventory;
-
-                let combatBingoHtml = '';
-                for (let i = 1; i <= 20; i++) {
-                    const isActive = h.decks.combat.includes(i);
-                    combatBingoHtml += `
-                        <button onclick="toggleDeckCard('${h.id}', 'combat', ${i})" class="card-slot-btn ${isActive ? 'combat-active' : ''}">
-                            ${i}
-                        </button>
-                    `;
-                }
-
-                let diploBingoHtml = '';
-                for (let i = 1; i <= 20; i++) {
-                    const isActive = h.decks.diplomacy.includes(i);
-                    diploBingoHtml += `
-                        <button onclick="toggleDeckCard('${h.id}', 'diplomacy', ${i})" class="card-slot-btn ${isActive ? 'diplo-active' : ''}">
-                            ${i}
-                        </button>
-                    `;
-                }
+                
+                let combatBingoHtml = buildDeckHtml(h, 'combat');
+                let diploBingoHtml = buildDeckHtml(h, 'diplomacy');
 
                 let itemsHtml = '';
                 h.itemsList.forEach(item => {
@@ -736,27 +808,6 @@
                     `;
                 });
 
-                let skillsHtml = '';
-                h.skills.forEach((skill, i) => {
-                    skillsHtml += `
-                        <div class="flex items-stretch bg-[#050706] border border-[#1e2621] rounded overflow-hidden shadow-sm focus-within:border-[#c2a675] transition-colors h-[34px]">
-                            <div class="relative">
-                                <select onchange="updateHeroSkillAttr('${h.id}', ${i}, this.value)" class="bg-[#0a0d0b] text-[#8c938f] font-sans font-bold text-[10px] uppercase outline-none cursor-pointer pl-1.5 pr-4 border-r border-[#1e2621] text-center w-[54px] h-full appearance-none">
-                                    <option value="none" ${skill.attr === 'none' ? 'selected' : ''}>---</option>
-                                    <option value="agr" ${skill.attr === 'agr' ? 'selected' : ''}>AGR</option>
-                                    <option value="emp" ${skill.attr === 'emp' ? 'selected' : ''}>EMP</option>
-                                    <option value="cor" ${skill.attr === 'cor' ? 'selected' : ''}>COR</option>
-                                    <option value="cau" ${skill.attr === 'cau' ? 'selected' : ''}>CAU</option>
-                                    <option value="pra" ${skill.attr === 'pra' ? 'selected' : ''}>PRA</option>
-                                    <option value="esp" ${skill.attr === 'esp' ? 'selected' : ''}>ESP</option>
-                                </select>
-                                <i class="ph-bold ph-caret-down absolute right-1.5 top-1/2 -translate-y-1/2 text-[#4a5550] pointer-events-none text-[9px]"></i>
-                            </div>
-                            <input type="text" value="${skill.name}" oninput="updateHeroSkillName('${h.id}', ${i}, this.value)" class="bg-transparent border-none text-[#b8b4a7] font-celtic text-[15px] px-2 flex-1 outline-none placeholder-[#343d38] italic w-full" placeholder="Face ativa da carta...">
-                        </div>
-                    `;
-                });
-
                 html += `
                     <div id="hero-card-${h.id}" class="hero-card ${h.isExpanded ? 'expanded' : ''} shadow-md flex flex-col transition-all">
                         
@@ -790,11 +841,12 @@
                         ${h.isExpanded ? `
                             <div class="p-3.5 space-y-3">
                                 
-                                <!-- 1. TRILHAS VITAIS -->
+                                <!-- 1. TRILHAS -->
                                 <div>
-                                    <span class="text-[11px] font-title text-[#8c938f] uppercase tracking-wider block mb-1.5 font-bold">
-                                        Trilhas Vitais
-                                    </span>
+                                    <div class="flex items-center gap-2 border-b border-[#1f2722] pb-1.5 mb-2.5">
+                                        <i class="ph-fill ph-diamond text-[#8c938f] text-[10px]"></i>
+                                        <h4 class="font-title text-[12.5px] text-[#c2a675] uppercase tracking-widest font-bold">Trilhas</h4>
+                                    </div>
                                     <div class="grid grid-cols-3 gap-1.5">
                                         <!-- Saúde -->
                                         <div class="bg-[#050706] border border-[#1e2621] px-1 py-1 rounded flex items-center gap-1 shadow-sm">
@@ -829,11 +881,12 @@
                                     </div>
                                 </div>
 
-                                <!-- 2. RECURSOS PESSOAIS -->
-                                <div class="pt-1">
-                                    <span class="text-[11px] font-title text-[#8c938f] uppercase tracking-wider block mb-1.5 font-bold">
-                                        Recursos Pessoais
-                                    </span>
+                                <!-- 2. RECURSOS -->
+                                <div class="pt-2">
+                                    <div class="flex items-center gap-2 border-b border-[#1f2722] pb-1.5 mb-2.5">
+                                        <i class="ph-fill ph-diamond text-[#8c938f] text-[10px]"></i>
+                                        <h4 class="font-title text-[12.5px] text-[#c2a675] uppercase tracking-widest font-bold">Recursos</h4>
+                                    </div>
                                     <div class="grid grid-cols-4 gap-2">
                                         <div class="bg-[#050706] border border-[#1e2621] p-1.5 rounded flex flex-col items-center">
                                             <span class="font-title text-[11px] font-bold text-[#b8b4a7] uppercase tracking-wider">Comida</span>
@@ -854,208 +907,199 @@
                                     </div>
                                 </div>
 
-                                <!-- 3. GAVETAS EXPANSÍVEIS (MÓDULOS) -->
-                                <div class="space-y-2 pt-1 border-t border-[#141a17]">
-                                    
-                                    <!-- MÓDULO A: ATRIBUTOS & PERÍCIAS -->
-                                    <div>
-                                        <button onclick="toggleHeroModule('${h.id}', 'attributes')" class="module-toggle-btn ${h.openModules.attributes ? 'open' : ''}">
-                                            <span class="font-title text-[12.5px] text-[#b8b4a7] uppercase tracking-wider font-bold flex items-center gap-1.5">
-                                                <i class="ph-fill ph-scales text-[#c2a675]"></i> Atributos Base & Perícias
-                                            </span>
-                                            <i class="ph-bold ${h.openModules.attributes ? 'ph-caret-up' : 'ph-caret-down'} text-[#8c938f] text-[16px]"></i>
-                                        </button>
-
-                                        ${h.openModules.attributes ? `
-                                            <div class="mt-2.5 p-2.5 bg-[#060807] border border-[#1a211e] rounded space-y-3">
-                                                
-                                                <!-- Os 6 Atributos Fixos -->
-                                                <div class="space-y-1.5">
-                                                    <div class="grid grid-cols-2 gap-2">
-                                                        <div class="attr-pill">
-                                                            <div class="flex items-center gap-2 min-w-0">
-                                                                <div class="attr-icon-badge">
-                                                                    <img src="asset/icons/agression.png" alt="AGR" class="attr-icon-img" onerror="this.src='https://placehold.co/28x28/fff/c2a675?text=A'">
-                                                                </div>
-                                                                <span class="font-title text-[14px] font-bold text-[#b8b4a7] tracking-widest truncate">AGR</span>
-                                                            </div>
-                                                            <div class="relative">
-                                                                <select onchange="updateHeroAttr('${h.id}', 'aggressiveness', this.value)" class="stat-select !h-[26px] !w-[42px] !text-sm !pr-4">
-                                                                    ${createOptionOptions(5, h.attributes.aggressiveness)}
-                                                                </select>
-                                                                <i class="ph-bold ph-caret-down absolute right-1.5 top-1/2 -translate-y-1/2 text-[#4a5550] pointer-events-none text-[10px]"></i>
-                                                            </div>
-                                                        </div>
-                                                        <div class="attr-pill">
-                                                            <div class="flex items-center gap-2 min-w-0">
-                                                                <div class="attr-icon-badge">
-                                                                    <img src="asset/icons/empathy.png" alt="EMP" class="attr-icon-img" onerror="this.src='https://placehold.co/28x28/fff/c2a675?text=E'">
-                                                                </div>
-                                                                <span class="font-title text-[14px] font-bold text-[#b8b4a7] tracking-widest truncate">EMP</span>
-                                                            </div>
-                                                            <div class="relative">
-                                                                <select onchange="updateHeroAttr('${h.id}', 'empathy', this.value)" class="stat-select !h-[26px] !w-[42px] !text-sm !pr-4">
-                                                                    ${createOptionOptions(5, h.attributes.empathy)}
-                                                                </select>
-                                                                <i class="ph-bold ph-caret-down absolute right-1.5 top-1/2 -translate-y-1/2 text-[#4a5550] pointer-events-none text-[10px]"></i>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-
-                                                    <div class="grid grid-cols-2 gap-2">
-                                                        <div class="attr-pill">
-                                                            <div class="flex items-center gap-2 min-w-0">
-                                                                <div class="attr-icon-badge">
-                                                                    <img src="asset/icons/courage.png" alt="COR" class="attr-icon-img" onerror="this.src='https://placehold.co/28x28/fff/c2a675?text=C'">
-                                                                </div>
-                                                                <span class="font-title text-[14px] font-bold text-[#b8b4a7] tracking-widest truncate">COR</span>
-                                                            </div>
-                                                            <div class="relative">
-                                                                <select onchange="updateHeroAttr('${h.id}', 'courage', this.value)" class="stat-select !h-[26px] !w-[42px] !text-sm !pr-4">
-                                                                    ${createOptionOptions(5, h.attributes.courage)}
-                                                                </select>
-                                                                <i class="ph-bold ph-caret-down absolute right-1.5 top-1/2 -translate-y-1/2 text-[#4a5550] pointer-events-none text-[10px]"></i>
-                                                            </div>
-                                                        </div>
-                                                        <div class="attr-pill">
-                                                            <div class="flex items-center gap-2 min-w-0">
-                                                                <div class="attr-icon-badge">
-                                                                    <img src="asset/icons/caution.png" alt="CAU" class="attr-icon-img" onerror="this.src='https://placehold.co/28x28/fff/c2a675?text=K'">
-                                                                </div>
-                                                                <span class="font-title text-[14px] font-bold text-[#b8b4a7] tracking-widest truncate">CAU</span>
-                                                            </div>
-                                                            <div class="relative">
-                                                                <select onchange="updateHeroAttr('${h.id}', 'caution', this.value)" class="stat-select !h-[26px] !w-[42px] !text-sm !pr-4">
-                                                                    ${createOptionOptions(5, h.attributes.caution)}
-                                                                </select>
-                                                                <i class="ph-bold ph-caret-down absolute right-1.5 top-1/2 -translate-y-1/2 text-[#4a5550] pointer-events-none text-[10px]"></i>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-
-                                                    <div class="grid grid-cols-2 gap-2">
-                                                        <div class="attr-pill">
-                                                            <div class="flex items-center gap-2 min-w-0">
-                                                                <div class="attr-icon-badge">
-                                                                    <img src="asset/icons/practicality.png" alt="PRA" class="attr-icon-img" onerror="this.src='https://placehold.co/28x28/fff/c2a675?text=P'">
-                                                                </div>
-                                                                <span class="font-title text-[14px] font-bold text-[#b8b4a7] tracking-widest truncate">PRA</span>
-                                                            </div>
-                                                            <div class="relative">
-                                                                <select onchange="updateHeroAttr('${h.id}', 'practicality', this.value)" class="stat-select !h-[26px] !w-[42px] !text-sm !pr-4">
-                                                                    ${createOptionOptions(5, h.attributes.practicality)}
-                                                                </select>
-                                                                <i class="ph-bold ph-caret-down absolute right-1.5 top-1/2 -translate-y-1/2 text-[#4a5550] pointer-events-none text-[10px]"></i>
-                                                            </div>
-                                                        </div>
-                                                        <div class="attr-pill">
-                                                            <div class="flex items-center gap-2 min-w-0">
-                                                                <div class="attr-icon-badge">
-                                                                    <img src="asset/icons/spirituality.png" alt="ESP" class="attr-icon-img" onerror="this.src='https://placehold.co/28x28/fff/c2a675?text=S'">
-                                                                </div>
-                                                                <span class="font-title text-[14px] font-bold text-[#b8b4a7] tracking-widest truncate">ESP</span>
-                                                            </div>
-                                                            <div class="relative">
-                                                                <select onchange="updateHeroAttr('${h.id}', 'spirituality', this.value)" class="stat-select !h-[26px] !w-[42px] !text-sm !pr-4">
-                                                                    ${createOptionOptions(5, h.attributes.spirituality)}
-                                                                </select>
-                                                                <i class="ph-bold ph-caret-down absolute right-1.5 top-1/2 -translate-y-1/2 text-[#4a5550] pointer-events-none text-[10px]"></i>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-
-                                                <!-- As 6 Cartas de Perícia Livres -->
-                                                <div class="pt-2 border-t border-[#141a17]">
-                                                    <div class="flex items-center justify-between mb-2">
-                                                        <span class="text-[10.5px] font-title text-[#c2a675] uppercase tracking-wider block font-bold">Cartas de Perícia Acopladas</span>
-                                                        <span class="text-[10px] font-sans text-[#4a5550] font-bold">0/6 MÁX</span>
-                                                    </div>
-                                                    <div class="grid grid-cols-2 gap-1.5">
-                                                        ${skillsHtml}
-                                                    </div>
-                                                </div>
-
-                                            </div>
-                                        ` : ''}
+                                <!-- 3. ATRIBUTOS & PERÍCIAS -->
+                                <div class="pt-2">
+                                    <div class="flex items-center gap-2 border-b border-[#1f2722] pb-1.5 mb-2.5">
+                                        <i class="ph-fill ph-diamond text-[#8c938f] text-[10px]"></i>
+                                        <h4 class="font-title text-[12.5px] text-[#c2a675] uppercase tracking-widest font-bold">Atributos & Perícias</h4>
                                     </div>
-
-                                    <!-- MÓDULO B: BARALHOS & INVENTÁRIO -->
-                                    <div>
-                                        <button onclick="toggleHeroModule('${h.id}', 'inventory')" class="module-toggle-btn ${h.openModules.inventory ? 'open' : ''}">
-                                            <span class="font-title text-[12.5px] text-[#b8b4a7] uppercase tracking-wider font-bold flex items-center gap-1.5">
-                                                <i class="ph-fill ph-archive-box text-[#c2a675]"></i> Baralhos & Inventário
-                                            </span>
-                                            <i class="ph-bold ${h.openModules.inventory ? 'ph-caret-up' : 'ph-caret-down'} text-[#8c938f] text-[16px]"></i>
-                                        </button>
-
-                                        ${h.openModules.inventory ? `
-                                            <div class="mt-2.5 p-2.5 bg-[#060807] border border-[#1a211e] rounded space-y-3">
-                                                
-                                                <!-- COMBATE -->
-                                                <div>
-                                                    <div class="flex items-center justify-between mb-1.5">
-                                                        <span class="font-sans text-[12px] font-bold text-[#ba4a1a] uppercase flex items-center gap-1">
-                                                            <i class="ph-fill ph-sword"></i> Baralho de Combate (1-20)
-                                                        </span>
-                                                        <span class="font-sans text-[11px] font-bold text-[#8c938f]">
-                                                            <strong class="text-[#ba4a1a]">${h.decks.combat.length}</strong> ativas
-                                                        </span>
-                                                    </div>
-                                                    <div class="flex flex-wrap gap-1">
-                                                        ${combatBingoHtml}
-                                                    </div>
+                                    
+                                    <div class="grid grid-cols-2 gap-2">
+                                        <!-- AGR -->
+                                        <div class="bg-[#060807] border border-[#1f2722] p-1.5 rounded-[3px] flex flex-col gap-1.5 shadow-sm">
+                                            <div class="flex items-center justify-between w-full">
+                                                <div class="flex items-center gap-2">
+                                                    <div class="attr-icon-badge"><img src="asset/icons/agression.png" alt="AGR" class="attr-icon-img" onerror="this.src='https://placehold.co/28x28/fff/c2a675?text=A'"></div>
+                                                    <span class="font-title text-[14px] font-bold text-[#b8b4a7] tracking-widest">AGR</span>
                                                 </div>
-
-                                                <!-- DIPLOMACIA -->
-                                                <div class="pt-2 border-t border-[#141a17]">
-                                                    <div class="flex items-center justify-between mb-1.5">
-                                                        <span class="font-sans text-[12px] font-bold text-[#b59263] uppercase flex items-center gap-1">
-                                                            <i class="ph-fill ph-chats-circle"></i> Baralho de Diplomacia (1-20)
-                                                        </span>
-                                                        <span class="font-sans text-[11px] font-bold text-[#8c938f]">
-                                                            <strong class="text-[#b59263]">${h.decks.diplomacy.length}</strong> ativas
-                                                        </span>
-                                                    </div>
-                                                    <div class="flex flex-wrap gap-1">
-                                                        ${diploBingoHtml}
-                                                    </div>
+                                                <div class="relative">
+                                                    <select onchange="updateHeroAttr('${h.id}', 'aggressiveness', this.value)" class="stat-select !h-[26px] !w-[40px] !text-sm !pr-4">
+                                                        ${createOptionOptions(5, h.attributes.aggressiveness)}
+                                                    </select>
+                                                    <i class="ph-bold ph-caret-down absolute right-1.5 top-1/2 -translate-y-1/2 text-[#4a5550] pointer-events-none text-[10px]"></i>
                                                 </div>
-
-                                                <!-- ITENS INDIVIDUAIS -->
-                                                <div class="pt-2 border-t border-[#141a17] space-y-2">
-                                                    <div class="flex items-center justify-between">
-                                                        <span class="font-title text-[11.5px] uppercase text-[#c2a675] font-bold flex items-center gap-1">
-                                                            <i class="ph-fill ph-shield"></i> Itens do Personagem
-                                                        </span>
-                                                        <button type="button" onclick="addItem('${h.id}')" class="text-[10.5px] font-sans font-bold uppercase tracking-wider px-2 py-0.5 rounded bg-[#101613] border border-[#2b3630] text-[#c2a675] hover:border-[#c2a675]">
-                                                            + Adicionar Item
-                                                        </button>
-                                                    </div>
-                                                    <div class="space-y-1.5">
-                                                        ${itemsHtml || '<p class="text-[12px] font-celtic italic text-[#4a5550]">Nenhum item registrado.</p>'}
-                                                    </div>
-                                                </div>
-
-                                                <!-- SEGREDOS INDIVIDUAIS -->
-                                                <div class="pt-2 border-t border-[#141a17] space-y-2">
-                                                    <div class="flex items-center justify-between">
-                                                        <span class="font-title text-[11.5px] uppercase text-[#c2a675] font-bold flex items-center gap-1">
-                                                            <i class="ph-fill ph-key"></i> Segredos Adquiridos
-                                                        </span>
-                                                        <button type="button" onclick="addSecret('${h.id}')" class="text-[10.5px] font-sans font-bold uppercase tracking-wider px-2 py-0.5 rounded bg-[#101613] border border-[#2b3630] text-[#c2a675] hover:border-[#c2a675]">
-                                                            + Adicionar Segredo
-                                                        </button>
-                                                    </div>
-                                                    <div class="space-y-1.5">
-                                                        ${secretsHtml || '<p class="text-[12px] font-celtic italic text-[#4a5550]">Nenhum segredo registrado.</p>'}
-                                                    </div>
-                                                </div>
-
                                             </div>
-                                        ` : ''}
+                                            <div class="w-full flex flex-col gap-1">
+                                                ${renderSkillSlot(h, 'aggressiveness', 0)}
+                                                ${renderSkillSlot(h, 'aggressiveness', 1)}
+                                            </div>
+                                        </div>
+                                        <!-- EMP -->
+                                        <div class="bg-[#060807] border border-[#1f2722] p-1.5 rounded-[3px] flex flex-col gap-1.5 shadow-sm">
+                                            <div class="flex items-center justify-between w-full">
+                                                <div class="flex items-center gap-2">
+                                                    <div class="attr-icon-badge"><img src="asset/icons/empathy.png" alt="EMP" class="attr-icon-img" onerror="this.src='https://placehold.co/28x28/fff/c2a675?text=E'"></div>
+                                                    <span class="font-title text-[14px] font-bold text-[#b8b4a7] tracking-widest">EMP</span>
+                                                </div>
+                                                <div class="relative">
+                                                    <select onchange="updateHeroAttr('${h.id}', 'empathy', this.value)" class="stat-select !h-[26px] !w-[40px] !text-sm !pr-4">
+                                                        ${createOptionOptions(5, h.attributes.empathy)}
+                                                    </select>
+                                                    <i class="ph-bold ph-caret-down absolute right-1.5 top-1/2 -translate-y-1/2 text-[#4a5550] pointer-events-none text-[10px]"></i>
+                                                </div>
+                                            </div>
+                                            <div class="w-full flex flex-col gap-1">
+                                                ${renderSkillSlot(h, 'empathy', 0)}
+                                                ${renderSkillSlot(h, 'empathy', 1)}
+                                            </div>
+                                        </div>
+                                        <!-- COR -->
+                                        <div class="bg-[#060807] border border-[#1f2722] p-1.5 rounded-[3px] flex flex-col gap-1.5 shadow-sm">
+                                            <div class="flex items-center justify-between w-full">
+                                                <div class="flex items-center gap-2">
+                                                    <div class="attr-icon-badge"><img src="asset/icons/courage.png" alt="COR" class="attr-icon-img" onerror="this.src='https://placehold.co/28x28/fff/c2a675?text=C'"></div>
+                                                    <span class="font-title text-[14px] font-bold text-[#b8b4a7] tracking-widest">COR</span>
+                                                </div>
+                                                <div class="relative">
+                                                    <select onchange="updateHeroAttr('${h.id}', 'courage', this.value)" class="stat-select !h-[26px] !w-[40px] !text-sm !pr-4">
+                                                        ${createOptionOptions(5, h.attributes.courage)}
+                                                    </select>
+                                                    <i class="ph-bold ph-caret-down absolute right-1.5 top-1/2 -translate-y-1/2 text-[#4a5550] pointer-events-none text-[10px]"></i>
+                                                </div>
+                                            </div>
+                                            <div class="w-full flex flex-col gap-1">
+                                                ${renderSkillSlot(h, 'courage', 0)}
+                                                ${renderSkillSlot(h, 'courage', 1)}
+                                            </div>
+                                        </div>
+                                        <!-- CAU -->
+                                        <div class="bg-[#060807] border border-[#1f2722] p-1.5 rounded-[3px] flex flex-col gap-1.5 shadow-sm">
+                                            <div class="flex items-center justify-between w-full">
+                                                <div class="flex items-center gap-2">
+                                                    <div class="attr-icon-badge"><img src="asset/icons/caution.png" alt="CAU" class="attr-icon-img" onerror="this.src='https://placehold.co/28x28/fff/c2a675?text=K'"></div>
+                                                    <span class="font-title text-[14px] font-bold text-[#b8b4a7] tracking-widest">CAU</span>
+                                                </div>
+                                                <div class="relative">
+                                                    <select onchange="updateHeroAttr('${h.id}', 'caution', this.value)" class="stat-select !h-[26px] !w-[40px] !text-sm !pr-4">
+                                                        ${createOptionOptions(5, h.attributes.caution)}
+                                                    </select>
+                                                    <i class="ph-bold ph-caret-down absolute right-1.5 top-1/2 -translate-y-1/2 text-[#4a5550] pointer-events-none text-[10px]"></i>
+                                                </div>
+                                            </div>
+                                            <div class="w-full flex flex-col gap-1">
+                                                ${renderSkillSlot(h, 'caution', 0)}
+                                                ${renderSkillSlot(h, 'caution', 1)}
+                                            </div>
+                                        </div>
+                                        <!-- PRA -->
+                                        <div class="bg-[#060807] border border-[#1f2722] p-1.5 rounded-[3px] flex flex-col gap-1.5 shadow-sm">
+                                            <div class="flex items-center justify-between w-full">
+                                                <div class="flex items-center gap-2">
+                                                    <div class="attr-icon-badge"><img src="asset/icons/practicality.png" alt="PRA" class="attr-icon-img" onerror="this.src='https://placehold.co/28x28/fff/c2a675?text=P'"></div>
+                                                    <span class="font-title text-[14px] font-bold text-[#b8b4a7] tracking-widest">PRA</span>
+                                                </div>
+                                                <div class="relative">
+                                                    <select onchange="updateHeroAttr('${h.id}', 'practicality', this.value)" class="stat-select !h-[26px] !w-[40px] !text-sm !pr-4">
+                                                        ${createOptionOptions(5, h.attributes.practicality)}
+                                                    </select>
+                                                    <i class="ph-bold ph-caret-down absolute right-1.5 top-1/2 -translate-y-1/2 text-[#4a5550] pointer-events-none text-[10px]"></i>
+                                                </div>
+                                            </div>
+                                            <div class="w-full flex flex-col gap-1">
+                                                ${renderSkillSlot(h, 'practicality', 0)}
+                                                ${renderSkillSlot(h, 'practicality', 1)}
+                                            </div>
+                                        </div>
+                                        <!-- ESP -->
+                                        <div class="bg-[#060807] border border-[#1f2722] p-1.5 rounded-[3px] flex flex-col gap-1.5 shadow-sm">
+                                            <div class="flex items-center justify-between w-full">
+                                                <div class="flex items-center gap-2">
+                                                    <div class="attr-icon-badge"><img src="asset/icons/spirituality.png" alt="ESP" class="attr-icon-img" onerror="this.src='https://placehold.co/28x28/fff/c2a675?text=S'"></div>
+                                                    <span class="font-title text-[14px] font-bold text-[#b8b4a7] tracking-widest">ESP</span>
+                                                </div>
+                                                <div class="relative">
+                                                    <select onchange="updateHeroAttr('${h.id}', 'spirituality', this.value)" class="stat-select !h-[26px] !w-[40px] !text-sm !pr-4">
+                                                        ${createOptionOptions(5, h.attributes.spirituality)}
+                                                    </select>
+                                                    <i class="ph-bold ph-caret-down absolute right-1.5 top-1/2 -translate-y-1/2 text-[#4a5550] pointer-events-none text-[10px]"></i>
+                                                </div>
+                                            </div>
+                                            <div class="w-full flex flex-col gap-1">
+                                                ${renderSkillSlot(h, 'spirituality', 0)}
+                                                ${renderSkillSlot(h, 'spirituality', 1)}
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
+
+                                <!-- 4. BARALHOS & INVENTÁRIO -->
+                                <div class="pt-2">
+                                    <div class="flex items-center gap-2 border-b border-[#1f2722] pb-1.5 mb-2.5">
+                                        <i class="ph-fill ph-diamond text-[#8c938f] text-[10px]"></i>
+                                        <h4 class="font-title text-[12.5px] text-[#c2a675] uppercase tracking-widest font-bold">Baralhos & Inventário</h4>
+                                    </div>
+                                    
+                                    <div class="p-2.5 bg-[#050706] border border-[#1e2621] rounded space-y-3 shadow-sm">
+                                        
+                                        <!-- COMBATE -->
+                                        <div>
+                                            <div class="flex items-center justify-between mb-1.5">
+                                                <span class="font-sans text-[12px] font-bold text-[#ba4a1a] uppercase flex items-center gap-1">
+                                                    <i class="ph-fill ph-sword"></i> Baralho de Combate
+                                                </span>
+                                                <span class="font-sans text-[11px] font-bold text-[#8c938f]">
+                                                    <strong class="text-[#ba4a1a]">${h.decks.combat.length}</strong> ativas
+                                                </span>
+                                            </div>
+                                            ${combatBingoHtml}
+                                        </div>
+
+                                        <!-- DIPLOMACIA -->
+                                        <div class="pt-2 border-t border-[#141a17]">
+                                            <div class="flex items-center justify-between mb-1.5">
+                                                <span class="font-sans text-[12px] font-bold text-[#b59263] uppercase flex items-center gap-1">
+                                                    <i class="ph-fill ph-chats-circle"></i> Baralho de Diplomacia
+                                                </span>
+                                                <span class="font-sans text-[11px] font-bold text-[#8c938f]">
+                                                    <strong class="text-[#b59263]">${h.decks.diplomacy.length}</strong> ativas
+                                                </span>
+                                            </div>
+                                            ${diploBingoHtml}
+                                        </div>
+
+                                        <!-- ITENS INDIVIDUAIS -->
+                                        <div class="pt-2 border-t border-[#141a17] space-y-2">
+                                            <div class="flex items-center justify-between">
+                                                <span class="font-title text-[11.5px] uppercase text-[#c2a675] font-bold flex items-center gap-1">
+                                                    <i class="ph-fill ph-shield"></i> Itens do Personagem
+                                                </span>
+                                                <button type="button" onclick="addItem('${h.id}')" class="text-[10.5px] font-sans font-bold uppercase tracking-wider px-2 py-0.5 rounded bg-[#101613] border border-[#2b3630] text-[#c2a675] hover:border-[#c2a675]">
+                                                    + Adicionar Item
+                                                </button>
+                                            </div>
+                                            <div class="space-y-1.5">
+                                                ${itemsHtml || '<p class="text-[12px] font-celtic italic text-[#4a5550]">Nenhum item registrado.</p>'}
+                                            </div>
+                                        </div>
+
+                                        <!-- SEGREDOS INDIVIDUAIS -->
+                                        <div class="pt-2 border-t border-[#141a17] space-y-2">
+                                            <div class="flex items-center justify-between">
+                                                <span class="font-title text-[11.5px] uppercase text-[#c2a675] font-bold flex items-center gap-1">
+                                                    <i class="ph-fill ph-key"></i> Segredos Adquiridos
+                                                </span>
+                                                <button type="button" onclick="addSecret('${h.id}')" class="text-[10.5px] font-sans font-bold uppercase tracking-wider px-2 py-0.5 rounded bg-[#101613] border border-[#2b3630] text-[#c2a675] hover:border-[#c2a675]">
+                                                    + Adicionar Segredo
+                                                </button>
+                                            </div>
+                                            <div class="space-y-1.5">
+                                                ${secretsHtml || '<p class="text-[12px] font-celtic italic text-[#4a5550]">Nenhum segredo registrado.</p>'}
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                </div>
+
                             </div>
                         ` : ''}
                     </div>
@@ -1066,6 +1110,7 @@
         }
 
         window.onload = () => {
+            renderGlobalUnlocks();
             renderBottomNav();
             renderHeroes();
         };

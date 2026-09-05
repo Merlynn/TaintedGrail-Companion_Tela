@@ -90,9 +90,9 @@
             box-shadow: 0 0 8px rgba(194, 166, 117, 0.3);
         }
 
-        /* TRILHA DE JORNADA */
+        /* TRILHA DE JORNADA - Adaptada para 5 itens */
         .timeline-step { 
-            display: flex; flex-direction: column; align-items: center; cursor: pointer; width: 25%; position: relative; z-index: 2;
+            display: flex; flex-direction: column; align-items: center; cursor: pointer; width: 20%; position: relative; z-index: 2;
         }
         .timeline-node { 
             width: 14px; height: 14px; transform: rotate(45deg); background: #070908; 
@@ -105,8 +105,8 @@
             background: #2b3630; border-color: #4a5550; 
         }
         .timeline-text { 
-            font-family: var(--font-title); font-size: clamp(10px, 2.8vw, 13px); color: #6d7872; text-transform: uppercase; 
-            letter-spacing: 0.08em; transition: all 0.3s ease; margin-top: 8px; text-align: center; 
+            font-family: var(--font-title); font-size: clamp(9px, 2.3vw, 12px); color: #6d7872; text-transform: uppercase; 
+            letter-spacing: 0.05em; transition: all 0.3s ease; margin-top: 8px; text-align: center; line-height: 1;
         }
         .timeline-step.active .timeline-text { 
             color: #c2a675; font-weight: bold; text-shadow: 0 0 8px rgba(194,166,117,0.3); 
@@ -247,6 +247,7 @@
         .nav-button.primary { background: #450606; border-color: #9e1515; color: #b8b4a7; }
         .nav-button.primary:active { background: #9e1515; color: #fff; }
 
+        /* INPUT PARA CRIATURAS COM AUTOCOMPLETE */
         .inline-input {
             background: rgba(0,0,0,0.4); border: 1px solid #2b3630; color: #c2a675;
             outline: none; font-family: var(--font-celtic); font-size: 1.15rem;
@@ -308,7 +309,6 @@
         .corner-bl { bottom: 0; left: 0; border-bottom: 1px solid #2b3630; border-left: 1px solid #2b3630; }
         .corner-br { bottom: 0; right: 0; border-bottom: 1px solid #2b3630; border-right: 1px solid #2b3630; }
         
-        /* NAVEGAÇÃO INFERIOR CENTRADA E COM TIPOGRAFIA AMPLIADA */
         .bottom-nav-container {
             display: flex;
             justify-content: center;
@@ -358,25 +358,29 @@
         </div>
     </header>
 
-    <!-- PROGRESSO DO WIZARD -->
+    <!-- PROGRESSO DO WIZARD (AGORA COM 5 PASSOS) -->
     <div class="px-2 pt-5 pb-3 border-b border-[#1a211e] bg-[#090b0a]/95 backdrop-blur-md sticky top-0 z-20 flex-shrink-0">
         <div class="relative max-w-sm mx-auto">
-            <div class="absolute top-[6px] left-[12%] right-[12%] h-[1px] bg-[#2b3630] z-0"></div>
+            <div class="absolute top-[6px] left-[10%] right-[10%] h-[1px] bg-[#2b3630] z-0"></div>
             
             <div class="flex justify-between items-start relative z-10">
                 <div class="timeline-step active" onclick="goToStep(1)" id="indicator-1">
                     <div class="timeline-node"></div>
-                    <span class="timeline-text">Criaturas</span>
+                    <span class="timeline-text">Heróis</span>
                 </div>
                 <div class="timeline-step" onclick="goToStep(2)" id="indicator-2">
                     <div class="timeline-node"></div>
-                    <span class="timeline-text">O Mapa</span>
+                    <span class="timeline-text">Criaturas</span>
                 </div>
                 <div class="timeline-step" onclick="goToStep(3)" id="indicator-3">
                     <div class="timeline-node"></div>
-                    <span class="timeline-text">Na Caixa</span>
+                    <span class="timeline-text">O Mapa</span>
                 </div>
                 <div class="timeline-step" onclick="goToStep(4)" id="indicator-4">
+                    <div class="timeline-node"></div>
+                    <span class="timeline-text">Caixa</span>
+                </div>
+                <div class="timeline-step" onclick="goToStep(5)" id="indicator-5">
                     <div class="timeline-node"></div>
                     <span class="timeline-text">Resumo</span>
                 </div>
@@ -387,9 +391,26 @@
     <main id="main-scroll" class="flex-1 overflow-y-auto w-full max-w-lg mx-auto z-10 flex flex-col pb-20 pt-2 px-3">
         
         <div class="flex-1 space-y-4">
-            
-            <!-- PASSO 1: CRIATURAS -->
+
+            <!-- PASSO 1: HERÓIS -->
             <div id="step-1" class="wizard-step active relative bg-[#090b0a]/90 backdrop-blur-sm p-4 shadow-[inset_0_0_20px_rgba(0,0,0,1)] border border-[#141a17] rounded-sm mt-2">
+                <div class="absolute w-4 h-4 corner-tl opacity-50"></div>
+                <div class="absolute w-4 h-4 corner-tr opacity-50"></div>
+                <div class="absolute w-4 h-4 corner-bl opacity-50"></div>
+                <div class="absolute w-4 h-4 corner-br opacity-50"></div>
+
+                <h2 class="text-2xl text-[#c2a675] tracking-wider text-center border-b border-[#2b3630] pb-3 mb-2 font-title">Heróis & Fichas</h2>
+                
+                <p class="text-[15px] text-[#8c938f] text-center font-celtic mb-4 leading-relaxed mt-2">
+                    O aplicativo já registra as estatísticas, itens e atributos da sua equipe automaticamente.<br>
+                    <strong class="text-[#b8b4a7]">Se desejar, anexe uma foto das fichas físicas, dos baralhos ou da área de jogador.</strong>
+                </p>
+
+                <div id="photo-gallery-step0" class="mt-4"></div>
+            </div>
+            
+            <!-- PASSO 2: CRIATURAS -->
+            <div id="step-2" class="wizard-step relative bg-[#090b0a]/90 backdrop-blur-sm p-4 shadow-[inset_0_0_20px_rgba(0,0,0,1)] border border-[#141a17] rounded-sm mt-2">
                 <div class="absolute w-4 h-4 corner-tl opacity-50"></div>
                 <div class="absolute w-4 h-4 corner-tr opacity-50"></div>
                 <div class="absolute w-4 h-4 corner-bl opacity-50"></div>
@@ -407,8 +428,8 @@
                 <div id="photo-gallery-step1" class="mt-6"></div>
             </div>
 
-            <!-- PASSO 2: O MAPA -->
-            <div id="step-2" class="wizard-step relative bg-[#090b0a]/90 backdrop-blur-sm p-4 shadow-[inset_0_0_20px_rgba(0,0,0,1)] border border-[#141a17] rounded-sm mt-2">
+            <!-- PASSO 3: O MAPA -->
+            <div id="step-3" class="wizard-step relative bg-[#090b0a]/90 backdrop-blur-sm p-4 shadow-[inset_0_0_20px_rgba(0,0,0,1)] border border-[#141a17] rounded-sm mt-2">
                 <div class="absolute w-4 h-4 corner-tl opacity-50"></div>
                 <div class="absolute w-4 h-4 corner-tr opacity-50"></div>
                 <div class="absolute w-4 h-4 corner-bl opacity-50"></div>
@@ -430,8 +451,8 @@
                 <div id="photo-gallery-step2" class="mt-6"></div>
             </div>
 
-            <!-- PASSO 3: NA CAIXA -->
-            <div id="step-3" class="wizard-step relative bg-[#090b0a]/90 backdrop-blur-sm p-4 shadow-[inset_0_0_20px_rgba(0,0,0,1)] border border-[#141a17] rounded-sm mt-2">
+            <!-- PASSO 4: NA CAIXA -->
+            <div id="step-4" class="wizard-step relative bg-[#090b0a]/90 backdrop-blur-sm p-4 shadow-[inset_0_0_20px_rgba(0,0,0,1)] border border-[#141a17] rounded-sm mt-2">
                 <div class="absolute w-4 h-4 corner-tl opacity-50"></div>
                 <div class="absolute w-4 h-4 corner-tr opacity-50"></div>
                 <div class="absolute w-4 h-4 corner-bl opacity-50"></div>
@@ -491,8 +512,8 @@
                 </div>
             </div>
 
-            <!-- PASSO 4: RESUMO DINÂMICO -->
-            <div id="step-4" class="wizard-step relative bg-[#090b0a]/90 backdrop-blur-sm p-4 shadow-[inset_0_0_20px_rgba(0,0,0,1)] border border-[#141a17] rounded-sm mt-2">
+            <!-- PASSO 5: RESUMO DINÂMICO -->
+            <div id="step-5" class="wizard-step relative bg-[#090b0a]/90 backdrop-blur-sm p-4 shadow-[inset_0_0_20px_rgba(0,0,0,1)] border border-[#141a17] rounded-sm mt-2">
                 <div class="absolute w-4 h-4 corner-tl opacity-50"></div>
                 <div class="absolute w-4 h-4 corner-tr opacity-50"></div>
                 <div class="absolute w-4 h-4 corner-bl opacity-50"></div>
@@ -579,7 +600,7 @@
         });
 
         document.addEventListener('click', (e) => {
-            if (currentStep !== 2) return;
+            if (currentStep !== 3) return; // Agora o passo do mapa é o 3
             const clickedCard = e.target.closest('.location-card-item');
             const clickedAddBtn = e.target.closest('.world-add-btn');
             const clickedInput = e.target.closest('#new-location-input');
@@ -597,7 +618,7 @@
         });
 
         let currentStep = 1;
-        const totalSteps = 4;
+        const totalSteps = 5;
 
         function updateUI() {
             document.querySelectorAll('.wizard-step').forEach(el => el.classList.remove('active'));
@@ -641,10 +662,11 @@
         function goToStep(step) { currentStep = step; updateUI(); }
 
         const photoConfig = {
+            step0: { id: 'step0', title: 'Anexar Foto da Ficha (Opcional)', icon: 'ph-identification-card' },
             step1: { id: 'step1', title: 'Anexar Foto da Mesa', icon: 'ph-camera' },
             step2: { id: 'step2', title: 'Anexar Foto da Área do Mapa', icon: 'ph-map-trifold' }
         };
-        let photos = { step1: [], step2: [] };
+        let photos = { step0: [], step1: [], step2: [] };
 
         function mockCapturePhoto(stepId) {
             const mockUrl = "https://placehold.co/400x400/1a211e/6d7872?text=FOTO";
@@ -968,7 +990,8 @@
             }
             html += `</div>`;
 
-            const totalPhotos = photos.step1.length + photos.step2.length;
+            // Lê as 3 matrizes de fotos agora
+            const totalPhotos = photos.step0.length + photos.step1.length + photos.step2.length;
             html += `
                 <div class="p-3.5 bg-[#070908]/70 border border-[#2b3630] rounded-sm">
                     <div class="flex items-center justify-between pb-1.5 border-b border-[#141a17] mb-2">
@@ -978,7 +1001,7 @@
                         <span class="text-[12.5px] font-sans font-bold text-[#8c938f]">${totalPhotos} fotos</span>
                     </div>
                     <div class="text-[14.5px] font-celtic text-[#b8b4a7]">
-                        ${totalPhotos > 0 ? `Fotos da mesa e do mapa anexadas.` : '<span class="text-[#6d7872] italic">Nenhuma foto anexada nesta sessão.</span>'}
+                        ${totalPhotos > 0 ? `Fotos auxiliares das fichas e mundo anexadas.` : '<span class="text-[#6d7872] italic">Nenhuma foto anexada nesta sessão.</span>'}
                     </div>
                 </div>
             `;
@@ -986,9 +1009,37 @@
             container.innerHTML = html;
         }
 
-        const dbEntities = { monarcas: ["Claudyne", "Veneda", "Nōnus", "Owyn", "Morrigan"], companheiros: ["Corcel de Batalha", "Cão Rastreador", "Corvo da Névoa", "Lince", "Familiar"], guardioes: ["Guardião do Desfiladeiro", "Aberração de Wyrd", "Aparição Errante", "Caçador Caído", "Aparição Anciã"] };
+        // BANCO DE DADOS ATUALIZADO (MONARCAS, COMPANHEIROS E 21 GUARDIÕES MOCK)
+        const dbEntities = { 
+            monarcas: [
+                "Claudyne", 
+                "Nōnus", 
+                "Veneda"
+            ], 
+            companheiros: [
+                "Cabra Negra", 
+                "Golem das Velas", 
+                "Isolut", 
+                "Kendrick"
+            ], 
+            guardioes: [
+                "Aberração de Wyrd", "Aparição Anciã", "Aparição Errante", "Banshee do Lamento",
+                "Besta da Névoa", "Caçador Caído", "Cão Infernal", "Cavaleiro Sem Cabeça",
+                "Colosso de Pedra", "Corrompido de Avalon", "Devorador de Almas", "Espectro da Ruína",
+                "Etéreo da Floresta", "Gigante da Geada", "Guardião do Desfiladeiro", "Harpia Sombria",
+                "Lobo Sangrento", "Lorde Fomoriano", "Quimera Decadente", "Sombra Rastejante",
+                "Troll das Cavernas"
+            ] 
+        };
+        
         let trackers = { padrons: [], monarcas: [], companheiros: [], guardioes: [] };
-        const trackerConfig = { padrons: { title: "Padrons", icon: "ph-lighthouse", color: "text-[#c2a675] drop-shadow-[0_0_5px_rgba(194,166,117,0.5)]", max: 3, type: 'array' }, monarcas: { title: "Monarcas da Ruína", icon: "ph-crown", color: "text-[#ff3333] drop-shadow-[0_0_5px_rgba(255,51,51,0.6)]", max: 3, type: 'object' }, companheiros: { title: "Companheiros", icon: "ph-paw-print", color: "text-[#b8b4a7] drop-shadow-[0_0_3px_rgba(184,180,167,0.5)]", max: 99, type: 'object' }, guardioes: { title: "Guardiões", icon: "ph-sword", color: "text-[#c2a675] drop-shadow-[0_0_5px_rgba(194,166,117,0.5)]", max: 99, type: 'object' } };
+        
+        const trackerConfig = { 
+            padrons: { title: "Padrons", icon: "ph-lighthouse", color: "text-[#c2a675] drop-shadow-[0_0_5px_rgba(194,166,117,0.5)]", max: 3, type: 'array' }, 
+            monarcas: { title: "Monarcas da Ruína", icon: "ph-crown", color: "text-[#ff3333] drop-shadow-[0_0_5px_rgba(255,51,51,0.6)]", max: 3, type: 'object' }, 
+            companheiros: { title: "Companheiros", icon: "ph-paw-print", color: "text-[#b8b4a7] drop-shadow-[0_0_3px_rgba(184,180,167,0.5)]", max: 4, type: 'object' }, 
+            guardioes: { title: "Guardiões", icon: "ph-sword", color: "text-[#c2a675] drop-shadow-[0_0_5px_rgba(194,166,117,0.5)]", max: 99, type: 'object' } 
+        };
 
         function addTracker(category) {
             if (category === 'padrons') { if (trackers.padrons.length === 0) trackers.padrons = [['', '', '', ''], ['', '', '', ''], ['', '', '', '']]; } 
@@ -1006,12 +1057,17 @@
         function romanize(num) { return ['I', 'II', 'III'][num] || num + 1; }
 
         function showSuggestions(inputEl, category, index) {
-            const val = inputEl.value.toLowerCase(); const box = document.getElementById(`suggestions-${category}-${index}`);
+            const val = inputEl.value.toLowerCase(); 
+            const box = document.getElementById(`suggestions-${category}-${index}`);
             if(!box) return;
+            
             const matches = val === '' ? dbEntities[category] : dbEntities[category].filter(n => n.toLowerCase().includes(val));
             if (matches.length === 0) { box.style.display = 'none'; return; }
-            let html = ''; matches.forEach(m => html += `<div class="p-3 border-b border-[#1a211e] text-[14px] text-[#b8b4a7] font-sans cursor-pointer hover:bg-[#1a211e]" onmousedown="selectSuggestion('${category}', ${index}, '${m}')">${m}</div>`);
-            box.innerHTML = html; box.style.display = 'block';
+            
+            let html = ''; 
+            matches.forEach(m => html += `<div class="p-3 border-b border-[#1a211e] text-[14px] text-[#b8b4a7] font-sans cursor-pointer hover:bg-[#1a211e]" onmousedown="selectSuggestion('${category}', ${index}, '${m}')">${m}</div>`);
+            box.innerHTML = html; 
+            box.style.display = 'block';
         }
 
         function selectSuggestion(c, i, val) { updateTrackerObject(c, i, 'name', val); renderTrackers(); }
@@ -1064,7 +1120,8 @@
                                     <input type="text" class="inline-input w-full" placeholder="Nome..." value="${item.name}" 
                                         onfocus="showSuggestions(this, '${category}', ${index})" oninput="updateTrackerObject('${category}', ${index}, 'name', this.value); showSuggestions(this, '${category}', ${index})"
                                         onblur="setTimeout(() => { const el = document.getElementById('suggestions-${category}-${index}'); if(el) el.style.display = 'none'; }, 150)">
-                                    <div id="suggestions-${category}-${index}" class="absolute top-full left-0 mt-1 w-full bg-[#070908] border border-[#2b3630] rounded-sm z-50 shadow-[0_4px_12px_rgba(0,0,0,1)] hidden max-h-32 overflow-y-auto"></div>
+                                    <!-- Altura máxima aumentada para caber mais itens -->
+                                    <div id="suggestions-${category}-${index}" class="absolute top-full left-0 mt-1 w-full bg-[#070908] border border-[#2b3630] rounded-sm z-50 shadow-[0_4px_12px_rgba(0,0,0,1)] hidden max-h-48 overflow-y-auto"></div>
                                 </div>
                                 <input type="text" class="inline-input w-20 text-center" placeholder="Local" value="${item.loc}" oninput="updateTrackerObject('${category}', ${index}, 'loc', this.value)">
                                 <button onclick="requestRemoveTracker('${category}', ${index}, this)" class="flex items-center justify-center bg-[#0d0f0e] border border-[#2b3630] w-[32px] h-[32px] rounded-sm text-[#6d7872] hover:bg-[#1a0505] hover:text-[#ff3333] hover:border-[#ff3333] transition-all flex-shrink-0">
@@ -1081,7 +1138,7 @@
 
         window.onload = () => {
             updateUI(); renderTrackers(); renderWorldLocations();
-            renderPhotoGallery('step1'); renderPhotoGallery('step2');
+            renderPhotoGallery('step0'); renderPhotoGallery('step1'); renderPhotoGallery('step2');
         };
     </script>
 </body>
