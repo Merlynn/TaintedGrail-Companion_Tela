@@ -153,13 +153,25 @@
             font-weight: bold;
         }
         
-        /* Cores Grimdark das Fitas */
         .ribbon-all { background: linear-gradient(180deg, #1f2722, #0d120f); }
         .ribbon-local { background: linear-gradient(180deg, #1e3a5f, #0d1b2e); }
         .ribbon-npc { background: linear-gradient(180deg, #243b29, #102115); }
         .ribbon-demanda { background: linear-gradient(180deg, #5c4022, #291a0c); }
         .ribbon-personagem { background: linear-gradient(180deg, #3d284a, #1d1024); }
 
+        /* MÁSCARA DE ESMAECIMENTO (FADE-OUT) NO SCROLL REFINADA */
+        .journal-scroll-wrapper {
+            flex: 1;
+            overflow-y: auto;
+            width: 100%;
+            padding-bottom: 6rem; /* Garante que o texto passe da nav inferior */
+            /* Puxa o container milimetricamente para trás dos fitilhos (apenas 16px) */
+            margin-top: -16px;
+            padding-top: 16px;
+            /* Transição muito rápida (apenas 12px) para não roubar espaço de leitura */
+            -webkit-mask-image: linear-gradient(to bottom, transparent 0%, rgba(0,0,0,1) 12px);
+            mask-image: linear-gradient(to bottom, transparent 0%, rgba(0,0,0,1) 12px);
+        }
 
         /* ESTÉTICA DE CÓDICE (LIVRO) PARA NOTAS */
         .journal-container {
@@ -375,7 +387,7 @@
         }
         .modal-textarea:focus { border-color: #c2a675; background: rgba(0,0,0,0.8); }
 
-        /* TAGS NO MODAL - Estilo "Entalhe Escuro" */
+        /* TAGS NO MODAL */
         .tag-toggle-btn {
             background: #060807;
             border: 1px solid #1f2722;
@@ -434,11 +446,11 @@
         </div>
     </header>
 
-    <main class="flex-1 overflow-y-auto w-full max-w-lg mx-auto z-10 flex flex-col pb-24">
+    <main class="flex-1 flex flex-col w-full max-w-lg mx-auto z-10 overflow-hidden relative">
         
-        <!-- CABEÇALHO DO DIÁRIO (Busca + Fitilhos de Filtro) -->
-        <div class="sticky top-0 z-20">
-            <!-- Camada 1: A barra de busca com fundo escuro e opaco -->
+        <!-- CABEÇALHO DO DIÁRIO (Busca + Fitilhos Fixos) -->
+        <div class="z-20 flex-shrink-0 relative pointer-events-auto">
+            <!-- Camada 1: A barra de busca com fundo opaco -->
             <div class="bg-[#070908]/95 backdrop-blur-md pt-1 pb-3 relative z-10 border-b border-[#1a211e] shadow-[0_4px_12px_rgba(0,0,0,0.5)]">
                 <div class="search-container">
                     <input type="text" id="search-diary" class="search-input-classic" placeholder="Pesquisar nas memórias..." oninput="renderDiary()">
@@ -446,7 +458,7 @@
                 </div>
             </div>
             
-            <!-- Camada 2: Os fitilhos que ficam parcialmente escondidos por baixo da barra superior -->
+            <!-- Camada 2: Fitilhos -->
             <div class="ribbon-filters hide-scrollbar relative z-0">
                 <button onclick="setFilter('all')" id="flt-all" class="filter-ribbon ribbon-all active" title="Todos os Registros">
                     <i class="ph-bold ph-circles-four"></i>
@@ -471,9 +483,11 @@
             </div>
         </div>
 
-        <!-- FEED ESTILO CÓDICE/LIVRO -->
-        <div id="diary-timeline" class="journal-container">
-            <!-- Renderizado via JS -->
+        <!-- FEED ESTILO CÓDICE/LIVRO (COM MÁSCARA DE FADE-OUT NO TOPO) -->
+        <div id="main-scroll" class="journal-scroll-wrapper hide-scrollbar">
+            <div id="diary-timeline" class="journal-container">
+                <!-- Renderizado via JS -->
+            </div>
         </div>
 
     </main>
@@ -501,7 +515,6 @@
                 </button>
             </div>
 
-            <!-- Edição de Capítulo/Parte -->
             <div id="modal-time-context" class="flex items-center gap-2">
                 <div class="flex-1">
                     <label class="text-[10px] font-sans uppercase font-bold text-[#8c938f] block mb-1">Capítulo</label>
@@ -513,10 +526,8 @@
                 </div>
             </div>
 
-            <!-- Campo de Texto -->
             <textarea id="note-text-input" class="modal-textarea" placeholder="O que aconteceu?..."></textarea>
 
-            <!-- Tags Selecionáveis -->
             <div id="modal-tags-section">
                 <span class="text-[10px] font-sans uppercase font-bold text-[#8c938f] block mb-1.5">Anexar Fitilho (Opcional)</span>
                 <div class="grid grid-cols-2 gap-2">
@@ -581,7 +592,6 @@
                             updatedAt: n.updatedAt || n.date
                         }));
                     } else {
-                        // Mock Demonstrativo
                         diaryEntries = [
                             {
                                 id: 'note_demo_1',
@@ -980,8 +990,12 @@
             closeNoteModal();
             renderDiary();
             
+            // Foca o scroll no início da lista sempre que adicionar uma anotação nova
             if (modalMode === 'create' || modalMode === 'reply') {
-                window.scrollTo({ top: 0, behavior: 'smooth' });
+                const scrollWrapper = document.getElementById('main-scroll');
+                if (scrollWrapper) {
+                    scrollWrapper.scrollTo({ top: 0, behavior: 'smooth' });
+                }
             }
         }
 

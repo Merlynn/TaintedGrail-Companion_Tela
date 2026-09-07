@@ -220,43 +220,6 @@
             opacity: 0.9;
         }
 
-        .search-input {
-            background: rgba(7, 9, 8, 0.9);
-            border: 1px solid #2b3630;
-            color: #b8b4a7;
-            width: 100%;
-            padding: 12px 14px 12px 40px;
-            font-size: 1.15rem;
-            border-radius: 4px;
-            box-shadow: inset 0 2px 6px rgba(0,0,0,0.8);
-            transition: border-color 0.2s;
-            font-family: var(--font-celtic);
-        }
-        .search-input:focus {
-            outline: none;
-            border-color: #6d7872;
-        }
-
-        .altar-input {
-            background: transparent;
-            border: none;
-            color: #c2a675;
-            outline: none;
-            border-bottom: 1px dashed #2b3630;
-            transition: all 0.3s;
-            padding: 0 2px;
-            margin: 0;
-            font-family: var(--font-title);
-            cursor: pointer;
-            text-align: center;
-        }
-        .altar-input:focus {
-            border-bottom-color: #c2a675;
-            border-bottom-style: solid;
-            color: #fff;
-            text-shadow: 0 0 8px rgba(194, 166, 117, 0.6);
-        }
-
         @keyframes slideDownFade {
             from { opacity: 0; transform: translateY(-4px); }
             to { opacity: 1; transform: translateY(0); }
@@ -350,22 +313,29 @@
                 <div class="absolute w-4 h-4 corner-br opacity-50"></div>
                 <div class="absolute inset-0 opacity-20 bg-[radial-gradient(ellipse_at_center,rgba(255,255,255,0.08)_0%,transparent_70%)] pointer-events-none"></div>
 
-                <div class="flex flex-col flex-1 min-w-0 relative z-10 gap-2.5">
-                    <div class="flex items-baseline gap-2 flex-wrap">
-                        <label for="chapter-display" style="font-size: clamp(13px, 4.2vw, 22px);" class="font-title text-[#b8b4a7] uppercase tracking-wider whitespace-nowrap font-bold">
-                            CAPÍTULO:
-                        </label>
-                        <input type="text" id="chapter-display" value="1" onchange="manualChapterChange(this.value)" style="font-size: clamp(13px, 4.2vw, 24px); width: 38px;" class="altar-input font-bold text-center">
+                <div class="flex flex-col flex-1 min-w-0 relative z-10 gap-3">
+                    
+                    <!-- Bloco Capítulo -->
+                    <div class="bg-[#060807] border border-[#1f2722] rounded-[3px] p-2 shadow-inner flex flex-col items-center justify-center relative">
+                        <div class="flex items-center gap-1.5 w-full justify-center mb-1 pb-1 border-b border-[#141a17]">
+                            <i class="ph-fill ph-book-bookmark text-[#6d7872] text-[13px]"></i>
+                            <span class="font-sans text-[10px] font-bold text-[#8c938f] uppercase tracking-widest">Capítulo</span>
+                        </div>
+                        <input type="text" id="chapter-display" value="1" onchange="manualChapterChange(this.value)" class="bg-transparent border-none text-[#c2a675] outline-none font-title font-bold text-[22px] w-full text-center p-0 m-0 focus:text-[#fff] transition-colors" style="text-shadow: 0 0 8px rgba(194,166,117,0.3);">
                     </div>
-                    <div class="flex items-baseline gap-2 flex-wrap">
-                        <label for="part-display" style="font-size: clamp(12px, 3.8vw, 19px);" class="font-title text-[#8c938f] uppercase tracking-wider whitespace-nowrap font-bold">
-                            PARTE:
-                        </label>
-                        <input type="text" id="part-display" value="A:1" onchange="manualPartChange(this.value)" style="font-size: clamp(12px, 3.8vw, 20px); width: 54px;" class="altar-input font-bold text-center">
+
+                    <!-- Bloco Parte -->
+                    <div class="bg-[#060807] border border-[#1f2722] rounded-[3px] p-2 shadow-inner flex flex-col items-center justify-center relative">
+                        <div class="flex items-center gap-1.5 w-full justify-center mb-1 pb-1 border-b border-[#141a17]">
+                            <i class="ph-fill ph-map-trifold text-[#6d7872] text-[13px]"></i>
+                            <span class="font-sans text-[10px] font-bold text-[#8c938f] uppercase tracking-widest">Parte</span>
+                        </div>
+                        <input type="text" id="part-display" value="A:1" onchange="manualPartChange(this.value)" class="bg-transparent border-none text-[#c2a675] outline-none font-title font-bold text-[18px] w-full text-center p-0 m-0 focus:text-[#fff] transition-colors" style="text-shadow: 0 0 8px rgba(194,166,117,0.3);">
                     </div>
+
                 </div>
 
-                <div class="flex-shrink-0 flex flex-col items-center gap-1 relative z-10">
+                <div class="flex-shrink-0 flex flex-col items-center gap-1 relative z-10 pl-4">
                     <span style="font-size: clamp(10.5px, 2.8vw, 12px); color: #c2a675; text-shadow: 0 1px 3px rgba(0,0,0,1);" class="font-title uppercase tracking-widest text-center font-bold">
                         Passagem do Tempo
                     </span>
@@ -381,17 +351,18 @@
             </div>
 
             <!-- BUSCA E LISTA DE CONDIÇÕES -->
-            <div class="space-y-3">
-                <div id="search-container" class="sticky top-0 z-10 py-1.5 bg-[#070908]/95 backdrop-blur-md">
-                    <div class="relative">
-                        <i class="ph ph-magnifying-glass absolute left-3 top-1/2 transform -translate-y-1/2 text-[#6d7872] text-[20px]"></i>
-                        <input type="text" id="searchInput" oninput="renderConditions()" onfocus="handleSearchFocus()" class="search-input italic" placeholder="Buscar condição (ex: Abastecimento)...">
-                        <button id="clearSearchBtn" onclick="clearSearch()" class="absolute right-3 top-1/2 transform -translate-y-1/2 text-[#6d7872] hidden hover:text-[#b8b4a7]">
-                            <i class="ph-fill ph-x-circle text-[20px]"></i>
+            <div class="space-y-1.5">
+                <div class="sticky top-1 z-20 pt-1 pb-1">
+                    <div class="relative bg-[#090b0a]/95 backdrop-blur-md border border-[#1f2722] rounded-sm shadow-[0_4px_15px_rgba(0,0,0,0.8)] px-3 py-2 flex items-center transition-colors focus-within:border-[#c2a675]">
+                        <input type="text" id="searchInput" oninput="renderConditions()" onfocus="handleSearchFocus()" class="w-full bg-transparent border-none text-[#c2a675] font-celtic text-[1.1rem] outline-none placeholder-[#343d38] italic text-center pr-6" placeholder="Buscar condição (ex: Abastecimento)...">
+                        <i id="searchIcon" class="ph-bold ph-magnifying-glass absolute right-4 text-[#4a5550] text-[1.2rem] pointer-events-none"></i>
+                        <button id="clearSearchBtn" onclick="clearSearch()" class="absolute right-4 text-[#6d7872] text-[1.2rem] hidden hover:text-[#ff6b6b] bg-transparent border-none p-0 outline-none cursor-pointer">
+                            <i class="ph-bold ph-x"></i>
                         </button>
                     </div>
                 </div>
-                <div id="conditionsList" class="space-y-3 pb-6">
+                
+                <div id="conditionsList" class="space-y-1.5 pb-6">
                     <!-- Condições renderizadas aqui -->
                 </div>
             </div>
@@ -473,7 +444,7 @@
 
             const searchInput = document.getElementById('searchInput');
             if (searchInput && searchInput.value.trim() !== '') {
-                if (!e.target.closest('#conditionsList > div') && !e.target.closest('#search-container')) {
+                if (!e.target.closest('#conditionsList > div') && !e.target.closest('.sticky')) {
                     searchInput.value = '';
                     shouldRender = true;
                 }
@@ -489,7 +460,7 @@
 
         function handleSearchFocus() {
             setTimeout(() => {
-                const searchContainer = document.getElementById('search-container');
+                const searchContainer = document.getElementById('searchInput');
                 if (searchContainer) {
                     searchContainer.scrollIntoView({ behavior: 'smooth', block: 'start' });
                 }
@@ -570,8 +541,16 @@
             const query = document.getElementById('searchInput').value.toLowerCase().trim();
             const container = document.getElementById('conditionsList');
             const clearBtn = document.getElementById('clearSearchBtn');
+            const searchIcon = document.getElementById('searchIcon');
             
-            clearBtn.style.display = query.length > 0 ? 'block' : 'none'; 
+            if (query.length > 0) {
+                clearBtn.style.display = 'block';
+                searchIcon.style.display = 'none';
+            } else {
+                clearBtn.style.display = 'none';
+                searchIcon.style.display = 'block';
+            }
+
             container.innerHTML = '';
             
             const toRender = dbConditions.filter(c => { const hasMarks = conditionMarks[c.id].length > 0; if (query === '') return hasMarks; return c.name.toLowerCase().includes(query); });
