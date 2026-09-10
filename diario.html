@@ -131,13 +131,13 @@
         }
         .filter-ribbon {
             width: clamp(56px, 18vw, 70px);
-            height: 58px; /* Altura fixa para controlar perfeitamente o eixo vertical */
+            height: 58px;
             padding: 8px 2px 14px 2px; 
             clip-path: polygon(0 0, 100% 0, 100% 100%, 50% 82%, 0 100%);
             display: flex;
             flex-direction: column;
             align-items: center;
-            justify-content: center; /* Centraliza perfeitamente o conteúdo no meio da fita */
+            justify-content: center;
             gap: 2px;
             cursor: pointer;
             transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
@@ -152,14 +152,6 @@
         .filter-ribbon span.material-symbols-rounded { 
             font-size: 20px !important; 
             line-height: 1;
-        }
-        .filter-ribbon span:not(.material-symbols-rounded) { 
-            color: #b8b4a7; 
-            font-size: 9px; 
-            font-family: var(--font-ui); 
-            text-transform: uppercase; 
-            letter-spacing: 0.05em; 
-            font-weight: bold;
         }
         .filter-ribbon span:not(.material-symbols-rounded) { 
             color: #b8b4a7; 
@@ -529,11 +521,11 @@
                     <span>Todos</span>
                 </button>
                 <button onclick="setFilter('local')" id="flt-local" class="filter-ribbon ribbon-local" title="Locais">
-                    <span class="material-symbols-rounded text-[#c2a675]">place</span>
+                    <span class="material-symbols-rounded text-[#c2a675]">globe_location_pin</span>
                     <span>Local</span>
                 </button>
                 <button onclick="setFilter('npc')" id="flt-npc" class="filter-ribbon ribbon-npc" title="NPCs">
-                    <span class="material-symbols-rounded text-[#c2a675]">groups</span>
+                    <span class="material-symbols-rounded text-[#c2a675]">hail</span>
                     <span>NPC</span>
                 </button>
                 <button onclick="setFilter('demanda')" id="flt-demanda" class="filter-ribbon ribbon-demanda" title="Demandas">
@@ -541,7 +533,7 @@
                     <span>Demanda</span>
                 </button>
                 <button onclick="setFilter('personagem')" id="flt-personagem" class="filter-ribbon ribbon-personagem" title="Personagens">
-                    <span class="material-symbols-rounded text-[#c2a675]">badge</span>
+                    <span class="material-symbols-rounded text-[#c2a675]">hiking</span>
                     <span>Personagem</span>
                 </button>
             </div>
@@ -596,16 +588,16 @@
                 <span class="text-[10px] font-sans uppercase font-bold text-[#8c938f] block mb-1.5">Anexar Fitilho (Opcional)</span>
                 <div class="grid grid-cols-2 gap-2">
                     <button type="button" onclick="toggleModalTag('local', this)" class="tag-toggle-btn tgt-local" data-tag="local">
-                        <span class="material-symbols-rounded text-[16px]">place</span> Local
+                        <span class="material-symbols-rounded text-[16px]">globe_location_pin</span> Local
                     </button>
                     <button type="button" onclick="toggleModalTag('npc', this)" class="tag-toggle-btn tgt-npc" data-tag="npc">
-                        <span class="material-symbols-rounded text-[16px]">groups</span> NPC
+                        <span class="material-symbols-rounded text-[16px]">hail</span> NPC
                     </button>
                     <button type="button" onclick="toggleModalTag('demanda', this)" class="tag-toggle-btn tgt-demanda" data-tag="demanda">
-                        <span class="material-symbols-rounded text-[16px]">description</span> Demanda
+                        <span class="material-symbols-rounded text-[16px]">receipt_long</span> Demanda
                     </button>
                     <button type="button" onclick="toggleModalTag('personagem', this)" class="tag-toggle-btn tgt-personagem" data-tag="personagem">
-                        <span class="material-symbols-rounded text-[16px]">badge</span> Personagem
+                        <span class="material-symbols-rounded text-[16px]">hiking</span> Personagem
                     </button>
                 </div>
             </div>
@@ -741,10 +733,10 @@
 
         function getTagMarkup(tag) {
             switch(tag) {
-                case 'local': return '<div class="fitilho fitilho-local" title="Local"><span class="material-symbols-rounded text-[#c2a675] text-[14px]">place</span></div>';
-                case 'npc': return '<div class="fitilho fitilho-npc" title="NPC"><span class="material-symbols-rounded text-[#c2a675] text-[14px]">groups</span></div>';
-                case 'demanda': return '<div class="fitilho fitilho-demanda" title="Demanda"><span class="material-symbols-rounded text-[#c2a675] text-[14px]">description</span></div>';
-                case 'personagem': return '<div class="fitilho fitilho-personagem" title="Personagem"><span class="material-symbols-rounded text-[#c2a675] text-[14px]">badge</span></div>';
+                case 'local': return '<div class="fitilho fitilho-local" title="Local"><span class="material-symbols-rounded text-[#c2a675] text-[14px]">globe_location_pin</span></div>';
+                case 'npc': return '<div class="fitilho fitilho-npc" title="NPC"><span class="material-symbols-rounded text-[#c2a675] text-[14px]">hail</span></div>';
+                case 'demanda': return '<div class="fitilho fitilho-demanda" title="Demanda"><span class="material-symbols-rounded text-[#c2a675] text-[14px]">receipt_long</span></div>';
+                case 'personagem': return '<div class="fitilho fitilho-personagem" title="Personagem"><span class="material-symbols-rounded text-[#c2a675] text-[14px]">hiking</span></div>';
                 default: return '';
             }
         }

@@ -5,9 +5,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Kings of Ruin - Grupo</title>
     
+    <!-- Tipografia -->
     <link href="https://fonts.googleapis.com/css2?family=Alegreya+Sans:ital,wght@0,400;0,700;1,400&family=Cinzel:wght@600;700&family=Crimson+Pro:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+    
+    <!-- Google Material Symbols Rounded -->
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,400,1,0&display=swap" rel="stylesheet" />
+    
     <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://unpkg.com/@phosphor-icons/web"></script>
 
     <style>
         :root { 
@@ -15,6 +19,10 @@
             --font-title: 'Cinzel', serif;
             --font-ui: 'Alegreya Sans', sans-serif;
         }
+
+        /* Configuração Base para os Ícones Material */
+        .material-symbols-rounded { font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24; display: inline-block; vertical-align: middle; line-height: 1; }
+        .icon-outlined { font-variation-settings: 'FILL' 0, 'wght' 600, 'GRAD' 0, 'opsz' 24; }
 
         body {
             background-color: transparent;
@@ -40,11 +48,25 @@
         }
 
         ::-webkit-scrollbar { display: none; }
+        .hide-scrollbar::-webkit-scrollbar { display: none; }
+        .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
 
         h1, h2, h3, h4, .font-title { font-family: var(--font-title) !important; }
         .font-sans { font-family: var(--font-ui) !important; }
         .font-celtic { font-family: var(--font-celtic) !important; }
 
+        /* Remove as setinhas padrão de inputs de número */
+        input[type=number]::-webkit-inner-spin-button, 
+        input[type=number]::-webkit-outer-spin-button { 
+            -webkit-appearance: none; 
+            margin: 0; 
+        }
+        input[type=number] {
+            -moz-appearance: textfield;
+            appearance: textfield;
+        }
+
+        /* CABEÇALHO */
         .site-header {
             background: linear-gradient(180deg, rgba(7, 9, 8, 0.95) 0%, rgba(7, 9, 8, 0.85) 100%);
             border-bottom: 1px solid rgba(43, 54, 48, 0.5);
@@ -53,7 +75,7 @@
             justify-content: space-between;
             align-items: center;
             position: relative;
-            z-index: 25;
+            z-index: 50;
             backdrop-filter: blur(10px);
             -webkit-backdrop-filter: blur(10px);
         }
@@ -66,27 +88,45 @@
             filter: drop-shadow(0 2px 6px rgba(0, 0, 0, 0.7));
         }
 
-        .ost-player-slot {
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            padding: 6px 12px;
-            background: rgba(16, 20, 18, 0.7);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
-            border: 1px solid #2b3630;
-            border-radius: 9999px;
-            color: #c2a675;
-            font-family: var(--font-ui);
-            font-size: clamp(0.75rem, 2.5vw, 0.85rem);
-            font-weight: bold;
-            letter-spacing: 0.1em;
-            text-transform: uppercase;
-            box-shadow: inset 0 1px 3px rgba(0,0,0,0.8), 0 2px 6px rgba(0,0,0,0.6);
-            cursor: pointer;
-            transition: all 0.2s ease;
+        /* BOTÃO ECOS NO CABEÇALHO */
+        .music-player-slot {
+            display: flex; align-items: center; gap: 6px; padding: 4px 12px 4px 6px;
+            background: #060807; border: 1px solid #2b3630; border-radius: 9999px;
+            color: #c2a675; font-family: var(--font-ui); font-size: clamp(0.7rem, 2.5vw, 0.8rem);
+            font-weight: bold; letter-spacing: 0.1em; text-transform: uppercase;
+            box-shadow: inset 0 1px 3px rgba(0,0,0,0.9), 0 2px 6px rgba(0,0,0,0.6); cursor: pointer; transition: all 0.2s ease;
+        }
+        .music-player-slot:hover { border-color: #c2a675; background: #0a0d0b; }
+        .music-player-icon {
+            background: #1a211e; color: #c2a675; width: 26px; height: 26px; border-radius: 50%;
+            display: flex; align-items: center; justify-content: center; border: 1px solid #2b3630;
         }
 
+        /* PLAYER FLUTUANTE (POPOVER) */
+        .player-popover {
+            background: linear-gradient(180deg, #111613 0%, #050706 100%); border: 1px solid #2b3630;
+            border-top: 1px solid #3a453f; border-radius: 4px; width: 320px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.9), 0 0 15px rgba(194, 166, 117, 0.05);
+            position: absolute; top: 70px; right: 16px; z-index: 60; overflow: hidden;
+            transform-origin: top right; transition: all 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        .player-artwork-glow { width: 72px; height: 72px; border-radius: 50%; background: radial-gradient(circle, rgba(194, 166, 117, 0.15) 0%, transparent 70%); display: flex; align-items: center; justify-content: center; border: 1px solid rgba(194, 166, 117, 0.2); box-shadow: 0 0 15px rgba(0,0,0,0.5); flex-shrink: 0; }
+        .player-ctrl-btn { color: #8c938f; background: transparent; border: none; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: all 0.2s; padding: 0; }
+        .player-ctrl-btn:hover { color: #c2a675; transform: scale(1.05); }
+        .player-ctrl-btn:active { transform: scale(0.95); }
+        .player-play-btn { width: 52px; height: 52px; border-radius: 50%; background: linear-gradient(135deg, #d4b886 0%, #9c7f4c 100%); color: #060807; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 10px rgba(0,0,0,0.6), inset 1px 1px 2px rgba(255,255,255,0.4); border: 2px solid #111613; cursor: pointer; transition: all 0.2s; }
+        .player-play-btn:hover { filter: brightness(1.1); box-shadow: 0 4px 15px rgba(194,166,117,0.4); }
+        .player-play-btn:active { transform: scale(0.95); }
+        .player-muffle-btn { padding: 4px 12px; border: 1px solid #2b3630; border-radius: 999px; font-family: var(--font-ui); font-size: 10px; font-weight: bold; text-transform: uppercase; letter-spacing: 0.1em; color: #8c938f; background: #090b0a; cursor: pointer; transition: all 0.2s; }
+        .player-muffle-btn.active { background: #1a211e; color: #c2a675; border-color: #c2a675; box-shadow: 0 0 8px rgba(194,166,117,0.2); }
+        .player-overlay { position: fixed; inset: 0; z-index: 45; display: none; }
+        
+        .config-select { background: #050706; border: 1px solid #2b3630; color: #b8b4a7; outline: none; font-family: var(--font-title); border-radius: 3px; box-shadow: inset 0 1px 3px rgba(0,0,0,0.9); padding: 0 10px; appearance: none; }
+        .custom-slider { -webkit-appearance: none; appearance: none; width: 100%; background: transparent; outline: none; margin: 0; padding: 10px 0; }
+        .custom-slider::-webkit-slider-runnable-track { width: 100%; height: 8px; background: #050706; border: 1px solid #7a6345; border-radius: 4px; box-shadow: inset 0 1px 4px rgba(0,0,0,1); }
+        .custom-slider::-webkit-slider-thumb { -webkit-appearance: none; appearance: none; width: 20px; height: 20px; background: linear-gradient(135deg, #d4b886 0%, #9c7f4c 100%); border: 2px solid #111613; border-radius: 3px; cursor: pointer; transform: rotate(45deg); box-shadow: 3px 3px 6px rgba(0,0,0,0.8), inset 1px 1px 2px rgba(255,255,255,0.4); margin-top: -7px; transition: transform 0.1s; }
+
+        /* FICHAS DOS HERÓIS */
         .hero-card {
             background: #090b0a;
             border: 1px solid #2b3630;
@@ -98,7 +138,7 @@
             box-shadow: 0 0 12px rgba(194,166,117,0.18), inset 0 0 15px rgba(0,0,0,0.9);
         }
 
-        /* COMBOBOX CUSTOMIZADO COM SETA SUTIL */
+        /* COMBOBOX CUSTOMIZADO */
         .stat-select {
             background: #050706;
             border: 1px solid #2b3630;
@@ -142,17 +182,6 @@
             border-color: #c2a675;
             background: rgba(0,0,0,0.95);
             box-shadow: 0 0 6px rgba(194,166,117,0.4);
-        }
-
-        .attr-pill {
-            background: #060807;
-            border: 1px solid #1f2722;
-            padding: 5px 8px;
-            border-radius: 3px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            width: 100%;
         }
 
         .attr-icon-badge {
@@ -240,6 +269,10 @@
             color: #8c938f;
             cursor: pointer;
             transition: all 0.15s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 4px;
         }
         .status-toggle-pill.active {
             background: #141c17;
@@ -288,59 +321,85 @@
             color: #e0d5c1;
         }
 
-        .bottom-nav-container {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 4rem;
-            width: 100%;
-            max-width: 512px;
-            margin: 0 auto;
-            gap: clamp(2px, 1.5vw, 12px);
-            padding: 0 4px;
-        }
-        .bottom-nav-item {
-            width: clamp(54px, 18vw, 76px);
-            flex-shrink: 1;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            height: 100%;
-            padding: 0 2px;
-            transition: color 0.2s;
-        }
-        .bottom-nav-label {
-            font-size: clamp(10px, 2.7vw, 12px);
-            font-family: var(--font-ui);
-            text-transform: uppercase;
-            font-weight: 700;
-            letter-spacing: 0.01em;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            width: 100%;
-            text-align: center;
-            margin-top: 2px;
-            line-height: 1;
-        }
+        /* NAVEGAÇÃO INFERIOR */
+        .bottom-nav-container { display: flex; justify-content: center; align-items: center; height: 4rem; width: 100%; max-width: 512px; margin: 0 auto; gap: clamp(2px, 1.5vw, 12px); padding: 0 4px; }
+        .bottom-nav-item { width: clamp(54px, 18vw, 76px); flex-shrink: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; padding: 0 2px; transition: color 0.2s; }
+        .bottom-nav-label { font-size: clamp(10px, 2.7vw, 12px); font-family: var(--font-ui); text-transform: uppercase; font-weight: 700; letter-spacing: 0.01em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; width: 100%; text-align: center; margin-top: 2px; line-height: 1; }
     </style>
 </head>
 <body class="h-screen flex flex-col">
 
+    <!-- CABEÇALHO -->
     <header class="site-header flex-shrink-0">
         <img src="https://lh3.googleusercontent.com/d/1U3juHgIiAcpfSSQiW3nWN20MhMUx7tJR" alt="Kings of Ruin" class="header-logo-img">
-        <div class="ost-player-slot" title="Trilha Sonora">
-            <i class="ph-fill ph-music-notes text-base"></i>
-            <span>OST</span>
+        <div class="flex items-center gap-3">
+            <div class="music-player-slot" title="Controle de Áudio" onclick="togglePlayerMenu()">
+                <div class="music-player-icon"><span class="material-symbols-rounded text-[14px] animate-pulse">music_note_2</span></div>
+                <span>Ecos</span>
+            </div>
+            <a href="config.html" class="text-[#6d7872] hover:text-[#c2a675] transition-colors p-1 flex items-center justify-center" title="Configurações">
+                <span class="material-symbols-rounded text-[26px]">settings</span>
+            </a>
         </div>
     </header>
 
-    <main id="main-scroll" class="flex-1 overflow-y-auto w-full max-w-lg mx-auto z-10 flex flex-col pb-20 pt-2 px-3 space-y-3.5">
+    <!-- OVERLAY E PLAYER ECOS (POPOVER) -->
+    <div id="player-overlay" class="player-overlay" onclick="togglePlayerMenu()"></div>
+    <div id="player-panel" class="player-popover opacity-0 scale-95 pointer-events-none">
+        <div class="p-5 flex flex-col items-center">
+            <div class="flex items-center w-full gap-4 mb-5">
+                <div class="player-artwork-glow">
+                    <span class="material-symbols-rounded text-[32px] text-[#c2a675] opacity-80">speaker</span>
+                </div>
+                <div class="flex-1 min-w-0 flex flex-col gap-1.5">
+                    <label class="text-[9px] font-sans uppercase font-bold text-[#6d7872]">Playlist Ativa</label>
+                    <div class="relative w-full">
+                        <select class="config-select !h-[30px] !text-[14px] !pr-8 !bg-[#060807] !border-[#2b3630]">
+                            <option>Ecos de Ruína</option>
+                            <option>Sangue e Gelo</option>
+                        </select>
+                        <span class="material-symbols-rounded icon-outlined absolute right-2.5 top-1/2 -translate-y-1/2 text-[#4a5550] pointer-events-none text-[18px]">arrow_drop_down</span>
+                    </div>
+                    <span class="font-sans text-[12px] text-[#e0d5c1] font-bold truncate mt-1">♪ Faixa 1: Vento Gélido</span>
+                </div>
+            </div>
+            <div class="w-full mb-5 px-1">
+                <div class="w-full h-1 bg-[#1a211e] rounded-full overflow-hidden">
+                    <div class="w-1/3 h-full bg-[#c2a675] rounded-full"></div>
+                </div>
+                <div class="flex justify-between mt-1.5">
+                    <span class="font-sans text-[10px] text-[#6d7872] font-bold">1:24</span>
+                    <span class="font-sans text-[10px] text-[#6d7872] font-bold">-2:15</span>
+                </div>
+            </div>
+            <div class="flex items-center justify-center gap-8 mb-6">
+                <button class="player-ctrl-btn"><span class="material-symbols-rounded text-[32px]">skip_previous</span></button>
+                <button class="player-play-btn" id="main-play-btn" onclick="togglePlayState()">
+                    <span id="play-icon" class="material-symbols-rounded text-[28px]">play_arrow</span>
+                </button>
+                <button class="player-ctrl-btn"><span class="material-symbols-rounded text-[32px]">skip_next</span></button>
+            </div>
+            <div class="w-full pt-4 border-t border-[#141a17] space-y-4">
+                <div class="flex items-center gap-3">
+                    <span class="material-symbols-rounded text-[#6d7872] text-[20px]">volume_down</span>
+                    <input type="range" id="vol-slider" min="0" max="100" value="80" class="custom-slider flex-1" oninput="updateVolume(this.value)">
+                    <span class="material-symbols-rounded text-[#c2a675] text-[20px]">volume_up</span>
+                </div>
+                <div class="flex justify-center">
+                    <button id="muffle-btn" class="player-muffle-btn flex items-center justify-center gap-1" onclick="toggleMuffle()">
+                        <span class="material-symbols-rounded icon-outlined text-[14px]">mic</span> Atenuar P/ Narrar
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- CONTEÚDO PRINCIPAL (GRUPO) -->
+    <main id="main-scroll" class="flex-1 overflow-y-auto w-full max-w-lg mx-auto z-10 flex flex-col pb-24 pt-2 px-3 space-y-3.5">
         
         <div class="flex items-center justify-between px-1 mt-1 mb-1">
             <label id="screen-title-label" class="text-[15px] uppercase font-title tracking-widest text-[#6d7872] flex items-center gap-2 font-bold">
-                <i class="ph-fill ph-shield-chevron text-[20px]"></i> Integrantes da Expedição
+                <span class="material-symbols-rounded text-[20px]">shield</span> Integrantes da Expedição
             </label>
             <span id="screen-role-badge" class="text-[11px] font-sans text-[#8c938f] uppercase tracking-wider font-bold">Modo Cronista</span>
         </div>
@@ -353,14 +412,14 @@
             <h4 class="font-title text-[12px] text-[#6d7872] uppercase tracking-widest font-bold mb-3 text-center">Expansões da Campanha</h4>
             <div class="space-y-2">
                 
-                <div class="flex items-center justify-between p-3 bg-[#060807] border border-[#1f2722] rounded-sm cursor-pointer transition-all hover:border-[#ffffff] shadow-sm" onclick="toggleGlobalUnlock('ecos')">
-                    <span class="font-title text-[14.5px] text-[#ffffff] tracking-wider font-bold">Cartas de "Ecos da Ruína"</span>
-                    <i id="icon-ecos" class="ph-bold ph-envelope text-[#ffffff] text-[22px]"></i>
+                <div class="flex items-center justify-between p-3 bg-[#060807] border border-[#1f2722] rounded-sm cursor-pointer transition-all hover:border-[#ffffff] shadow-sm" onclick="toggleGlobalUnlock('serieF')">
+                    <span class="font-title text-[14.5px] text-[#ffffff] tracking-wider font-bold">Cartas Série "F"</span>
+                    <span id="icon-serief" class="material-symbols-rounded text-[#ffffff] text-[22px]">mail_lock</span>
                 </div>
 
-                <div class="flex items-center justify-between p-3 bg-[#060807] border border-[#1f2722] rounded-sm cursor-pointer transition-all hover:border-[#c2a675] shadow-sm" onclick="toggleGlobalUnlock('segredos')">
-                    <span class="font-title text-[14.5px] text-[#c2a675] tracking-wider font-bold">Cartas "Segredos"</span>
-                    <i id="icon-segredos" class="ph-bold ph-envelope text-[#c2a675] text-[22px]"></i>
+                <div class="flex items-center justify-between p-3 bg-[#060807] border border-[#1f2722] rounded-sm cursor-pointer transition-all hover:border-[#c2a675] shadow-sm" onclick="toggleGlobalUnlock('serieD')">
+                    <span class="font-title text-[14.5px] text-[#c2a675] tracking-wider font-bold">Cartas Série "D"</span>
+                    <span id="icon-seried" class="material-symbols-rounded text-[#c2a675] text-[22px]">mail_lock</span>
                 </div>
 
             </div>
@@ -368,7 +427,7 @@
 
     </main>
 
-    <!-- NAVEGAÇÃO INFERIOR DINÂMICA -->
+    <!-- NAVEGAÇÃO INFERIOR -->
     <nav class="fixed bottom-0 w-full z-30 bg-[#070908]/95 backdrop-blur-md border-t border-[#1a211e] pb-safe shadow-[0_-4px_20px_rgba(0,0,0,1)] flex-shrink-0">
         <div id="bottom-nav-bar" class="bottom-nav-container"></div>
     </nav>
@@ -392,25 +451,48 @@
             }
         }
 
-        // Variável de Estado das Expansões
-        let globalUnlocks = JSON.parse(localStorage.getItem('global_unlocks')) || { ecos: false, segredos: false };
+        function renderBottomNav() {
+            const navContainer = document.getElementById('bottom-nav-bar');
+            if (!navContainer) return;
+
+            if (userRole === 'cronista') {
+                navContainer.innerHTML = `
+                    <a href="cronica.html" class="bottom-nav-item text-[#6d7872] hover:text-[#b8b4a7]"><span class="material-symbols-rounded text-[26px]">hourglass_bottom</span><span class="bottom-nav-label">Crônica</span></a>
+                    <a href="condicoes.html" class="bottom-nav-item text-[#6d7872] hover:text-[#b8b4a7]"><span class="material-symbols-rounded text-[26px]">library_books</span><span class="bottom-nav-label">Condições</span></a>
+                    <a href="diario.html" class="bottom-nav-item text-[#6d7872] hover:text-[#b8b4a7]"><span class="material-symbols-rounded text-[26px]">auto_stories</span><span class="bottom-nav-label">Diário</span></a>
+                    <a href="grupo.html" class="bottom-nav-item text-[#c2a675]"><span class="material-symbols-rounded text-[26px]">groups_2</span><span class="bottom-nav-label">Grupo</span></a>
+                    <a href="salvar.html" class="bottom-nav-item text-[#6d7872] hover:text-[#b8b4a7]"><span class="material-symbols-rounded text-[26px]">book_6</span><span class="bottom-nav-label">Salvar</span></a>
+                `;
+            } else {
+                navContainer.innerHTML = `
+                    <a href="cronica.html" class="bottom-nav-item text-[#6d7872] hover:text-[#b8b4a7]"><span class="material-symbols-rounded text-[26px]">hourglass_bottom</span><span class="bottom-nav-label">Crônica</span></a>
+                    <a href="condicoes.html" class="bottom-nav-item text-[#6d7872] hover:text-[#b8b4a7]"><span class="material-symbols-rounded text-[26px]">library_books</span><span class="bottom-nav-label">Condições</span></a>
+                    <a href="diario.html" class="bottom-nav-item text-[#c2a675]"><span class="material-symbols-rounded text-[26px]">history_edu</span><span class="bottom-nav-label">Diário</span></a>
+                    <a href="grupo.html" class="bottom-nav-item text-[#c2a675]"><span class="material-symbols-rounded text-[26px]">sports_martial_arts</span><span class="bottom-nav-label">Personagem</span></a>
+                    <a href="exportar.html" class="bottom-nav-item text-[#6d7872] hover:text-[#b8b4a7]"><span class="material-symbols-rounded text-[26px]">share</span><span class="bottom-nav-label">Exportar</span></a>
+                `;
+            }
+        }
+
+        // Variável de Estado das Expansões (Séries F e D)
+        let globalUnlocks = JSON.parse(localStorage.getItem('global_unlocks_series')) || { serieF: false, serieD: false };
 
         function toggleGlobalUnlock(type) {
             globalUnlocks[type] = !globalUnlocks[type];
-            localStorage.setItem('global_unlocks', JSON.stringify(globalUnlocks));
+            localStorage.setItem('global_unlocks_series', JSON.stringify(globalUnlocks));
             renderGlobalUnlocks();
             renderHeroes();
         }
 
         function renderGlobalUnlocks() {
-            const iconEcos = document.getElementById('icon-ecos');
-            const iconSegredos = document.getElementById('icon-segredos');
+            const iconF = document.getElementById('icon-serief');
+            const iconD = document.getElementById('icon-seried');
             
-            if(iconEcos) {
-                iconEcos.className = globalUnlocks.ecos ? "ph-bold ph-envelope-open text-[#ffffff] text-[22px]" : "ph-bold ph-envelope text-[#ffffff] text-[22px]";
+            if(iconF) {
+                iconF.innerText = globalUnlocks.serieF ? "drafts" : "mail_lock";
             }
-            if(iconSegredos) {
-                iconSegredos.className = globalUnlocks.segredos ? "ph-bold ph-envelope-open text-[#c2a675] text-[22px]" : "ph-bold ph-envelope text-[#c2a675] text-[22px]";
+            if(iconD) {
+                iconD.innerText = globalUnlocks.serieD ? "drafts" : "mail_lock";
             }
         }
 
@@ -425,7 +507,6 @@
             }
         };
 
-        // Cartas Iniciais Padrão (De B1 a B10)
         const initialDeckB = Array.from({ length: 10 }, (_, i) => 'B' + (i + 1));
 
         const heroesData = [
@@ -491,13 +572,11 @@
             }
         ];
 
-        // MIGRATION SCRIPT: Prevenção de erro para formatos antigos
+        // MIGRATION SCRIPT
         heroesData.forEach(h => {
             if (h.isExpanded === undefined) h.isExpanded = false;
             if (h.playerName === undefined) h.playerName = '';
             if (h.location === undefined) h.location = '';
-            
-            // Migra para Alfanumérico e força os iniciais B
             if (h.decks.combat.length > 0 && typeof h.decks.combat[0] === 'number') {
                 h.decks.combat = [...initialDeckB];
                 h.decks.diplomacy = [...initialDeckB];
@@ -506,55 +585,6 @@
                 h.skills = { aggressiveness: ['', ''], empathy: ['', ''], courage: ['', ''], caution: ['', ''], practicality: ['', ''], spirituality: ['', ''] };
             }
         });
-
-        function renderBottomNav() {
-            const navContainer = document.getElementById('bottom-nav-bar');
-            if (!navContainer) return;
-
-            if (userRole === 'cronista') {
-                navContainer.innerHTML = `
-                    <a href="cronica.html" class="bottom-nav-item text-[#6d7872] hover:text-[#b8b4a7]">
-                        <i class="ph-fill ph-book-open text-[23px]"></i>
-                        <span class="bottom-nav-label">Crônica</span>
-                    </a>
-                    <a href="grupo.html" class="bottom-nav-item text-[#c2a675]">
-                        <i class="ph-fill ph-users-three text-[23px]"></i>
-                        <span class="bottom-nav-label">Grupo</span>
-                    </a>
-                    <a href="diario.html" class="bottom-nav-item text-[#6d7872] hover:text-[#b8b4a7]">
-                        <i class="ph-fill ph-feather text-[23px]"></i>
-                        <span class="bottom-nav-label">Diário</span>
-                    </a>
-                    <a href="salvar.html" class="bottom-nav-item text-[#6d7872] hover:text-[#b8b4a7]">
-                        <i class="ph-fill ph-archive text-[23px]"></i>
-                        <span class="bottom-nav-label">Salvar</span>
-                    </a>
-                    <a href="config.html" class="bottom-nav-item text-[#6d7872] hover:text-[#b8b4a7]">
-                        <i class="ph-fill ph-gear-six text-[23px]"></i>
-                        <span class="bottom-nav-label">Config.</span>
-                    </a>
-                `;
-            } else {
-                navContainer.innerHTML = `
-                    <a href="grupo.html" class="bottom-nav-item text-[#c2a675]">
-                        <i class="ph-fill ph-user-circle text-[23px]"></i>
-                        <span class="bottom-nav-label">Grupo</span>
-                    </a>
-                    <a href="diario.html" class="bottom-nav-item text-[#6d7872] hover:text-[#b8b4a7]">
-                        <i class="ph-fill ph-feather text-[23px]"></i>
-                        <span class="bottom-nav-label">Diário</span>
-                    </a>
-                    <a href="exportar.html" class="bottom-nav-item text-[#6d7872] hover:text-[#b8b4a7]">
-                        <i class="ph-fill ph-share-network text-[23px]"></i>
-                        <span class="bottom-nav-label">Exportar</span>
-                    </a>
-                    <a href="config.html" class="bottom-nav-item text-[#6d7872] hover:text-[#b8b4a7]">
-                        <i class="ph-fill ph-gear-six text-[23px]"></i>
-                        <span class="bottom-nav-label">Config.</span>
-                    </a>
-                `;
-            }
-        }
 
         function createOptionOptions(max, current) {
             let opts = '';
@@ -600,7 +630,6 @@
             if (hero && hero.skills && hero.skills[attrKey]) {
                 hero.skills[attrKey][slotIndex] = val;
             }
-            
             if (el && el.tagName === 'SELECT') {
                 if (val === '') {
                     el.classList.add('text-[#4a5550]', 'italic');
@@ -615,17 +644,14 @@
         function toggleDeckCard(heroId, deckType, cardId) {
             const hero = heroesData.find(h => h.id === heroId);
             if (!hero || !hero.decks) return;
-
             const list = hero.decks[deckType];
             const idx = list.indexOf(cardId);
-
             if (idx === -1) {
                 list.push(cardId);
-                list.sort(); // Mantém a ordem alfanumérica
+                list.sort(); 
             } else {
                 list.splice(idx, 1);
             }
-
             renderHeroes();
         }
 
@@ -696,29 +722,26 @@
                 catalog.forEach(s => {
                     opts += `<option value="${s}" ${s === val ? 'selected' : ''} class="bg-[#090b0a] text-[#c2a675] not-italic">${s}</option>`;
                 });
-                
                 const colorClass = val === '' ? 'text-[#4a5550] italic' : 'text-[#c2a675]';
-
                 return `
                     <div class="relative">
-                        <i class="ph-fill ph-sparkle text-[#4a5550] text-[11px] absolute left-1 top-1/2 -translate-y-1/2 z-10"></i>
-                        <select class="skill-input ${colorClass} !pl-[18px] !pr-4 appearance-none relative z-0 cursor-pointer" onchange="updateHeroSkill('${hero.id}', '${attrKey}', ${slotIndex}, this.value, this)">
+                        <span class="material-symbols-rounded text-[#4a5550] text-[12px] absolute left-1 top-1/2 -translate-y-1/2 z-10">star</span>
+                        <select class="skill-input ${colorClass} !pl-[20px] !pr-4 appearance-none relative z-0 cursor-pointer" onchange="updateHeroSkill('${hero.id}', '${attrKey}', ${slotIndex}, this.value, this)">
                             ${opts}
                         </select>
-                        <i class="ph-bold ph-caret-down absolute right-1 top-1/2 -translate-y-1/2 text-[#4a5550] pointer-events-none text-[10px] z-10"></i>
+                        <span class="material-symbols-rounded absolute right-1 top-1/2 -translate-y-1/2 text-[#4a5550] pointer-events-none text-[16px] z-10">arrow_drop_down</span>
                     </div>
                 `;
             } else {
                 return `
                     <div class="relative">
-                        <i class="ph-fill ph-sparkle text-[#4a5550] text-[11px] absolute left-1 top-1/2 -translate-y-1/2"></i>
-                        <input type="text" class="skill-input !pl-[18px]" placeholder="Perícia..." value="${val}" oninput="updateHeroSkill('${hero.id}', '${attrKey}', ${slotIndex}, this.value, this)">
+                        <span class="material-symbols-rounded text-[#4a5550] text-[12px] absolute left-1 top-1/2 -translate-y-1/2 z-10">star</span>
+                        <input type="text" class="skill-input !pl-[20px]" placeholder="Perícia..." value="${val}" oninput="updateHeroSkill('${hero.id}', '${attrKey}', ${slotIndex}, this.value, this)">
                     </div>
                 `;
             }
         }
 
-        // Função universal de renderização de Decks
         function buildDeckHtml(hero, deckType) {
             const renderRow = (letter, max, color) => {
                 let rowHtml = `<div class="flex flex-wrap items-center gap-1"><span class="w-[20px] text-center ${color} font-title font-bold text-[14px]">${letter}</span>`;
@@ -736,11 +759,10 @@
             html += renderRow('B', 10, 'text-[#c2a675]');
             html += renderRow('E', 10, 'text-[#c2a675]');
             
-            if (globalUnlocks.segredos) {
-                // Letra D em dourado âmbar marcante para diferenciar
+            if (globalUnlocks.serieD) {
                 html += renderRow('D', 5, 'text-[#fbbf24]');
             }
-            if (globalUnlocks.ecos) {
+            if (globalUnlocks.serieF) {
                 html += renderRow('F', 5, 'text-[#ffffff]');
             }
             html += `</div>`;
@@ -757,10 +779,10 @@
             let heroesToRender = heroesData;
             if (userRole === 'jogador' && currentSinglePlayerHeroId) {
                 heroesToRender = heroesData.filter(h => h.id === currentSinglePlayerHeroId);
-                if (titleLabel) titleLabel.innerHTML = '<i class="ph-fill ph-user-circle text-[20px]"></i> Minha Ficha de Herói';
+                if (titleLabel) titleLabel.innerHTML = '<span class="material-symbols-rounded text-[20px]">person</span> Minha Ficha de Herói';
                 if (roleBadge) roleBadge.innerText = activePlayerName ? `Jogador (${activePlayerName})` : 'Modo Jogador';
             } else {
-                if (titleLabel) titleLabel.innerHTML = '<i class="ph-fill ph-shield-chevron text-[20px]"></i> Integrantes da Expedição';
+                if (titleLabel) titleLabel.innerHTML = '<span class="material-symbols-rounded text-[20px]">shield</span> Integrantes da Expedição';
                 if (roleBadge) roleBadge.innerText = 'Modo Cronista';
             }
 
@@ -778,15 +800,15 @@
                             <div class="flex items-center justify-between gap-2">
                                 <input type="text" class="note-input !text-[0.95rem] !border-none !p-0 placeholder-[#4a5550]" placeholder="Nome do item..." value="${item.name}" oninput="updateItemName('${h.id}', '${item.id}', this.value)">
                                 <button onclick="removeItem('${h.id}', '${item.id}')" class="text-[#6d7872] hover:text-[#ff6b6b] p-0.5" title="Remover item">
-                                    <i class="ph-bold ph-trash text-sm"></i>
+                                    <span class="material-symbols-rounded text-[18px]">delete</span>
                                 </button>
                             </div>
                             <div class="flex items-center gap-1.5">
                                 <button onclick="toggleItemEquip('${h.id}', '${item.id}')" class="status-toggle-pill ${item.equipped ? 'active' : ''}">
-                                    ${item.equipped ? 'Equipado' : 'Mochila'}
+                                    ${item.equipped ? '<span class="material-symbols-rounded text-[14px]">check_circle</span> Equipado' : '<span class="material-symbols-rounded text-[14px]">backpack</span> Mochila'}
                                 </button>
                                 <button onclick="toggleItemSpent('${h.id}', '${item.id}')" class="status-toggle-pill ${item.spent ? 'exhausted' : ''}">
-                                    ${item.spent ? 'Usado' : 'Pronto'}
+                                    ${item.spent ? '<span class="material-symbols-rounded text-[14px]">battery_0_bar</span> Usado' : '<span class="material-symbols-rounded text-[14px]">battery_full</span> Pronto'}
                                 </button>
                             </div>
                         </div>
@@ -798,11 +820,11 @@
                     secretsHtml += `
                         <div class="entity-item-card flex items-center justify-between gap-2">
                             <div class="flex items-center gap-2 flex-1 min-w-0">
-                                <input type="text" class="stat-input !w-[44px] !h-[26px] !text-xs !p-0" placeholder="Nº" value="${sec.number}" oninput="updateSecretField('${h.id}', '${sec.id}', 'number', this.value)">
+                                <input type="number" class="stat-input !w-[44px] !h-[26px] !text-xs !p-0" placeholder="Nº" value="${sec.number}" oninput="updateSecretField('${h.id}', '${sec.id}', 'number', this.value)">
                                 <input type="text" class="note-input !text-[0.95rem] !border-none !p-0 placeholder-[#4a5550] flex-1" placeholder="Descrição do segredo..." value="${sec.desc}" oninput="updateSecretField('${h.id}', '${sec.id}', 'desc', this.value)">
                             </div>
                             <button onclick="removeSecret('${h.id}', '${sec.id}')" class="text-[#6d7872] hover:text-[#ff6b6b] p-0.5" title="Remover segredo">
-                                <i class="ph-bold ph-trash text-sm"></i>
+                                <span class="material-symbols-rounded text-[18px]">delete</span>
                             </button>
                         </div>
                     `;
@@ -810,7 +832,7 @@
 
                 html += `
                     <div id="hero-card-${h.id}" class="hero-card ${h.isExpanded ? 'expanded' : ''} shadow-md flex flex-col transition-all">
-                        
+
                         <!-- CABEÇALHO DO PERSONAGEM (Toggle de Expansão) -->
                         <div class="flex items-center justify-between p-3.5 cursor-pointer ${h.isExpanded ? 'bg-[#0a0d0b] border-b border-[#141a17]' : ''}" onclick="toggleHeroCard('${h.id}')">
                             <div class="flex-1 pr-2">
@@ -820,12 +842,12 @@
                                 </div>
                                 <div class="mt-2 flex items-center gap-2 text-[#b8b4a7] font-celtic text-[15.5px]">
                                     <span class="flex items-center gap-1 opacity-80">
-                                        <i class="ph-fill ph-user text-[#6d7872] text-[16px]"></i> ${h.playerName || 'S/ Jogador'}
+                                        <span class="material-symbols-rounded text-[#6d7872] text-[16px]">person</span> ${h.playerName || 'S/ Jogador'}
                                     </span>
                                     <span class="text-[#2b3630] text-[12px] px-1">✦</span>
-                                    
+
                                     <div class="flex items-center gap-1 opacity-90">
-                                        <i class="ph-fill ph-map-pin text-[#6d7872] text-[16px]"></i> Local
+                                        <span class="material-symbols-rounded text-[#6d7872] text-[16px]">place</span> Local
                                         ${h.isExpanded ? `
                                             <input type="text" value="${h.location}" onclick="event.stopPropagation()" oninput="updateHeroField('${h.id}', 'location', this.value)" class="bg-transparent border-b border-[#c2a675] text-[#c2a675] font-title font-bold text-[14px] w-[46px] text-center outline-none focus:border-[#c2a675] p-0 m-0 ml-1 h-[20px] transition-colors" placeholder="?">
                                         ` : `
@@ -834,48 +856,45 @@
                                     </div>
                                 </div>
                             </div>
-                            <i class="ph-bold ${h.isExpanded ? 'ph-caret-up text-[#c2a675]' : 'ph-caret-down text-[#6d7872]'} text-[22px]"></i>
+                            <span class="material-symbols-rounded ${h.isExpanded ? 'text-[#c2a675]' : 'text-[#6d7872]'} text-[28px] transition-transform ${h.isExpanded ? 'rotate-180' : ''}">keyboard_arrow_down</span>
                         </div>
 
                         <!-- GAVETA (Corpo da Ficha Ocultável) -->
                         ${h.isExpanded ? `
                             <div class="p-3.5 space-y-3">
-                                
+
                                 <!-- 1. TRILHAS -->
                                 <div>
                                     <div class="flex items-center gap-2 border-b border-[#1f2722] pb-1.5 mb-2.5">
-                                        <i class="ph-fill ph-diamond text-[#8c938f] text-[10px]"></i>
+                                        <span class="material-symbols-rounded text-[#8c938f] text-[12px]">route</span>
                                         <h4 class="font-title text-[12.5px] text-[#c2a675] uppercase tracking-widest font-bold">Trilhas</h4>
                                     </div>
                                     <div class="grid grid-cols-3 gap-1.5">
-                                        <!-- Saúde -->
                                         <div class="bg-[#050706] border border-[#1e2621] px-1 py-1 rounded flex items-center gap-1 shadow-sm">
                                             <img src="asset/icons/health.png" alt="Saúde" class="w-7 h-7 object-contain flex-shrink-0" onerror="this.src='https://placehold.co/28x28/111/ef4444?text=S'">
                                             <div class="relative flex-1">
                                                 <select onchange="updateHeroTrack('${h.id}', 'health', this.value)" class="stat-select !h-[28px] !text-[1.2rem] !p-0 !pr-4 w-full">
                                                     ${createOptionOptions(15, h.tracks.health)}
                                                 </select>
-                                                <i class="ph-bold ph-caret-down absolute right-1 top-1/2 -translate-y-1/2 text-[#4a5550] pointer-events-none text-[12px]"></i>
+                                                <span class="material-symbols-rounded absolute right-1 top-1/2 -translate-y-1/2 text-[#4a5550] pointer-events-none text-[16px]">arrow_drop_down</span>
                                             </div>
                                         </div>
-                                        <!-- Energia -->
                                         <div class="bg-[#050706] border border-[#1e2621] px-1 py-1 rounded flex items-center gap-1 shadow-sm">
                                             <img src="asset/icons/energy.png" alt="Energia" class="w-7 h-7 object-contain flex-shrink-0" onerror="this.src='https://placehold.co/28x28/111/eab308?text=E'">
                                             <div class="relative flex-1">
                                                 <select onchange="updateHeroTrack('${h.id}', 'energy', this.value)" class="stat-select !h-[28px] !text-[1.2rem] !p-0 !pr-4 w-full">
                                                     ${createOptionOptions(15, h.tracks.energy)}
                                                 </select>
-                                                <i class="ph-bold ph-caret-down absolute right-1 top-1/2 -translate-y-1/2 text-[#4a5550] pointer-events-none text-[12px]"></i>
+                                                <span class="material-symbols-rounded absolute right-1 top-1/2 -translate-y-1/2 text-[#4a5550] pointer-events-none text-[16px]">arrow_drop_down</span>
                                             </div>
                                         </div>
-                                        <!-- Pavor -->
                                         <div class="bg-[#050706] border border-[#1e2621] px-1 py-1 rounded flex items-center gap-1 shadow-sm">
                                             <img src="asset/icons/terror.png" alt="Pavor" class="w-7 h-7 object-contain flex-shrink-0" onerror="this.src='https://placehold.co/28x28/111/a855f7?text=P'">
                                             <div class="relative flex-1">
                                                 <select onchange="updateHeroTrack('${h.id}', 'terror', this.value)" class="stat-select !h-[28px] !text-[1.2rem] !p-0 !pr-4 w-full">
                                                     ${createOptionOptions(15, h.tracks.terror)}
                                                 </select>
-                                                <i class="ph-bold ph-caret-down absolute right-1 top-1/2 -translate-y-1/2 text-[#4a5550] pointer-events-none text-[12px]"></i>
+                                                <span class="material-symbols-rounded absolute right-1 top-1/2 -translate-y-1/2 text-[#4a5550] pointer-events-none text-[16px]">arrow_drop_down</span>
                                             </div>
                                         </div>
                                     </div>
@@ -884,7 +903,7 @@
                                 <!-- 2. RECURSOS -->
                                 <div class="pt-2">
                                     <div class="flex items-center gap-2 border-b border-[#1f2722] pb-1.5 mb-2.5">
-                                        <i class="ph-fill ph-diamond text-[#8c938f] text-[10px]"></i>
+                                        <span class="material-symbols-rounded text-[#8c938f] text-[12px]">package_2</span>
                                         <h4 class="font-title text-[12.5px] text-[#c2a675] uppercase tracking-widest font-bold">Recursos</h4>
                                     </div>
                                     <div class="grid grid-cols-4 gap-2">
@@ -910,10 +929,10 @@
                                 <!-- 3. ATRIBUTOS & PERÍCIAS -->
                                 <div class="pt-2">
                                     <div class="flex items-center gap-2 border-b border-[#1f2722] pb-1.5 mb-2.5">
-                                        <i class="ph-fill ph-diamond text-[#8c938f] text-[10px]"></i>
+                                        <span class="material-symbols-rounded text-[#8c938f] text-[12px]">clinical_notes</span>
                                         <h4 class="font-title text-[12.5px] text-[#c2a675] uppercase tracking-widest font-bold">Atributos & Perícias</h4>
                                     </div>
-                                    
+
                                     <div class="grid grid-cols-2 gap-2">
                                         <!-- AGR -->
                                         <div class="bg-[#060807] border border-[#1f2722] p-1.5 rounded-[3px] flex flex-col gap-1.5 shadow-sm">
@@ -926,7 +945,7 @@
                                                     <select onchange="updateHeroAttr('${h.id}', 'aggressiveness', this.value)" class="stat-select !h-[26px] !w-[40px] !text-sm !pr-4">
                                                         ${createOptionOptions(5, h.attributes.aggressiveness)}
                                                     </select>
-                                                    <i class="ph-bold ph-caret-down absolute right-1.5 top-1/2 -translate-y-1/2 text-[#4a5550] pointer-events-none text-[10px]"></i>
+                                                    <span class="material-symbols-rounded absolute right-1 top-1/2 -translate-y-1/2 text-[#4a5550] pointer-events-none text-[16px]">arrow_drop_down</span>
                                                 </div>
                                             </div>
                                             <div class="w-full flex flex-col gap-1">
@@ -945,7 +964,7 @@
                                                     <select onchange="updateHeroAttr('${h.id}', 'empathy', this.value)" class="stat-select !h-[26px] !w-[40px] !text-sm !pr-4">
                                                         ${createOptionOptions(5, h.attributes.empathy)}
                                                     </select>
-                                                    <i class="ph-bold ph-caret-down absolute right-1.5 top-1/2 -translate-y-1/2 text-[#4a5550] pointer-events-none text-[10px]"></i>
+                                                    <span class="material-symbols-rounded absolute right-1 top-1/2 -translate-y-1/2 text-[#4a5550] pointer-events-none text-[16px]">arrow_drop_down</span>
                                                 </div>
                                             </div>
                                             <div class="w-full flex flex-col gap-1">
@@ -964,7 +983,7 @@
                                                     <select onchange="updateHeroAttr('${h.id}', 'courage', this.value)" class="stat-select !h-[26px] !w-[40px] !text-sm !pr-4">
                                                         ${createOptionOptions(5, h.attributes.courage)}
                                                     </select>
-                                                    <i class="ph-bold ph-caret-down absolute right-1.5 top-1/2 -translate-y-1/2 text-[#4a5550] pointer-events-none text-[10px]"></i>
+                                                    <span class="material-symbols-rounded absolute right-1 top-1/2 -translate-y-1/2 text-[#4a5550] pointer-events-none text-[16px]">arrow_drop_down</span>
                                                 </div>
                                             </div>
                                             <div class="w-full flex flex-col gap-1">
@@ -983,7 +1002,7 @@
                                                     <select onchange="updateHeroAttr('${h.id}', 'caution', this.value)" class="stat-select !h-[26px] !w-[40px] !text-sm !pr-4">
                                                         ${createOptionOptions(5, h.attributes.caution)}
                                                     </select>
-                                                    <i class="ph-bold ph-caret-down absolute right-1.5 top-1/2 -translate-y-1/2 text-[#4a5550] pointer-events-none text-[10px]"></i>
+                                                    <span class="material-symbols-rounded absolute right-1 top-1/2 -translate-y-1/2 text-[#4a5550] pointer-events-none text-[16px]">arrow_drop_down</span>
                                                 </div>
                                             </div>
                                             <div class="w-full flex flex-col gap-1">
@@ -1002,7 +1021,7 @@
                                                     <select onchange="updateHeroAttr('${h.id}', 'practicality', this.value)" class="stat-select !h-[26px] !w-[40px] !text-sm !pr-4">
                                                         ${createOptionOptions(5, h.attributes.practicality)}
                                                     </select>
-                                                    <i class="ph-bold ph-caret-down absolute right-1.5 top-1/2 -translate-y-1/2 text-[#4a5550] pointer-events-none text-[10px]"></i>
+                                                    <span class="material-symbols-rounded absolute right-1 top-1/2 -translate-y-1/2 text-[#4a5550] pointer-events-none text-[16px]">arrow_drop_down</span>
                                                 </div>
                                             </div>
                                             <div class="w-full flex flex-col gap-1">
@@ -1021,7 +1040,7 @@
                                                     <select onchange="updateHeroAttr('${h.id}', 'spirituality', this.value)" class="stat-select !h-[26px] !w-[40px] !text-sm !pr-4">
                                                         ${createOptionOptions(5, h.attributes.spirituality)}
                                                     </select>
-                                                    <i class="ph-bold ph-caret-down absolute right-1.5 top-1/2 -translate-y-1/2 text-[#4a5550] pointer-events-none text-[10px]"></i>
+                                                    <span class="material-symbols-rounded absolute right-1 top-1/2 -translate-y-1/2 text-[#4a5550] pointer-events-none text-[16px]">arrow_drop_down</span>
                                                 </div>
                                             </div>
                                             <div class="w-full flex flex-col gap-1">
@@ -1035,17 +1054,17 @@
                                 <!-- 4. BARALHOS & INVENTÁRIO -->
                                 <div class="pt-2">
                                     <div class="flex items-center gap-2 border-b border-[#1f2722] pb-1.5 mb-2.5">
-                                        <i class="ph-fill ph-diamond text-[#8c938f] text-[10px]"></i>
+                                        <span class="material-symbols-rounded text-[#8c938f] text-[12px]">playing_cards</span>
                                         <h4 class="font-title text-[12.5px] text-[#c2a675] uppercase tracking-widest font-bold">Baralhos & Inventário</h4>
                                     </div>
-                                    
+
                                     <div class="p-2.5 bg-[#050706] border border-[#1e2621] rounded space-y-3 shadow-sm">
-                                        
+
                                         <!-- COMBATE -->
                                         <div>
                                             <div class="flex items-center justify-between mb-1.5">
                                                 <span class="font-sans text-[12px] font-bold text-[#ba4a1a] uppercase flex items-center gap-1">
-                                                    <i class="ph-fill ph-sword"></i> Baralho de Combate
+                                                    <span class="material-symbols-rounded text-[16px]">swords</span> Baralho de Combate
                                                 </span>
                                                 <span class="font-sans text-[11px] font-bold text-[#8c938f]">
                                                     <strong class="text-[#ba4a1a]">${h.decks.combat.length}</strong> ativas
@@ -1058,7 +1077,7 @@
                                         <div class="pt-2 border-t border-[#141a17]">
                                             <div class="flex items-center justify-between mb-1.5">
                                                 <span class="font-sans text-[12px] font-bold text-[#b59263] uppercase flex items-center gap-1">
-                                                    <i class="ph-fill ph-chats-circle"></i> Baralho de Diplomacia
+                                                    <span class="material-symbols-rounded text-[16px]">conversation</span> Baralho de Diplomacia
                                                 </span>
                                                 <span class="font-sans text-[11px] font-bold text-[#8c938f]">
                                                     <strong class="text-[#b59263]">${h.decks.diplomacy.length}</strong> ativas
@@ -1071,7 +1090,7 @@
                                         <div class="pt-2 border-t border-[#141a17] space-y-2">
                                             <div class="flex items-center justify-between">
                                                 <span class="font-title text-[11.5px] uppercase text-[#c2a675] font-bold flex items-center gap-1">
-                                                    <i class="ph-fill ph-shield"></i> Itens do Personagem
+                                                    <span class="material-symbols-rounded text-[16px]">money_bag</span> Itens do Personagem
                                                 </span>
                                                 <button type="button" onclick="addItem('${h.id}')" class="text-[10.5px] font-sans font-bold uppercase tracking-wider px-2 py-0.5 rounded bg-[#101613] border border-[#2b3630] text-[#c2a675] hover:border-[#c2a675]">
                                                     + Adicionar Item
@@ -1086,7 +1105,7 @@
                                         <div class="pt-2 border-t border-[#141a17] space-y-2">
                                             <div class="flex items-center justify-between">
                                                 <span class="font-title text-[11.5px] uppercase text-[#c2a675] font-bold flex items-center gap-1">
-                                                    <i class="ph-fill ph-key"></i> Segredos Adquiridos
+                                                    <span class="material-symbols-rounded text-[16px]">vpn_key</span> Segredos Adquiridos
                                                 </span>
                                                 <button type="button" onclick="addSecret('${h.id}')" class="text-[10.5px] font-sans font-bold uppercase tracking-wider px-2 py-0.5 rounded bg-[#101613] border border-[#2b3630] text-[#c2a675] hover:border-[#c2a675]">
                                                     + Adicionar Segredo
@@ -1107,6 +1126,52 @@
             });
 
             container.innerHTML = html;
+        }
+
+        // --- SISTEMA FLUTUANTE DE ECOS ---
+        let isPlaying = false;
+        let isMuffled = false;
+        let preMuffleVolume = 80;
+
+        function togglePlayerMenu() {
+            const panel = document.getElementById('player-panel');
+            const overlay = document.getElementById('player-overlay');
+            if (panel.classList.contains('opacity-0')) {
+                overlay.style.display = 'block';
+                panel.classList.remove('opacity-0', 'scale-95', 'pointer-events-none');
+                panel.classList.add('opacity-100', 'scale-100', 'pointer-events-auto');
+            } else {
+                overlay.style.display = 'none';
+                panel.classList.remove('opacity-100', 'scale-100', 'pointer-events-auto');
+                panel.classList.add('opacity-0', 'scale-95', 'pointer-events-none');
+            }
+        }
+
+        function togglePlayState() {
+            isPlaying = !isPlaying;
+            const icon = document.getElementById('play-icon');
+            icon.innerText = isPlaying ? "pause" : "play_arrow";
+        }
+
+        function toggleMuffle() {
+            const muffleBtn = document.getElementById('muffle-btn');
+            const volSlider = document.getElementById('vol-slider');
+            isMuffled = !isMuffled;
+            if(isMuffled) {
+                preMuffleVolume = volSlider.value;
+                volSlider.value = 15; 
+                muffleBtn.classList.add('active');
+            } else {
+                volSlider.value = preMuffleVolume; 
+                muffleBtn.classList.remove('active');
+            }
+        }
+
+        function updateVolume(val) {
+            if(isMuffled) {
+                isMuffled = false;
+                document.getElementById('muffle-btn').classList.remove('active');
+            }
         }
 
         window.onload = () => {
