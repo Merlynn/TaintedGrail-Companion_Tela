@@ -20,7 +20,6 @@
             --font-ui: 'Alegreya Sans', sans-serif;
         }
 
-        /* Configuração Base para os Ícones Material */
         .material-symbols-rounded { font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24; display: inline-block; vertical-align: middle; line-height: 1; }
         .icon-outlined { font-variation-settings: 'FILL' 0, 'wght' 600, 'GRAD' 0, 'opsz' 24; }
 
@@ -103,10 +102,16 @@
         @keyframes pulse-red { 0%, 100% { box-shadow: inset 0 0 10px rgba(0,0,0,0.8), 0 0 5px rgba(158,21,21,0.3); } 50% { box-shadow: inset 0 0 10px rgba(0,0,0,0.8), 0 0 12px rgba(158,21,21,0.8); } }
         
         .slots-row-container { display: flex; align-items: center; justify-content: flex-start; gap: clamp(2px, 0.8vw, 4px); width: 100%; overflow-x: auto; padding-bottom: 4px; }
-        .slot-btn { position: relative; flex: 1 1 0px; min-width: clamp(21px, 6vw, 29px); max-width: 32px; height: clamp(24px, 6.8vw, 30px); background: #070908; border: 1px solid #2b3630; box-shadow: inset 0 2px 4px rgba(0,0,0,1); color: #6d7872; display: flex; align-items: center; justify-content: center; font-family: var(--font-title); font-weight: 700; font-size: clamp(11.5px, 3.2vw, 13.5px); border-radius: 3px; transition: all 0.15s; padding: 0; flex-shrink: 0; line-height: 1; }
+        
+        /* A slot-btn agora é uma DIV para evitar conflitos de focus no mobile com o Input in-line */
+        .slot-btn { position: relative; flex: 1 1 0px; min-width: clamp(21px, 6vw, 29px); max-width: 32px; height: clamp(24px, 6.8vw, 30px); background: #070908; border: 1px solid #2b3630; box-shadow: inset 0 2px 4px rgba(0,0,0,1); color: #6d7872; display: flex; align-items: center; justify-content: center; font-family: var(--font-title); font-weight: 700; font-size: clamp(11.5px, 3.2vw, 13.5px); border-radius: 3px; transition: all 0.15s; padding: 0; flex-shrink: 0; line-height: 1; overflow: hidden; cursor: pointer; user-select: none; }
         .slot-btn.filled { background: #450606; border-color: #9e1515; color: #b8b4a7; box-shadow: inset 0 0 10px rgba(0,0,0,0.8), 0 0 5px rgba(158,21,21,0.3); }
         .slot-btn.expanded { border-color: #c2a675; box-shadow: inset 0 0 10px rgba(0,0,0,0.8), 0 0 5px rgba(194,166,117,0.4); }
         .slot-btn.pending-delete { border-color: #ff3333; animation: pulse-red 1s infinite; }
+
+        /* Slot Aberto para Condições Livres */
+        .slot-btn.open-slot { border-style: dashed; border-color: #3a453f; color: #4a5550; background: transparent; }
+        .slot-btn.open-slot:hover { border-color: #c2a675; color: #c2a675; }
 
         /* MARCA DE NOTA (TRIÂNGULO DOURADO) */
         .note-marker { color: #c2a675 !important; font-style: italic; text-shadow: 0 0 5px rgba(194,166,117,0.4); }
@@ -205,7 +210,7 @@
         <div class="z-20 flex-shrink-0 relative pointer-events-auto">
             <div class="bg-[#070908]/95 backdrop-blur-md pt-1 pb-3 relative z-10 border-b border-[#1a211e] shadow-[0_4px_12px_rgba(0,0,0,0.5)]">
                 <div class="search-container">
-                    <input type="text" id="searchInput" oninput="renderConditions()" onfocus="handleSearchFocus()" class="search-input-classic" placeholder="Buscar condição (ex: Abastecimento)...">
+                    <input type="text" id="searchInput" oninput="renderConditions()" onfocus="handleSearchFocus()" class="search-input-classic" placeholder="Buscar condição (ex: Sobreviventes)...">
                     <span id="searchIcon" class="material-symbols-rounded search-icon-classic">search</span>
                     <button id="clearSearchBtn" onclick="clearSearch()" class="search-clear-btn">
                         <span class="material-symbols-rounded">close</span>
@@ -242,12 +247,14 @@
                 navContainer.innerHTML = `
                     <a href="cronica.html" class="bottom-nav-item text-[#6d7872] hover:text-[#b8b4a7]"><span class="material-symbols-rounded text-[26px]">hourglass_bottom</span><span class="bottom-nav-label">Crônica</span></a>
                     <a href="condicoes.html" class="bottom-nav-item text-[#c2a675]"><span class="material-symbols-rounded text-[26px]">library_books</span><span class="bottom-nav-label">Condições</span></a>
-                    <a href="diario.html" class="bottom-nav-item text-[#6d7872] hover:text-[#b8b4a7]"><span class="material-symbols-rounded text-[26px]">history_edu</span><span class="bottom-nav-label">Diário</span></a>
+                    <a href="diario.html" class="bottom-nav-item text-[#6d7872] hover:text-[#b8b4a7]"><span class="material-symbols-rounded text-[26px]">auto_stories</span><span class="bottom-nav-label">Diário</span></a>
                     <a href="grupo.html" class="bottom-nav-item text-[#6d7872] hover:text-[#b8b4a7]"><span class="material-symbols-rounded text-[26px]">groups_2</span><span class="bottom-nav-label">Grupo</span></a>
                     <a href="salvar.html" class="bottom-nav-item text-[#6d7872] hover:text-[#b8b4a7]"><span class="material-symbols-rounded text-[26px]">book_6</span><span class="bottom-nav-label">Salvar</span></a>
                 `;
             } else {
                 navContainer.innerHTML = `
+                    <a href="cronica.html" class="bottom-nav-item text-[#6d7872] hover:text-[#b8b4a7]"><span class="material-symbols-rounded text-[26px]">hourglass_bottom</span><span class="bottom-nav-label">Crônica</span></a>
+                    <a href="condicoes.html" class="bottom-nav-item text-[#c2a675]"><span class="material-symbols-rounded text-[26px]">library_books</span><span class="bottom-nav-label">Condições</span></a>
                     <a href="diario.html" class="bottom-nav-item text-[#6d7872] hover:text-[#b8b4a7]"><span class="material-symbols-rounded text-[26px]">history_edu</span><span class="bottom-nav-label">Diário</span></a>                    
                     <a href="grupo.html" class="bottom-nav-item text-[#6d7872] hover:text-[#b8b4a7]"><span class="material-symbols-rounded text-[26px]">sports_martial_arts</span><span class="bottom-nav-label">Personagem</span></a>
                     <a href="exportar.html" class="bottom-nav-item text-[#6d7872] hover:text-[#b8b4a7]"><span class="material-symbols-rounded text-[26px]">share</span><span class="bottom-nav-label">Exportar</span></a>
@@ -255,14 +262,16 @@
             }
         }
 
-        /* LÓGICA DE CONDIÇÕES */
-        let conditionMarks = {}; 
-        let conditionNotes = {}; 
-        let expandedNote = {}; 
-        let pendingDelete = null; 
-
-        // Banco de Dados Mock
+        /* BANCO DE DADOS COMPLETO */
         const dbConditions = [
+            // Condições Livres (Sem Numeral Predefinido)
+            { id: "free_1", name: "Sobreviventes do Ermo", isFree: true, slotCount: 3 },
+            { id: "free_2", name: "Andarilhos das Brumas", isFree: true, slotCount: 6 },
+            { id: "free_3", name: "Vozes da Escuridão", isFree: true, slotCount: 4 },
+            { id: "free_4", name: "Pacto dos Esquecidos", isFree: true, slotCount: 3 },
+            { id: "free_5", name: "Segredos Enterrados", isFree: true, slotCount: 5 },
+
+            // Predefinidas
             { id: "c1", name: "Abandonados", nums: [1, 2] },
             { id: "c2", name: "Abastecimento", nums: [1, 2, 3, 4, 5, 6, 7, 8, 9] },
             { id: "c3", name: "Coração de Gelo", nums: [2, 1, 3, 4, 5, 6, 7, 8, 9, 10] },
@@ -276,21 +285,37 @@
             { id: "c11", name: "Topografia", nums: [1, 7, 6, 5, 4, 10, 9, 8, 3, 2] }
         ];
 
+        let conditionMarks = {}; 
+        let conditionNotes = {}; 
+        let expandedNote = {}; 
+        let pendingDelete = null; 
+
         dbConditions.forEach(c => { 
-            conditionMarks[c.id] = []; conditionNotes[c.id] = {}; expandedNote[c.id] = null; 
+            conditionMarks[c.id] = c.isFree ? Array(c.slotCount).fill(null) : []; 
+            conditionNotes[c.id] = {}; 
+            expandedNote[c.id] = null; 
         });
 
         // Fechar interações E limpar busca ao clicar fora
         document.addEventListener('click', (e) => {
             let shouldRender = false;
             
-            if (pendingDelete && !e.target.closest('.slot-btn') && !e.target.closest('.note-input')) {
+            // Ignora o documento fechar se clicou em um slot button, num input de nota, ou no próprio input in-line livre
+            if (pendingDelete && !e.target.closest('.slot-btn') && !e.target.closest('.note-input') && !e.target.closest('input[id^="slot-in-"]')) {
                 pendingDelete = null; 
                 shouldRender = true;
             }
 
             const openCond = Object.keys(expandedNote).find(k => expandedNote[k] !== null);
-            if (openCond && !e.target.closest('.slot-btn') && !e.target.closest('.note-input')) {
+            if (openCond && !e.target.closest('.slot-btn') && !e.target.closest('.note-input') && !e.target.closest('input[id^="slot-in-"]')) {
+                const slotIdx = expandedNote[openCond];
+                const cond = dbConditions.find(c => c.id === openCond);
+                
+                // Limpa slot livre se ficou expandido vazio sem receber nenhuma entrada
+                if (cond && cond.isFree && (!conditionMarks[openCond][slotIdx] || conditionMarks[openCond][slotIdx].trim() === "")) {
+                    conditionMarks[openCond][slotIdx] = null; 
+                }
+                
                 expandedNote[openCond] = null;
                 shouldRender = true;
             }
@@ -313,26 +338,59 @@
             }, 300);
         }
 
-        function saveNote(inputElement, condId, num) { conditionNotes[condId][num] = inputElement.value; }
+        // --- SISTEMA DE NOTAS E FOCOS ---
         
-        function handleBlur(condId, num) {
-            setTimeout(() => {
-                if (expandedNote[condId] === num) { expandedNote[condId] = null; renderConditions(); }
-            }, 150); 
+        function saveNote(inputElement, condId, refIndex) { 
+            conditionNotes[condId][refIndex] = inputElement.value; 
         }
 
-        function handleNoteFocus(condId, num) {
-            if (pendingDelete && pendingDelete.condId === condId && pendingDelete.num === num) {
-                pendingDelete = null;
-                const btn = document.getElementById(`btn-${condId}-${num}`);
-                if(btn) {
+        function updateFreeSlotValue(condId, slotIndex, val) {
+            conditionMarks[condId][slotIndex] = val;
+            const bracket = document.getElementById(`bracket-${condId}-${slotIndex}`);
+            if (bracket) {
+                bracket.innerText = val.trim() ? `[${val}]` : `[]`;
+            }
+        }
+
+        // Correção principal: manipulação direta do DOM para evitar perda de foco (sem re-render da tela toda)
+        function handleNoteFocus(condId, numOrSlot, isFree) {
+            if (pendingDelete && pendingDelete.condId === condId && pendingDelete.num === numOrSlot) {
+                pendingDelete = null; // Zera o estado global de exclusão
+                
+                // Restaura visualmente o botão que estava vermelho
+                const btn = document.getElementById(`btn-${condId}-${numOrSlot}`);
+                if (btn) {
                     btn.classList.remove('pending-delete');
-                    btn.innerHTML = num;
+                    
+                    if (isFree) {
+                        const val = conditionMarks[condId][numOrSlot];
+                        if (val === null || val === "") {
+                            btn.innerHTML = '<span class="text-[15px] opacity-40">+</span>';
+                            btn.classList.remove('filled');
+                            btn.classList.add('open-slot');
+                        } else {
+                            btn.innerHTML = val;
+                        }
+                    } else {
+                        btn.innerHTML = numOrSlot;
+                    }
+                }
+            }
+            
+            // Atualiza os colchetes com os valores atuais nas condições livres
+            if (isFree) {
+                const bracket = document.getElementById(`bracket-${condId}-${numOrSlot}`);
+                const currentVal = conditionMarks[condId][numOrSlot] || "";
+                if (bracket) {
+                    bracket.innerText = `[${currentVal}]`;
                 }
             }
         }
 
-        function toggleStatusMark(event, btn, condId, num) {
+        // --- GATILHOS ---
+
+        /* Handler Padrão (Numeradas) */
+        function toggleStatusMark(event, condId, num) {
             event.stopPropagation(); 
             
             const searchInput = document.getElementById('searchInput');
@@ -373,6 +431,67 @@
             }
         }
 
+        /* Handler Livre (Sem número) com Edição In-line */
+        function toggleFreeStatusMark(event, condId, slotIndex) {
+            event.stopPropagation();
+            
+            const searchInput = document.getElementById('searchInput');
+            const cond = dbConditions.find(c => c.id === condId);
+            if (searchInput.value.trim() !== cond.name) {
+                searchInput.value = cond.name;
+            }
+
+            const slotValue = conditionMarks[condId][slotIndex];
+            const currentNote = conditionNotes[condId][slotIndex] || "";
+
+            if (pendingDelete && (pendingDelete.condId !== condId || pendingDelete.num !== slotIndex)) { 
+                pendingDelete = null; 
+            }
+
+            const isFilled = slotValue !== null && slotValue !== "";
+
+            if (!isFilled) {
+                // Ao clicar num slot vazio, ele vira um input editável
+                conditionMarks[condId][slotIndex] = ""; 
+                conditionNotes[condId][slotIndex] = ""; 
+                expandedNote[condId] = slotIndex; 
+                pendingDelete = null;
+            } else {
+                // Se já tem valor ou nota, funciona como as condições numeradas
+                if (currentNote.trim() !== "") {
+                    expandedNote[condId] = (expandedNote[condId] === slotIndex) ? null : slotIndex; 
+                    pendingDelete = null;
+                } else {
+                    if (expandedNote[condId] === slotIndex) { expandedNote[condId] = null; }
+                    else if (pendingDelete && pendingDelete.condId === condId && pendingDelete.num === slotIndex) {
+                        conditionMarks[condId][slotIndex] = null;
+                        delete conditionNotes[condId][slotIndex];
+                        expandedNote[condId] = null;
+                        pendingDelete = null;
+                    } else {
+                        pendingDelete = { condId, num: slotIndex };
+                        expandedNote[condId] = slotIndex;
+                    }
+                }
+            }
+
+            renderConditions();
+
+            // Direciona o foco para o slot em edição in-line, ou para a nota
+            if (expandedNote[condId] === slotIndex && pendingDelete === null) {
+                setTimeout(() => {
+                    const inlineInput = document.getElementById(`slot-in-${condId}-${slotIndex}`);
+                    if (inlineInput && !isFilled) {
+                        inlineInput.focus();
+                    } else {
+                        const noteInput = document.getElementById(`note-${condId}-${slotIndex}`);
+                        if (noteInput) noteInput.focus();
+                    }
+                }, 50);
+            }
+        }
+
+        // --- RENDERIZAÇÃO ---
         function renderConditions() {
             const query = document.getElementById('searchInput').value.toLowerCase().trim();
             const container = document.getElementById('conditionsList');
@@ -390,7 +509,10 @@
             container.innerHTML = '';
             
             const toRender = dbConditions.filter(c => { 
-                const hasMarks = conditionMarks[c.id].length > 0; 
+                const hasMarks = c.isFree 
+                    ? conditionMarks[c.id].some(val => val !== null && val !== "") 
+                    : conditionMarks[c.id].length > 0;
+                    
                 if (query === '') return hasMarks; 
                 return c.name.toLowerCase().includes(query); 
             });
@@ -410,43 +532,91 @@
             }
 
             toRender.forEach(cond => {
-                let slotsHTML = cond.nums.map(n => {
-                    const isFilled = conditionMarks[cond.id].includes(n); 
-                    const hasNote = conditionNotes[cond.id][n] && conditionNotes[cond.id][n].trim() !== ""; 
-                    const isExpanded = (expandedNote[cond.id] === n); 
-                    const isPendingDelete = (pendingDelete && pendingDelete.condId === cond.id && pendingDelete.num === n);
-                    
-                    let classes = "slot-btn hide-scrollbar "; 
-                    if (isFilled) classes += "filled "; 
-                    if (isExpanded) classes += "expanded "; 
-                    
-                    let btnContent = n;
-                    if (isPendingDelete) { 
-                        classes += "pending-delete "; 
-                        btnContent = `<span class="material-symbols-rounded text-[18px] text-[#ff3333]">delete</span>`; 
-                    } 
-                    else if (isFilled && hasNote && !isExpanded) { 
-                        classes += "note-marker "; 
-                    }
-                    
-                    return `<button id="btn-${cond.id}-${n}" class="${classes.trim()}" onclick="toggleStatusMark(event, this, '${cond.id}', ${n})">${btnContent}</button>`;
-                }).join('');
+                let slotsHTML = '';
+
+                if (cond.isFree) {
+                    slotsHTML = conditionMarks[cond.id].map((val, slotIndex) => {
+                        const isFilled = (val !== null && val !== "");
+                        const isCurrentlyBeingEdited = (val === "" && expandedNote[cond.id] === slotIndex);
+                        const hasNote = conditionNotes[cond.id][slotIndex] && conditionNotes[cond.id][slotIndex].trim() !== "";
+                        const isExpanded = (expandedNote[cond.id] === slotIndex);
+                        const isPendingDelete = (pendingDelete && pendingDelete.condId === cond.id && pendingDelete.num === slotIndex);
+
+                        let classes = "slot-btn hide-scrollbar cursor-pointer select-none ";
+                        if (isFilled || isCurrentlyBeingEdited) classes += "filled ";
+                        else classes += "open-slot ";
+                        
+                        if (isExpanded) classes += "expanded ";
+
+                        let btnContent = '';
+
+                        if (isPendingDelete) {
+                            classes += "pending-delete ";
+                            btnContent = `<span class="material-symbols-rounded text-[18px] text-[#ff3333]">delete</span>`;
+                        } else if (isCurrentlyBeingEdited) {
+                            btnContent = `<input type="text" id="slot-in-${cond.id}-${slotIndex}" class="w-full h-full bg-transparent border-none text-center outline-none text-[#c2a675] font-title font-bold text-[13.5px] px-0 m-0" value="${val || ''}" oninput="updateFreeSlotValue('${cond.id}', ${slotIndex}, this.value)" onclick="event.stopPropagation()" autocomplete="off">`;
+                        } else if (isFilled) {
+                            btnContent = val;
+                            if (hasNote && !isExpanded) classes += "note-marker ";
+                        } else {
+                            btnContent = '<span class="text-[15px] opacity-40">+</span>';
+                        }
+
+                        return `<div id="btn-${cond.id}-${slotIndex}" class="${classes.trim()}" onclick="toggleFreeStatusMark(event, '${cond.id}', ${slotIndex})">${btnContent}</div>`;
+                    }).join('');
+                } else {
+                    slotsHTML = cond.nums.map(n => {
+                        const isFilled = conditionMarks[cond.id].includes(n); 
+                        const hasNote = conditionNotes[cond.id][n] && conditionNotes[cond.id][n].trim() !== ""; 
+                        const isExpanded = (expandedNote[cond.id] === n); 
+                        const isPendingDelete = (pendingDelete && pendingDelete.condId === cond.id && pendingDelete.num === n);
+                        
+                        let classes = "slot-btn hide-scrollbar cursor-pointer select-none "; 
+                        if (isFilled) classes += "filled "; 
+                        if (isExpanded) classes += "expanded "; 
+                        
+                        let btnContent = n;
+                        if (isPendingDelete) { 
+                            classes += "pending-delete "; 
+                            btnContent = `<span class="material-symbols-rounded text-[18px] text-[#ff3333]">delete</span>`; 
+                        } 
+                        else if (isFilled && hasNote && !isExpanded) { 
+                            classes += "note-marker "; 
+                        }
+                        
+                        return `<div id="btn-${cond.id}-${n}" class="${classes.trim()}" onclick="toggleStatusMark(event, '${cond.id}', ${n})">${btnContent}</div>`;
+                    }).join('');
+                }
 
                 let activeNoteHTML = ''; 
-                const activeNum = expandedNote[cond.id];
+                const activeRef = expandedNote[cond.id];
                 
-                if (activeNum !== null) {
-                    const val = conditionNotes[cond.id][activeNum] || "";
-                    activeNoteHTML = `
-                        <div class="note-wrapper flex items-end gap-2 mt-2.5 pt-2 border-t border-[#1a211e]">
-                            <span class="text-[13px] text-[#c2a675] font-bold font-title mb-0.5">[${activeNum}]</span>
-                            <input type="text" id="note-${cond.id}-${activeNum}" class="note-input placeholder-[#343d38] italic" placeholder="Adicionar nota..." value="${val}" onfocus="handleNoteFocus('${cond.id}', ${activeNum})" oninput="saveNote(this, '${cond.id}', ${activeNum})" onblur="handleBlur('${cond.id}', ${activeNum})" autocomplete="off">
-                        </div>`;
+                if (activeRef !== null) {
+                    const noteVal = conditionNotes[cond.id][activeRef] || "";
+
+                    if (cond.isFree) {
+                        const displayRef = conditionMarks[cond.id][activeRef] || "";
+                        const bracketText = displayRef ? `[${displayRef}]` : `[]`;
+
+                        activeNoteHTML = `
+                            <div class="note-wrapper flex items-end gap-2 mt-2.5 pt-2 border-t border-[#1a211e]">
+                                <span id="bracket-${cond.id}-${activeRef}" class="text-[13px] text-[#c2a675] font-bold font-title mb-0.5">${bracketText}</span>
+                                <input type="text" id="note-${cond.id}-${activeRef}" class="note-input placeholder-[#343d38] italic flex-1" placeholder="Adicionar nota..." value="${noteVal}" onfocus="handleNoteFocus('${cond.id}', ${activeRef}, true)" oninput="saveNote(this, '${cond.id}', ${activeRef})" autocomplete="off">
+                            </div>`;
+                    } else {
+                        activeNoteHTML = `
+                            <div class="note-wrapper flex items-end gap-2 mt-2.5 pt-2 border-t border-[#1a211e]">
+                                <span class="text-[13px] text-[#c2a675] font-bold font-title mb-0.5">[${activeRef}]</span>
+                                <input type="text" id="note-${cond.id}-${activeRef}" class="note-input placeholder-[#343d38] italic flex-1" placeholder="Adicionar nota..." value="${noteVal}" onfocus="handleNoteFocus('${cond.id}', ${activeRef}, false)" oninput="saveNote(this, '${cond.id}', ${activeRef})" autocomplete="off">
+                            </div>`;
+                    }
                 }
 
                 container.innerHTML += `
                     <div class="bg-[#090b0a] border border-[#2b3630] p-3.5 rounded-sm shadow-md transition-colors">
-                        <span class="font-title text-[15.5px] text-[#c2a675] tracking-wide block mb-3 leading-none font-bold">${cond.name}</span>
+                        <div class="flex items-center justify-between mb-3">
+                            <span class="font-title text-[15.5px] text-[#c2a675] tracking-wide leading-none font-bold">${cond.name}</span>
+                        </div>
                         <div class="slots-row-container">${slotsHTML}</div>
                         ${activeNoteHTML}
                     </div>`;
