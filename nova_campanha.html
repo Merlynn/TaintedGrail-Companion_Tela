@@ -6,9 +6,8 @@
     <title>Kings of Ruin - Nova Campanha</title>
     
     <link href="https://fonts.googleapis.com/css2?family=Alegreya+Sans:ital,wght@0,400;0,700;1,400&family=Cinzel:wght@600;700&family=Crimson+Pro:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,400,1,0&display=swap" rel="stylesheet" />
     <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://unpkg.com/@phosphor-icons/web"></script>
-    <!-- Leitor de QR Code leve e confiável -->
     <script src="https://unpkg.com/html5-qrcode"></script>
 
     <style>
@@ -17,6 +16,9 @@
             --font-title: 'Cinzel', serif;
             --font-ui: 'Alegreya Sans', sans-serif;
         }
+
+        .material-symbols-rounded { font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24; display: inline-block; vertical-align: middle; line-height: 1; }
+        .icon-outlined { font-variation-settings: 'FILL' 0, 'wght' 600, 'GRAD' 0, 'opsz' 24; }
 
         body {
             background-color: transparent;
@@ -37,6 +39,8 @@
         }
 
         ::-webkit-scrollbar { display: none; }
+        .hide-scrollbar::-webkit-scrollbar { display: none; }
+        .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
 
         h1, h2, h3, .font-title { font-family: var(--font-title) !important; }
         .font-sans { font-family: var(--font-ui) !important; }
@@ -318,7 +322,7 @@
     <header class="site-header flex-shrink-0">
         <img src="https://lh3.googleusercontent.com/d/1U3juHgIiAcpfSSQiW3nWN20MhMUx7tJR" alt="Kings of Ruin" class="header-logo-img">
         <a href="index.html" class="back-nav-btn" title="Voltar ao Início">
-            <i class="ph-bold ph-arrow-left text-sm"></i>
+            <span class="material-symbols-rounded text-sm">arrow_back</span>
             <span>Voltar</span>
         </a>
     </header>
@@ -346,7 +350,7 @@
                             <span class="font-title text-[14px] text-[#c2a675] font-bold block leading-tight">Modo Solo</span>
                             <span class="font-sans text-[11px] text-[#8c938f]">Controle no app</span>
                         </div>
-                        <i class="ph-fill ph-user text-[20px] text-[#c2a675]"></i>
+                        <span class="material-symbols-rounded text-[20px] text-[#c2a675]">person</span>
                     </div>
 
                     <div id="btn-mode-multi" class="choice-card" onclick="setSessionType('multiplayer')">
@@ -354,7 +358,7 @@
                             <span class="font-title text-[14px] text-[#b8b4a7] font-bold block leading-tight">Multiplayer</span>
                             <span class="font-sans text-[11px] text-[#8c938f]">Mesa em grupo</span>
                         </div>
-                        <i class="ph-fill ph-users text-[20px] text-[#6d7872]"></i>
+                        <span class="material-symbols-rounded text-[20px] text-[#6d7872]">groups</span>
                     </div>
                 </div>
             </div>
@@ -370,7 +374,7 @@
                             <span class="font-title text-[14px] text-[#c2a675] font-bold block leading-tight">Sou Cronista</span>
                             <span class="font-sans text-[11px] text-[#8c938f]">Gerenciar campanha</span>
                         </div>
-                        <i class="ph-fill ph-book-open-user text-[20px] text-[#c2a675]"></i>
+                        <span class="material-symbols-rounded text-[20px] text-[#c2a675]">menu_book</span>
                     </div>
 
                     <div id="btn-role-jogador" class="choice-card" onclick="setUserRole('jogador')">
@@ -378,7 +382,7 @@
                             <span class="font-title text-[14px] text-[#b8b4a7] font-bold block leading-tight">Sou Jogador</span>
                             <span class="font-sans text-[11px] text-[#8c938f]">Apenas minha ficha</span>
                         </div>
-                        <i class="ph-fill ph-sword text-[20px] text-[#6d7872]"></i>
+                        <span class="material-symbols-rounded text-[20px] text-[#6d7872]">swords</span>
                     </div>
                 </div>
             </div>
@@ -403,30 +407,30 @@
 
                     <div class="space-y-1.5" id="heroes-selection-list">
                         
-                        <!-- Elgan (magic-wand) -->
+                        <!-- Elgan -->
                         <div id="card-hero-elgan" class="hero-select-card selected">
                             <div class="flex items-center justify-between cursor-pointer" onclick="toggleHeroSelection('elgan')">
                                 <div class="flex items-center gap-2.5 min-w-0">
-                                    <div class="hero-checkbox"><i class="ph-bold ph-check text-xs"></i></div>
+                                    <div class="hero-checkbox"><span class="material-symbols-rounded text-xs">check</span></div>
                                     <div class="flex items-baseline gap-1.5 truncate">
                                         <span class="font-title text-[15px] text-[#c2a675] font-bold leading-none">Elgan</span>
                                         <span class="font-celtic text-[13px] text-[#8c938f] italic truncate">• O Candelário</span>
                                     </div>
                                 </div>
-                                <i class="ph-fill ph-magic-wand text-[#6d7872] text-[18px] flex-shrink-0 ml-2"></i>
+                                <span class="material-symbols-rounded text-[#6d7872] text-[18px] flex-shrink-0 ml-2">candle</span>
                             </div>
                             <div id="player-field-elgan" class="mt-2 pt-1.5 border-t border-[#1a211e] items-center justify-between gap-2 hidden">
                                 <div class="flex items-center gap-1.5 flex-1 min-w-0">
-                                    <i class="ph-fill ph-user text-[#c2a675] text-xs"></i>
+                                    <span class="material-symbols-rounded text-[#c2a675] text-xs">person</span>
                                     <input type="text" id="player-name-elgan" class="player-name-input" placeholder="Nome do jogador..." autocomplete="off">
                                 </div>
                                 <button type="button" onclick="openQrScannerModal('elgan')" class="qr-action-btn">
-                                    <i class="ph-fill ph-qr-code text-sm"></i> Importar
+                                    <span class="material-symbols-rounded text-sm">qr_code_2</span> Importar
                                 </button>
                             </div>
                         </div>
 
-                        <!-- Gerdwyn (target) -->
+                        <!-- Gerdwyn -->
                         <div id="card-hero-gerdwyn" class="hero-select-card">
                             <div class="flex items-center justify-between cursor-pointer" onclick="toggleHeroSelection('gerdwyn')">
                                 <div class="flex items-center gap-2.5 min-w-0">
@@ -436,20 +440,20 @@
                                         <span class="font-celtic text-[13px] text-[#8c938f] italic truncate">• A Mercenária</span>
                                     </div>
                                 </div>
-                                <i class="ph-fill ph-target text-[#6d7872] text-[18px] flex-shrink-0 ml-2"></i>
+                                <span class="material-symbols-rounded text-[#6d7872] text-[18px] flex-shrink-0 ml-2">target_check</span>
                             </div>
                             <div id="player-field-gerdwyn" class="mt-2 pt-1.5 border-t border-[#1a211e] items-center justify-between gap-2 hidden">
                                 <div class="flex items-center gap-1.5 flex-1 min-w-0">
-                                    <i class="ph-fill ph-user text-[#c2a675] text-xs"></i>
+                                    <span class="material-symbols-rounded text-[#c2a675] text-xs">person</span>
                                     <input type="text" id="player-name-gerdwyn" class="player-name-input" placeholder="Nome do jogador..." autocomplete="off">
                                 </div>
                                 <button type="button" onclick="openQrScannerModal('gerdwyn')" class="qr-action-btn">
-                                    <i class="ph-fill ph-qr-code text-sm"></i> Importar
+                                    <span class="material-symbols-rounded text-sm">qr_code_2</span> Importar
                                 </button>
                             </div>
                         </div>
 
-                        <!-- Iunis (sword) -->
+                        <!-- Iunis -->
                         <div id="card-hero-iunis" class="hero-select-card">
                             <div class="flex items-center justify-between cursor-pointer" onclick="toggleHeroSelection('iunis')">
                                 <div class="flex items-center gap-2.5 min-w-0">
@@ -459,20 +463,20 @@
                                         <span class="font-celtic text-[13px] text-[#8c938f] italic truncate">• A Gladiatrix Fomoriana</span>
                                     </div>
                                 </div>
-                                <i class="ph-fill ph-sword text-[#6d7872] text-[18px] flex-shrink-0 ml-2"></i>
+                                <span class="material-symbols-rounded text-[#6d7872] text-[18px] flex-shrink-0 ml-2">swords</span>
                             </div>
                             <div id="player-field-iunis" class="mt-2 pt-1.5 border-t border-[#1a211e] items-center justify-between gap-2 hidden">
                                 <div class="flex items-center gap-1.5 flex-1 min-w-0">
-                                    <i class="ph-fill ph-user text-[#c2a675] text-xs"></i>
+                                    <span class="material-symbols-rounded text-[#c2a675] text-xs">person</span>
                                     <input type="text" id="player-name-iunis" class="player-name-input" placeholder="Nome do jogador..." autocomplete="off">
                                 </div>
                                 <button type="button" onclick="openQrScannerModal('iunis')" class="qr-action-btn">
-                                    <i class="ph-fill ph-qr-code text-sm"></i> Importar
+                                    <span class="material-symbols-rounded text-sm">qr_code_2</span> Importar
                                 </button>
                             </div>
                         </div>
 
-                        <!-- Osbert (clover) -->
+                        <!-- Osbert -->
                         <div id="card-hero-osbert" class="hero-select-card">
                             <div class="flex items-center justify-between cursor-pointer" onclick="toggleHeroSelection('osbert')">
                                 <div class="flex items-center gap-2.5 min-w-0">
@@ -482,15 +486,15 @@
                                         <span class="font-celtic text-[13px] text-[#8c938f] italic truncate">• O Bufão Itinerante</span>
                                     </div>
                                 </div>
-                                <i class="ph-fill ph-clover text-[#6d7872] text-[18px] flex-shrink-0 ml-2"></i>
+                                <span class="material-symbols-rounded text-[#6d7872] text-[18px] flex-shrink-0 ml-2">theater_comedy</span>
                             </div>
                             <div id="player-field-osbert" class="mt-2 pt-1.5 border-t border-[#1a211e] items-center justify-between gap-2 hidden">
                                 <div class="flex items-center gap-1.5 flex-1 min-w-0">
-                                    <i class="ph-fill ph-user text-[#c2a675] text-xs"></i>
+                                    <span class="material-symbols-rounded text-[#c2a675] text-xs">person</span>
                                     <input type="text" id="player-name-osbert" class="player-name-input" placeholder="Nome do jogador..." autocomplete="off">
                                 </div>
                                 <button type="button" onclick="openQrScannerModal('osbert')" class="qr-action-btn">
-                                    <i class="ph-fill ph-qr-code text-sm"></i> Importar
+                                    <span class="material-symbols-rounded text-sm">qr_code_2</span> Importar
                                 </button>
                             </div>
                         </div>
@@ -503,7 +507,7 @@
                     <div class="flex items-center justify-between">
                         <div>
                             <label class="text-[13.5px] uppercase font-title tracking-widest text-[#c2a675] block font-bold flex items-center gap-1.5">
-                                <i class="ph-fill ph-sliders-horizontal"></i> Modificadores de Regra
+                                <span class="material-symbols-rounded text-[18px]">tune</span> Modificadores de Regra
                             </label>
                             <span class="text-[11px] font-sans text-[#8c938f]">Ajustes de dificuldade</span>
                         </div>
@@ -514,12 +518,12 @@
 
                     <div class="flex gap-2">
                         <button type="button" onclick="setModifierTab('narrativo')" id="tab-btn-narrativo" class="mode-tab-btn active-narrativo">
-                            <i class="ph-fill ph-book-open"></i>
+                            <span class="material-symbols-rounded text-[18px]">menu_book</span>
                             <span>Narrativo</span>
                             <span id="badge-count-narrativo" class="badge-tab-count">0/7</span>
                         </button>
                         <button type="button" onclick="setModifierTab('desafiador')" id="tab-btn-desafiador" class="mode-tab-btn">
-                            <i class="ph-fill ph-skull"></i>
+                            <span class="material-symbols-rounded text-[18px]">skull</span>
                             <span>Desafiador</span>
                             <span id="badge-count-desafiador" class="badge-tab-count">0/8</span>
                         </button>
@@ -551,7 +555,7 @@
                                 <span class="font-title text-[15px] text-[#c2a675] font-bold block leading-none">Elgan</span>
                                 <span class="font-celtic text-[13px] text-[#8c938f] italic truncate">• O Candelário</span>
                             </div>
-                            <i class="ph-fill ph-magic-wand text-[#c2a675] text-[18px] flex-shrink-0 ml-2"></i>
+                            <span class="material-symbols-rounded text-[#c2a675] text-[18px] flex-shrink-0 ml-2">candle</span>
                         </div>
 
                         <div id="player-hero-gerdwyn" class="choice-card" onclick="setSingleHero('gerdwyn')">
@@ -559,7 +563,7 @@
                                 <span class="font-title text-[15px] text-[#b8b4a7] font-bold block leading-none">Gerdwyn</span>
                                 <span class="font-celtic text-[13px] text-[#8c938f] italic truncate">• A Mercenária</span>
                             </div>
-                            <i class="ph-fill ph-target text-[#6d7872] text-[18px] flex-shrink-0 ml-2"></i>
+                            <span class="material-symbols-rounded text-[#6d7872] text-[18px] flex-shrink-0 ml-2">target_check</span>
                         </div>
 
                         <div id="player-hero-iunis" class="choice-card" onclick="setSingleHero('iunis')">
@@ -567,7 +571,7 @@
                                 <span class="font-title text-[15px] text-[#b8b4a7] font-bold block leading-none">Iunis</span>
                                 <span class="font-celtic text-[13px] text-[#8c938f] italic truncate">• A Gladiatrix Fomoriana</span>
                             </div>
-                            <i class="ph-fill ph-sword text-[#6d7872] text-[18px] flex-shrink-0 ml-2"></i>
+                            <span class="material-symbols-rounded text-[#6d7872] text-[18px] flex-shrink-0 ml-2">swords</span>
                         </div>
 
                         <div id="player-hero-osbert" class="choice-card" onclick="setSingleHero('osbert')">
@@ -575,7 +579,7 @@
                                 <span class="font-title text-[15px] text-[#b8b4a7] font-bold block leading-none">Osbert</span>
                                 <span class="font-celtic text-[13px] text-[#8c938f] italic truncate">• O Bufão Itinerante</span>
                             </div>
-                            <i class="ph-fill ph-clover text-[#6d7872] text-[18px] flex-shrink-0 ml-2"></i>
+                            <span class="material-symbols-rounded text-[#6d7872] text-[18px] flex-shrink-0 ml-2">theater_comedy</span>
                         </div>
                     </div>
                 </div>
@@ -585,7 +589,7 @@
             <!-- BOTÃO DE INICIAR -->
             <div class="pt-3">
                 <button type="button" onclick="startNewSession()" id="btn-submit-start" class="start-btn flex items-center justify-center gap-2">
-                    <i class="ph-fill ph-shield-chevron text-lg"></i>
+                    <span class="material-symbols-rounded text-lg">shield</span>
                     <span id="lbl-btn-start">Iniciar Jornada Solo</span>
                 </button>
             </div>
@@ -594,24 +598,22 @@
 
     </main>
 
-    <!-- MODAL DE IMPORTAÇÃO (CAMERA QR / CODIGO) -->
+    <!-- MODAL DE IMPORTAÇÃO -->
     <div id="qr-modal" class="fixed inset-0 z-50 bg-[#000000]/85 backdrop-blur-sm flex items-center justify-center p-4 hidden" onclick="if(event.target === this) closeQrModal()">
         <div class="bg-[#090b0a] border border-[#2b3630] rounded-sm p-4 w-full max-w-sm space-y-3 relative shadow-2xl" onclick="event.stopPropagation()">
             <div class="flex items-center justify-between border-b border-[#1a211e] pb-2">
                 <span class="font-title text-[14px] text-[#c2a675] font-bold flex items-center gap-2">
-                    <i class="ph-fill ph-qr-code text-[18px]"></i> Importar Ficha (<span id="modal-hero-target-name">Herói</span>)
+                    <span class="material-symbols-rounded text-[18px]">qr_code_2</span> Importar Ficha (<span id="modal-hero-target-name">Herói</span>)
                 </span>
                 <button type="button" onclick="closeQrModal()" class="text-[#8c938f] hover:text-[#c2a675] p-1 transition-colors" title="Fechar">
-                    <i class="ph-bold ph-x text-xl pointer-events-none"></i>
+                    <span class="material-symbols-rounded text-xl pointer-events-none">close</span>
                 </button>
             </div>
 
-            <!-- Opção Câmera -->
             <div id="reader-container" class="rounded overflow-hidden border border-[#1f2722] bg-[#050706]">
                 <div id="qr-reader" style="width: 100%;"></div>
             </div>
 
-            <!-- Opção Colar Código Manual -->
             <div class="space-y-1.5 pt-1">
                 <label class="text-[11px] font-sans uppercase font-bold text-[#8c938f] block">Ou cole o código da ficha:</label>
                 <div class="flex gap-2">
@@ -667,9 +669,9 @@
             if (type === 'solo') {
                 btnSolo.className = 'choice-card selected';
                 btnMulti.className = 'choice-card';
-                btnSolo.querySelector('i').className = 'ph-fill ph-user text-[20px] text-[#c2a675]';
+                btnSolo.querySelector('.material-symbols-rounded').className = 'material-symbols-rounded text-[20px] text-[#c2a675]';
                 btnSolo.querySelector('.font-title').className = 'font-title text-[14px] text-[#c2a675] font-bold block leading-tight';
-                btnMulti.querySelector('i').className = 'ph-fill ph-users text-[20px] text-[#6d7872]';
+                btnMulti.querySelector('.material-symbols-rounded').className = 'material-symbols-rounded text-[20px] text-[#6d7872]';
                 btnMulti.querySelector('.font-title').className = 'font-title text-[14px] text-[#b8b4a7] font-bold block leading-tight';
                 
                 sectionRole.classList.add('hidden');
@@ -677,9 +679,9 @@
             } else {
                 btnMulti.className = 'choice-card selected';
                 btnSolo.className = 'choice-card';
-                btnMulti.querySelector('i').className = 'ph-fill ph-users text-[20px] text-[#c2a675]';
+                btnMulti.querySelector('.material-symbols-rounded').className = 'material-symbols-rounded text-[20px] text-[#c2a675]';
                 btnMulti.querySelector('.font-title').className = 'font-title text-[14px] text-[#c2a675] font-bold block leading-tight';
-                btnSolo.querySelector('i').className = 'ph-fill ph-user text-[20px] text-[#6d7872]';
+                btnSolo.querySelector('.material-symbols-rounded').className = 'material-symbols-rounded text-[20px] text-[#6d7872]';
                 btnSolo.querySelector('.font-title').className = 'font-title text-[14px] text-[#b8b4a7] font-bold block leading-tight';
                 
                 sectionRole.classList.remove('hidden');
@@ -697,16 +699,16 @@
             if (role === 'cronista') {
                 btnCronista.className = 'choice-card selected';
                 btnJogador.className = 'choice-card';
-                btnCronista.querySelector('i').className = 'ph-fill ph-book-open-user text-[20px] text-[#c2a675]';
+                btnCronista.querySelector('.material-symbols-rounded').className = 'material-symbols-rounded text-[20px] text-[#c2a675]';
                 btnCronista.querySelector('.font-title').className = 'font-title text-[14px] text-[#c2a675] font-bold block leading-tight';
-                btnJogador.querySelector('i').className = 'ph-fill ph-sword text-[20px] text-[#6d7872]';
+                btnJogador.querySelector('.material-symbols-rounded').className = 'material-symbols-rounded text-[20px] text-[#6d7872]';
                 btnJogador.querySelector('.font-title').className = 'font-title text-[14px] text-[#b8b4a7] font-bold block leading-tight';
             } else {
                 btnJogador.className = 'choice-card selected';
                 btnCronista.className = 'choice-card';
-                btnJogador.querySelector('i').className = 'ph-fill ph-sword text-[20px] text-[#c2a675]';
+                btnJogador.querySelector('.material-symbols-rounded').className = 'material-symbols-rounded text-[20px] text-[#c2a675]';
                 btnJogador.querySelector('.font-title').className = 'font-title text-[14px] text-[#c2a675] font-bold block leading-tight';
-                btnCronista.querySelector('i').className = 'ph-fill ph-book-open-user text-[20px] text-[#6d7872]';
+                btnCronista.querySelector('.material-symbols-rounded').className = 'material-symbols-rounded text-[20px] text-[#6d7872]';
                 btnCronista.querySelector('.font-title').className = 'font-title text-[14px] text-[#b8b4a7] font-bold block leading-tight';
             }
 
@@ -771,7 +773,7 @@
                     const titleSpan = card.querySelector('.font-title');
                     
                     if (isSelected) {
-                        checkbox.innerHTML = '<i class="ph-bold ph-check text-xs"></i>';
+                        checkbox.innerHTML = '<span class="material-symbols-rounded text-xs">check</span>';
                         titleSpan.classList.add('text-[#c2a675]');
                         titleSpan.classList.remove('text-[#b8b4a7]');
                         
@@ -807,9 +809,12 @@
                 card.querySelector('.font-title').className = isSelected 
                     ? 'font-title text-[15px] text-[#c2a675] font-bold block leading-none' 
                     : 'font-title text-[15px] text-[#b8b4a7] font-bold block leading-none';
-                card.querySelector('i').className = isSelected 
-                    ? card.querySelector('i').className.replace('text-[#6d7872]', 'text-[#c2a675]') 
-                    : card.querySelector('i').className.replace('text-[#c2a675]', 'text-[#6d7872]');
+                
+                const icon = card.querySelector('.material-symbols-rounded');
+                if (icon) {
+                    icon.classList.toggle('text-[#c2a675]', isSelected);
+                    icon.classList.toggle('text-[#6d7872]', !isSelected);
+                }
             });
         }
 
@@ -892,7 +897,7 @@
             }
         }
 
-        // CONTROLE DO MODAL E LEITOR QR CODE
+        // LEITOR QR CODE
         function openQrScannerModal(heroId) {
             currentTargetImportHero = heroId;
             document.getElementById('modal-hero-target-name').innerText = heroId.toUpperCase();
@@ -921,11 +926,9 @@
         }
 
         function closeQrModal() {
-            // 1. Fecha a interface imediatamente
             const modal = document.getElementById('qr-modal');
             if (modal) modal.classList.add('hidden');
 
-            // 2. Encerra a câmera com segurança sem travar o script
             if (html5QrScanner) {
                 try {
                     if (html5QrScanner.isScanning) {
@@ -943,7 +946,6 @@
             }
         }
 
-        // Fechamento pelo teclado (Esc)
         document.addEventListener('keydown', (e) => {
             if (e.key === 'Escape') closeQrModal();
         });
@@ -964,7 +966,6 @@
                 }
                 alert(`Ficha de ${currentTargetImportHero.toUpperCase()} importada com sucesso!`);
             } catch (e) {
-                // Caso seja apenas o nome puro do jogador
                 const input = document.getElementById(`player-name-${currentTargetImportHero}`);
                 if (input) input.value = payloadString;
                 alert(`Nome importado com sucesso!`);

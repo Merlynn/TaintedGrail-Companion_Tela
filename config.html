@@ -6,8 +6,8 @@
     <title>Kings of Ruin - Configurações</title>
     
     <link href="https://fonts.googleapis.com/css2?family=Alegreya+Sans:ital,wght@0,400;0,700;1,400&family=Cinzel:wght@600;700&family=Crimson+Pro:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,400,1,0&display=swap" rel="stylesheet" />
     <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://unpkg.com/@phosphor-icons/web"></script>
 
     <style>
         :root { 
@@ -16,6 +16,9 @@
             --font-ui: 'Alegreya Sans', sans-serif;
             --zoom-level: 16px; 
         }
+
+        .material-symbols-rounded { font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24; display: inline-block; vertical-align: middle; line-height: 1; }
+        .icon-outlined { font-variation-settings: 'FILL' 0, 'wght' 600, 'GRAD' 0, 'opsz' 24; }
 
         html {
             font-size: var(--zoom-level);
@@ -45,6 +48,8 @@
         }
 
         ::-webkit-scrollbar { display: none; }
+        .hide-scrollbar::-webkit-scrollbar { display: none; }
+        .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
 
         h1, h2, h3, .font-title { font-family: var(--font-title) !important; }
         .font-sans { font-family: var(--font-ui) !important; }
@@ -58,7 +63,7 @@
             justify-content: space-between;
             align-items: center;
             position: relative;
-            z-index: 50; /* Aumentado para o botão ficar acima do overlay */
+            z-index: 50;
             backdrop-filter: blur(10px);
             -webkit-backdrop-filter: blur(10px);
         }
@@ -71,7 +76,30 @@
             filter: drop-shadow(0 2px 6px rgba(0, 0, 0, 0.7));
         }
 
-        /* BOTÃO ECOS NO CABEÇALHO */
+        .back-nav-btn {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            padding: 4px 12px;
+            background: #060807;
+            border: 1px solid #2b3630;
+            border-radius: 9999px;
+            color: #8c938f;
+            font-family: var(--font-ui);
+            font-size: clamp(0.7rem, 2.5vw, 0.8rem);
+            font-weight: bold;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            box-shadow: inset 0 1px 3px rgba(0,0,0,0.9), 0 2px 6px rgba(0,0,0,0.6);
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        .back-nav-btn:hover {
+            border-color: #c2a675;
+            color: #c2a675;
+            background: #0a0d0b;
+        }
+
         .music-player-slot {
             display: flex;
             align-items: center;
@@ -103,7 +131,6 @@
             border: 1px solid #2b3630;
         }
 
-        /* CARDS DE CONFIGURAÇÃO */
         .config-card {
             background: #090b0a;
             border: 1px solid #1f2722;
@@ -169,7 +196,6 @@
         .btn-action.danger { color: #ff6b6b; border-color: #450606; }
         .btn-action.danger:hover { background: #1f0a0a; border-color: #9e1515; }
 
-        /* SLIDER CUSTOMIZADO GEOMÉTRICO (LOSANGO TÁTIL) */
         .custom-slider {
             -webkit-appearance: none;
             appearance: none;
@@ -204,30 +230,7 @@
         .custom-slider::-webkit-slider-thumb:active {
             transform: rotate(45deg) scale(0.9);
         }
-        .custom-slider::-moz-range-track {
-            width: 100%;
-            height: 8px;
-            background: #050706;
-            border: 1px solid #7a6345;
-            border-radius: 4px;
-            box-shadow: inset 0 1px 4px rgba(0,0,0,1), 0 1px 2px rgba(194, 166, 117, 0.15);
-        }
-        .custom-slider::-moz-range-thumb {
-            width: 20px;
-            height: 20px;
-            background: linear-gradient(135deg, #d4b886 0%, #9c7f4c 100%);
-            border: 2px solid #111613; 
-            border-radius: 3px;
-            cursor: pointer;
-            transform: rotate(45deg);
-            box-shadow: 3px 3px 6px rgba(0,0,0,0.8), inset 1px 1px 2px rgba(255,255,255,0.4);
-            transition: transform 0.1s;
-        }
-        .custom-slider::-moz-range-thumb:active {
-            transform: rotate(45deg) scale(0.9);
-        }
 
-        /* PLAYLIST CARDS */
         .playlist-row {
             display: flex;
             align-items: center;
@@ -269,7 +272,6 @@
         .playlist-action-btn.delete-mode { color: #6d7872; }
         .playlist-action-btn.delete-mode:hover { color: #ff6b6b; background: rgba(255, 107, 107, 0.1); }
 
-        /* PLAYER FLUTUANTE (POPOVER) */
         .player-popover {
             background: linear-gradient(180deg, #111613 0%, #050706 100%);
             border: 1px solid #2b3630;
@@ -279,16 +281,16 @@
             box-shadow: 0 15px 35px rgba(0,0,0,0.9), 0 0 15px rgba(194, 166, 117, 0.05);
             position: absolute;
             top: 70px;
-            right: 16px;
+            right: 86px;
             z-index: 60;
-            overflow: hidden;
+            overflow: visible;
             transform-origin: top right;
             transition: all 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
         
         .player-artwork-glow {
-            width: 72px;
-            height: 72px;
+            width: 64px;
+            height: 64px;
             border-radius: 50%;
             background: radial-gradient(circle, rgba(194, 166, 117, 0.15) 0%, transparent 70%);
             display: flex;
@@ -297,6 +299,7 @@
             border: 1px solid rgba(194, 166, 117, 0.2);
             box-shadow: 0 0 15px rgba(0,0,0,0.5);
             flex-shrink: 0;
+            transition: all 0.25s ease;
         }
 
         .player-ctrl-btn {
@@ -314,8 +317,8 @@
         .player-ctrl-btn:active { transform: scale(0.95); }
         
         .player-play-btn {
-            width: 52px;
-            height: 52px;
+            width: 50px;
+            height: 50px;
             border-radius: 50%;
             background: linear-gradient(135deg, #d4b886 0%, #9c7f4c 100%);
             color: #060807;
@@ -351,28 +354,66 @@
             box-shadow: 0 0 8px rgba(194,166,117,0.2);
         }
 
-        /* Overlay invisível para clicar fora e fechar */
         .player-overlay {
             position: fixed;
             inset: 0;
-            z-index: 45; /* Abaixo do header e do player, acima do app */
+            z-index: 45;
             display: none;
         }
 
-        /* NAVEGAÇÃO INFERIOR */
-        .bottom-nav-container {
-            display: flex; justify-content: center; align-items: center;
-            height: 4rem; width: 100%; max-width: 512px; margin: 0 auto;
-            gap: clamp(2px, 1.5vw, 12px); padding: 0 4px;
+        .custom-playlist-trigger {
+            background: #050706;
+            border: 1px solid #2b3630;
+            border-radius: 3px;
+            padding: 5px 8px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            transition: all 0.2s;
         }
-        .bottom-nav-item {
-            width: clamp(54px, 18vw, 76px); flex-shrink: 1; display: flex; flex-direction: column;
-            align-items: center; justify-content: center; height: 100%; padding: 0 2px; transition: color 0.2s;
+        .custom-playlist-trigger:hover { border-color: #c2a675; }
+        .custom-playlist-trigger.menu-open {
+            border-color: #c2a675;
+            border-bottom-left-radius: 0;
+            border-bottom-right-radius: 0;
         }
-        .bottom-nav-label {
-            font-size: clamp(10px, 2.7vw, 12px); font-family: var(--font-ui); text-transform: uppercase;
-            font-weight: 700; letter-spacing: 0.01em; white-space: nowrap; overflow: hidden;
-            text-overflow: ellipsis; width: 100%; text-align: center; margin-top: 2px; line-height: 1;
+        
+        .custom-playlist-menu {
+            background: #050706;
+            border: 1px solid #c2a675;
+            border-top: none;
+            border-bottom-left-radius: 3px;
+            border-bottom-right-radius: 3px;
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            z-index: 80;
+            max-height: 145px;
+            overflow-y: auto;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.95);
+            margin: 0;
+        }
+        .custom-playlist-option {
+            padding: 7px 10px;
+            font-family: var(--font-title);
+            font-size: 13px;
+            color: #b8b4a7;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            transition: background 0.15s, color 0.15s;
+        }
+        .custom-playlist-option:hover {
+            background: #141c17;
+            color: #c2a675;
+        }
+        .custom-playlist-option.selected {
+            background: #1a211e;
+            color: #c2a675;
+            font-weight: bold;
         }
     </style>
 </head>
@@ -380,104 +421,115 @@
 
     <header class="site-header flex-shrink-0">
         <img src="https://lh3.googleusercontent.com/d/1U3juHgIiAcpfSSQiW3nWN20MhMUx7tJR" alt="Kings of Ruin" class="header-logo-img">
-        <div class="music-player-slot" title="Controle de Áudio" onclick="togglePlayerMenu()">
-            <div class="music-player-icon"><i class="ph-bold ph-waveform text-[12px] animate-pulse"></i></div>
-            <span>Ecos</span>
+        <div class="flex items-center gap-2.5">
+            <div class="music-player-slot" title="Controle de Áudio" onclick="togglePlayerMenu()">
+                <div class="music-player-icon"><span class="material-symbols-rounded text-[14px] animate-pulse">music_note_2</span></div>
+                <span>Ecos</span>
+            </div>
+            <button onclick="goBackOrigin()" class="back-nav-btn" title="Voltar para a tela anterior">
+                <span class="material-symbols-rounded text-[16px]">arrow_back</span>
+                <span>Voltar</span>
+            </button>
         </div>
     </header>
 
-    <!-- OVERLAY PARA FECHAR O MENU DE MÚSICA AO CLICAR FORA -->
     <div id="player-overlay" class="player-overlay" onclick="togglePlayerMenu()"></div>
 
-    <!-- PLAYER DE ECOS (MENU FLUTUANTE POPOVER) -->
     <div id="player-panel" class="player-popover opacity-0 scale-95 pointer-events-none">
         <div class="p-5 flex flex-col items-center">
             
-            <!-- Linha 1: Artwork + Seleção de Playlist e Faixa -->
-            <div class="flex items-center w-full gap-4 mb-5">
-                <div class="player-artwork-glow">
-                    <i class="ph-fill ph-speaker-hifi text-[32px] text-[#c2a675] opacity-80"></i>
+            <div class="flex items-center w-full gap-4 mb-4">
+                <div id="player-art-glow" class="player-artwork-glow">
+                    <span id="player-art-icon" class="material-symbols-rounded text-[28px] text-[#c2a675]">music_note</span>
                 </div>
                 
-                <div class="flex-1 min-w-0 flex flex-col gap-1.5">
+                <div class="flex-1 min-w-0 flex flex-col gap-1">
                     <label class="text-[9px] font-sans uppercase font-bold text-[#6d7872]">Playlist Ativa</label>
-                    <div class="relative w-full">
-                        <select class="config-select !h-[30px] !text-[14px] !pr-8 !font-title !bg-[#060807] !border-[#2b3630]">
-                            <option>Ecos de Ruína</option>
-                            <option>Sangue e Gelo</option>
-                            <option>Névoa Espessa</option>
-                            <option>Taverna do Chifre</option>
-                        </select>
-                        <i class="ph-bold ph-caret-down absolute right-2.5 top-1/2 -translate-y-1/2 text-[#4a5550] pointer-events-none text-[12px]"></i>
+                    
+                    <div id="custom-playlist-wrapper" class="relative w-full">
+                        <div id="custom-playlist-btn" class="custom-playlist-trigger" onclick="toggleCustomPlaylistMenu(event)">
+                            <span id="current-playlist-label" class="font-title text-[13px] text-[#e0d5c1] truncate">Ecos de Ruína</span>
+                            <span id="playlist-chevron" class="material-symbols-rounded text-[18px] text-[#4a5550]">expand_more</span>
+                        </div>
+
+                        <div id="custom-playlist-list" class="custom-playlist-menu hide-scrollbar hidden">
+                            <div class="custom-playlist-option selected" onclick="selectPlaylist('Ecos de Ruína', 'music_note', 'text-[#c2a675]', 'rgba(194, 166, 117, 0.2)')">
+                                <span class="material-symbols-rounded text-[16px]">music_note</span> Ecos de Ruína
+                            </div>
+                            <div class="custom-playlist-option" onclick="selectPlaylist('Sangue e Gelo', 'swords', 'text-[#ff6b6b]', 'rgba(255, 107, 107, 0.25)')">
+                                <span class="material-symbols-rounded text-[16px]">swords</span> Sangue e Gelo
+                            </div>
+                            <div class="custom-playlist-option" onclick="selectPlaylist('Névoa Espessa', 'explore', 'text-[#38bdf8]', 'rgba(56, 189, 248, 0.25)')">
+                                <span class="material-symbols-rounded text-[16px]">explore</span> Névoa Espessa
+                            </div>
+                            <div class="custom-playlist-option" onclick="selectPlaylist('Taverna do Chifre', 'sports_bar', 'text-[#f59e0b]', 'rgba(245, 158, 11, 0.25)')">
+                                <span class="material-symbols-rounded text-[16px]">sports_bar</span> Taverna do Chifre
+                            </div>
+                        </div>
                     </div>
-                    <span class="font-sans text-[12px] text-[#e0d5c1] font-bold truncate mt-1">♪ Faixa 1: Vento Gélido</span>
+
+                    <span class="font-sans text-[11px] text-[#8c938f] truncate mt-0.5">♪ Faixa 1: Vento Gélido</span>
                 </div>
             </div>
 
-            <!-- Linha 2: Barra de Progresso -->
-            <div class="w-full mb-5 px-1">
+            <div class="w-full mb-4 px-1">
                 <div class="w-full h-1 bg-[#1a211e] rounded-full overflow-hidden">
                     <div class="w-1/3 h-full bg-[#c2a675] rounded-full"></div>
                 </div>
-                <div class="flex justify-between mt-1.5">
+                <div class="flex justify-between mt-1">
                     <span class="font-sans text-[10px] text-[#6d7872] font-bold">1:24</span>
                     <span class="font-sans text-[10px] text-[#6d7872] font-bold">-2:15</span>
                 </div>
             </div>
 
-            <!-- Linha 3: Controles Simétricos (Prev, Play, Next) -->
-            <div class="flex items-center justify-center gap-8 mb-6">
+            <div class="flex items-center justify-center gap-7 mb-5">
                 <button class="player-ctrl-btn" title="Anterior">
-                    <i class="ph-fill ph-skip-back text-[28px]"></i>
+                    <span class="material-symbols-rounded text-[28px]">skip_previous</span>
                 </button>
 
                 <button class="player-play-btn" id="main-play-btn" onclick="togglePlayState()" title="Play/Pause">
-                    <i id="play-icon" class="ph-fill ph-play text-[24px] ml-1"></i>
+                    <span id="play-icon" class="material-symbols-rounded text-[26px]">play_arrow</span>
                 </button>
 
                 <button class="player-ctrl-btn" title="Próxima">
-                    <i class="ph-fill ph-skip-forward text-[28px]"></i>
+                    <span class="material-symbols-rounded text-[28px]">skip_next</span>
                 </button>
             </div>
 
-            <!-- Linha 4: Volume e Atenuar -->
-            <div class="w-full pt-4 border-t border-[#141a17] space-y-4">
+            <div class="w-full pt-3 border-t border-[#141a17] space-y-3">
                 <div class="flex items-center gap-3">
-                    <i class="ph-fill ph-speaker-low text-[#6d7872] text-[18px]"></i>
+                    <span class="material-symbols-rounded text-[#6d7872] text-[18px]">volume_down</span>
                     <input type="range" id="vol-slider" min="0" max="100" value="80" class="custom-slider flex-1" oninput="updateVolume(this.value)">
-                    <i class="ph-fill ph-speaker-high text-[#c2a675] text-[18px]"></i>
+                    <span class="material-symbols-rounded text-[#c2a675] text-[18px]">volume_up</span>
                 </div>
 
                 <div class="flex justify-center">
-                    <button id="muffle-btn" class="player-muffle-btn" onclick="toggleMuffle()" title="Reduz a música para narrar">
-                        <i class="ph-bold ph-microphone-stage mr-1 text-[12px]"></i> Atenuar P/ Narrar
+                    <button id="muffle-btn" class="player-muffle-btn flex items-center justify-center gap-1" onclick="toggleMuffle()" title="Reduz a música para narrar">
+                        <span class="material-symbols-rounded icon-outlined text-[14px]">mic</span> Atenuar P/ Narrar
                     </button>
                 </div>
             </div>
 
         </div>
     </div>
-    <!-- FIM DO PLAYER -->
 
-    <main class="flex-1 overflow-y-auto w-full max-w-lg mx-auto z-10 flex flex-col pb-24 pt-4 px-3">
+    <main class="flex-1 overflow-y-auto w-full max-w-lg mx-auto z-10 flex flex-col pb-12 pt-4 px-3">
         
         <div class="flex items-center justify-center mb-5">
             <h1 class="font-title text-[20px] text-[#b8b4a7] uppercase tracking-widest font-bold">Configurações</h1>
         </div>
 
-        <!-- MÓDULO 1: ÁUDIO & TRILHAS (CATÁLOGO DE DOWNLOADS) -->
         <div class="config-card">
             <div class="config-header">
-                <i class="ph-bold ph-download-simple"></i> Catálogo de Ecos
+                <span class="material-symbols-rounded text-[20px]">download</span> Catálogo de Ecos
             </div>
             <div class="space-y-2">
                 <p class="text-[12.5px] font-sans text-[#6d7872] mb-3 leading-snug">Faça o download das trilhas para o seu dispositivo para tocá-las offline durante a sessão.</p>
 
-                <!-- Trilha 1 -->
                 <div class="playlist-row">
                     <div class="flex items-center gap-3 min-w-0">
                         <div class="playlist-icon-box">
-                            <i class="ph-fill ph-speaker-hifi text-[20px]"></i>
+                            <span class="material-symbols-rounded text-[20px]">music_note</span>
                         </div>
                         <div class="flex flex-col min-w-0">
                             <span class="font-title text-[15px] text-[#b8b4a7] font-bold leading-none truncate">Ecos de Ruína</span>
@@ -485,15 +537,14 @@
                         </div>
                     </div>
                     <button class="playlist-action-btn" onclick="togglePlaylistState(this, 'Ecos de Ruína')" title="Baixar Trilha">
-                        <i class="ph-bold ph-cloud-arrow-down text-[22px]"></i>
+                        <span class="material-symbols-rounded text-[22px]">cloud_download</span>
                     </button>
                 </div>
 
-                <!-- Trilha 2 -->
                 <div class="playlist-row">
                     <div class="flex items-center gap-3 min-w-0">
                         <div class="playlist-icon-box !border-[#450606] !text-[#ff6b6b]">
-                            <i class="ph-fill ph-sword text-[20px]"></i>
+                            <span class="material-symbols-rounded text-[20px]">swords</span>
                         </div>
                         <div class="flex flex-col min-w-0">
                             <span class="font-title text-[15px] text-[#b8b4a7] font-bold leading-none truncate">Sangue e Gelo</span>
@@ -501,15 +552,14 @@
                         </div>
                     </div>
                     <button class="playlist-action-btn" onclick="togglePlaylistState(this, 'Sangue e Gelo')" title="Baixar Trilha">
-                        <i class="ph-bold ph-cloud-arrow-down text-[22px]"></i>
+                        <span class="material-symbols-rounded text-[22px]">cloud_download</span>
                     </button>
                 </div>
 
-                <!-- Trilha 3 -->
                 <div class="playlist-row">
                     <div class="flex items-center gap-3 min-w-0">
                         <div class="playlist-icon-box !border-[#1a3845] !text-[#38bdf8]">
-                            <i class="ph-fill ph-compass text-[20px]"></i>
+                            <span class="material-symbols-rounded text-[20px]">explore</span>
                         </div>
                         <div class="flex flex-col min-w-0">
                             <span class="font-title text-[15px] text-[#b8b4a7] font-bold leading-none truncate">Névoa Espessa</span>
@@ -517,16 +567,15 @@
                         </div>
                     </div>
                     <button class="playlist-action-btn delete-mode" onclick="togglePlaylistState(this, 'Névoa Espessa', true)" title="Excluir do Dispositivo">
-                        <i class="ph-bold ph-trash text-[20px]"></i>
+                        <span class="material-symbols-rounded text-[20px]">delete</span>
                     </button>
                 </div>
             </div>
         </div>
 
-        <!-- MÓDULO 2: INTERFACE & ZOOM -->
         <div class="config-card">
             <div class="config-header">
-                <i class="ph-bold ph-text-aa"></i> Interface & Leitura
+                <span class="material-symbols-rounded text-[20px]">format_size</span> Interface & Leitura
             </div>
             
             <div class="mt-2 mb-1">
@@ -535,18 +584,17 @@
                     <span id="zoom-display" class="font-title font-bold text-[#c2a675] text-[15px]">100%</span>
                 </div>
                 
-                <div class="flex items-center gap-4 px-1 pb-2">
-                    <span class="text-[12px] font-title font-bold text-[#6d7872] select-none">A</span>
+                <div class="flex items-center gap-3 px-1 pb-2">
+                    <span class="material-symbols-rounded text-[#6d7872] text-[18px]">text_fields</span>
                     <input type="range" id="zoom-slider" min="0" max="4" value="2" step="1" class="custom-slider flex-1" oninput="handleZoomSlider(this.value)">
-                    <span class="text-[22px] font-title font-bold text-[#6d7872] select-none">A</span>
+                    <span class="material-symbols-rounded text-[#c2a675] text-[24px]">format_size</span>
                 </div>
             </div>
         </div>
 
-        <!-- MÓDULO 3: IDIOMA -->
         <div class="config-card">
             <div class="config-header">
-                <i class="ph-bold ph-translate"></i> Idioma do Sistema
+                <span class="material-symbols-rounded text-[20px]">translate</span> Idioma do Sistema
             </div>
             <div class="space-y-3">
                 <div class="flex flex-col gap-1.5">
@@ -556,29 +604,28 @@
                             <option value="en-US">English (US)</option>
                             <option value="es-ES">Español</option>
                         </select>
-                        <i class="ph-bold ph-caret-down absolute right-3 top-1/2 -translate-y-1/2 text-[#4a5550] pointer-events-none"></i>
+                        <span class="material-symbols-rounded icon-outlined absolute right-3 top-1/2 -translate-y-1/2 text-[#4a5550] pointer-events-none text-[18px]">arrow_drop_down</span>
                     </div>
                 </div>
             </div>
         </div>
 
-        <!-- MÓDULO 4: DADOS (BACKUP / RESTORE) -->
         <div class="config-card">
             <div class="config-header">
-                <i class="ph-bold ph-database"></i> Gerenciamento de Dados
+                <span class="material-symbols-rounded text-[20px]">database</span> Gerenciamento de Dados
             </div>
             <div class="space-y-3">
                 <p class="text-[13px] font-celtic text-[#8c938f] leading-snug mb-2">
                     Faça o download do seu progresso para evitar perdas caso o navegador limpe o cache.
                 </p>
                 <button type="button" class="btn-action" onclick="exportData()">
-                    <i class="ph-bold ph-download text-lg"></i> Exportar Backup (Salvar)
+                    <span class="material-symbols-rounded text-lg">download</span> Exportar Backup (Salvar)
                 </button>
                 
                 <div class="relative mt-2">
                     <input type="file" id="import-file" accept=".json" class="hidden" onchange="importData(event)">
                     <button type="button" class="btn-action danger" onclick="document.getElementById('import-file').click()">
-                        <i class="ph-bold ph-upload text-lg"></i> Restaurar Backup (Carregar)
+                        <span class="material-symbols-rounded text-lg">restart_alt</span> Restaurar Backup (Carregar)
                     </button>
                 </div>
             </div>
@@ -586,70 +633,24 @@
 
     </main>
 
-    <!-- NAVEGAÇÃO INFERIOR -->
-    <nav class="fixed bottom-0 w-full z-30 bg-[#070908]/95 backdrop-blur-md border-t border-[#1a211e] pb-safe shadow-[0_-4px_20px_rgba(0,0,0,1)] flex-shrink-0">
-        <div id="bottom-nav-bar" class="bottom-nav-container"></div>
-    </nav>
-
     <script>
         const storedPlayer = localStorage.getItem('active_player');
         const storedCampaign = localStorage.getItem('active_campaign');
-        let userRole = 'cronista';
 
-        if (storedPlayer && !storedCampaign) {
-            userRole = 'jogador';
-        }
-
-        function renderBottomNav() {
-            const navContainer = document.getElementById('bottom-nav-bar');
-            if (!navContainer) return;
-
-            if (userRole === 'cronista') {
-                navContainer.innerHTML = `
-                    <a href="cronica.html" class="bottom-nav-item text-[#6d7872] hover:text-[#b8b4a7]">
-                        <i class="ph-fill ph-book-open text-[23px]"></i>
-                        <span class="bottom-nav-label">Crônica</span>
-                    </a>
-                    <a href="grupo.html" class="bottom-nav-item text-[#6d7872] hover:text-[#b8b4a7]">
-                        <i class="ph-fill ph-users-three text-[23px]"></i>
-                        <span class="bottom-nav-label">Grupo</span>
-                    </a>
-                    <a href="diario.html" class="bottom-nav-item text-[#6d7872] hover:text-[#b8b4a7]">
-                        <i class="ph-fill ph-feather text-[23px]"></i>
-                        <span class="bottom-nav-label">Diário</span>
-                    </a>
-                    <a href="salvar.html" class="bottom-nav-item text-[#6d7872] hover:text-[#b8b4a7]">
-                        <i class="ph-fill ph-archive text-[23px]"></i>
-                        <span class="bottom-nav-label">Salvar</span>
-                    </a>
-                    <a href="config.html" class="bottom-nav-item text-[#c2a675]">
-                        <i class="ph-fill ph-gear-six text-[23px]"></i>
-                        <span class="bottom-nav-label">Config.</span>
-                    </a>
-                `;
+        function goBackOrigin() {
+            if (document.referrer && document.referrer.includes(window.location.host)) {
+                window.history.back();
             } else {
-                navContainer.innerHTML = `
-                    <a href="grupo.html" class="bottom-nav-item text-[#6d7872] hover:text-[#b8b4a7]">
-                        <i class="ph-fill ph-user-circle text-[23px]"></i>
-                        <span class="bottom-nav-label">Grupo</span>
-                    </a>
-                    <a href="diario.html" class="bottom-nav-item text-[#6d7872] hover:text-[#b8b4a7]">
-                        <i class="ph-fill ph-feather text-[23px]"></i>
-                        <span class="bottom-nav-label">Diário</span>
-                    </a>
-                    <a href="exportar.html" class="bottom-nav-item text-[#6d7872] hover:text-[#b8b4a7]">
-                        <i class="ph-fill ph-share-network text-[23px]"></i>
-                        <span class="bottom-nav-label">Exportar</span>
-                    </a>
-                    <a href="config.html" class="bottom-nav-item text-[#c2a675]">
-                        <i class="ph-fill ph-gear-six text-[23px]"></i>
-                        <span class="bottom-nav-label">Config.</span>
-                    </a>
-                `;
+                if (storedCampaign) {
+                    window.location.href = 'cronica.html';
+                } else if (storedPlayer) {
+                    window.location.href = 'grupo.html';
+                } else {
+                    window.location.href = 'index.html';
+                }
             }
         }
 
-        // --- SISTEMA DE ZOOM ---
         const zoomLevels = [
             { label: '80%', value: '12.8px' },
             { label: '90%', value: '14.4px' },
@@ -680,7 +681,6 @@
             document.getElementById('zoom-display').innerText = level.label;
         }
 
-        // --- MÓDULO: PLAYER FLUTUANTE (POPOVER) ---
         let isPlaying = false;
         let isMuffled = false;
         let preMuffleVolume = 80;
@@ -689,27 +689,82 @@
             const panel = document.getElementById('player-panel');
             const overlay = document.getElementById('player-overlay');
             
-            // Se estiver fechado (opaco)
             if (panel.classList.contains('opacity-0')) {
                 overlay.style.display = 'block';
                 panel.classList.remove('opacity-0', 'scale-95', 'pointer-events-none');
                 panel.classList.add('opacity-100', 'scale-100', 'pointer-events-auto');
             } else {
-                // Se estiver aberto, fecha
-                overlay.style.display = 'none';
-                panel.classList.remove('opacity-100', 'scale-100', 'pointer-events-auto');
-                panel.classList.add('opacity-0', 'scale-95', 'pointer-events-none');
+                closePlayerMenu();
             }
         }
+
+        function closePlayerMenu() {
+            const panel = document.getElementById('player-panel');
+            const overlay = document.getElementById('player-overlay');
+            overlay.style.display = 'none';
+            panel.classList.remove('opacity-100', 'scale-100', 'pointer-events-auto');
+            panel.classList.add('opacity-0', 'scale-95', 'pointer-events-none');
+            closeCustomPlaylistMenu();
+        }
+
+        function toggleCustomPlaylistMenu(event) {
+            event.stopPropagation();
+            const trigger = document.getElementById('custom-playlist-btn');
+            const menu = document.getElementById('custom-playlist-list');
+            const chevron = document.getElementById('playlist-chevron');
+            const isHidden = menu.classList.contains('hidden');
+            
+            if (isHidden) {
+                menu.classList.remove('hidden');
+                trigger.classList.add('menu-open');
+                chevron.innerText = 'expand_less';
+            } else {
+                closeCustomPlaylistMenu();
+            }
+        }
+
+        function closeCustomPlaylistMenu() {
+            const trigger = document.getElementById('custom-playlist-btn');
+            const menu = document.getElementById('custom-playlist-list');
+            const chevron = document.getElementById('playlist-chevron');
+            if (menu) menu.classList.add('hidden');
+            if (trigger) trigger.classList.remove('menu-open');
+            if (chevron) chevron.innerText = 'expand_more';
+        }
+
+        function selectPlaylist(name, iconName, colorClass, borderGlow) {
+            document.getElementById('current-playlist-label').innerText = name;
+            
+            const artIcon = document.getElementById('player-art-icon');
+            const artGlow = document.getElementById('player-art-glow');
+            
+            if (artIcon) {
+                artIcon.innerText = iconName;
+                artIcon.className = `material-symbols-rounded text-[28px] ${colorClass}`;
+            }
+            if (artGlow) {
+                artGlow.style.borderColor = borderGlow;
+            }
+
+            const options = document.querySelectorAll('.custom-playlist-option');
+            options.forEach(opt => {
+                const optText = opt.innerText.replace(iconName, '').trim();
+                opt.classList.toggle('selected', optText === name);
+            });
+
+            closeCustomPlaylistMenu();
+        }
+
+        document.addEventListener('click', (e) => {
+            if (!e.target.closest('#custom-playlist-wrapper')) {
+                closeCustomPlaylistMenu();
+            }
+        });
 
         function togglePlayState() {
             isPlaying = !isPlaying;
             const icon = document.getElementById('play-icon');
-            if(isPlaying) {
-                icon.className = "ph-fill ph-pause text-[24px]";
-            } else {
-                icon.className = "ph-fill ph-play text-[24px] ml-1";
-            }
+            icon.innerText = isPlaying ? "pause" : "play_arrow";
         }
 
         function toggleMuffle() {
@@ -735,28 +790,26 @@
             }
         }
 
-        // --- SISTEMA DE PLAYLIST (CATÁLOGO/DOWNLOADS) ---
-        function togglePlaylistState(btnElement, playlistName, isInitialDeleteMode = false) {
+        function togglePlaylistState(btnElement, playlistName) {
             const isDeleteMode = btnElement.classList.contains('delete-mode');
             
             if (isDeleteMode) {
                 if(confirm(`Remover "${playlistName}" do dispositivo para liberar espaço?`)) {
                     btnElement.classList.remove('delete-mode');
-                    btnElement.innerHTML = `<i class="ph-bold ph-cloud-arrow-down text-[22px]"></i>`;
+                    btnElement.innerHTML = `<span class="material-symbols-rounded text-[22px]">cloud_download</span>`;
                     btnElement.title = "Baixar Trilha";
                 }
             } else {
-                btnElement.innerHTML = `<i class="ph-bold ph-spinner animate-spin text-[20px]"></i>`;
+                btnElement.innerHTML = `<span class="material-symbols-rounded text-[20px] animate-spin">progress_activity</span>`;
                 
                 setTimeout(() => {
                     btnElement.classList.add('delete-mode');
-                    btnElement.innerHTML = `<i class="ph-bold ph-trash text-[20px]"></i>`;
+                    btnElement.innerHTML = `<span class="material-symbols-rounded text-[20px]">delete</span>`;
                     btnElement.title = "Excluir do Dispositivo";
                 }, 1500);
             }
         }
 
-        // --- SISTEMA DE BACKUP E RESTORE ---
         function exportData() {
             const exportObj = {
                 app_version: "1.0",
@@ -806,7 +859,6 @@
         }
 
         window.onload = () => {
-            renderBottomNav();
             loadZoom();
         };
     </script>

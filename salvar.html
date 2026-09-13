@@ -6,8 +6,8 @@
     <title>Kings of Ruin - Salvar Jogo</title>
     
     <link href="https://fonts.googleapis.com/css2?family=Alegreya+Sans:ital,wght@0,400;0,700;1,400&family=Cinzel:wght@600;700&family=Crimson+Pro:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,400,1,0&display=swap" rel="stylesheet" />
     <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://unpkg.com/@phosphor-icons/web"></script>
 
     <style>
         :root { 
@@ -15,6 +15,9 @@
             --font-title: 'Cinzel', serif;
             --font-ui: 'Alegreya Sans', sans-serif;
         }
+
+        .material-symbols-rounded { font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24; display: inline-block; vertical-align: middle; line-height: 1; }
+        .icon-outlined { font-variation-settings: 'FILL' 0, 'wght' 600, 'GRAD' 0, 'opsz' 24; }
 
         body {
             background-color: transparent;
@@ -35,6 +38,8 @@
         }
 
         ::-webkit-scrollbar { display: none; }
+        .hide-scrollbar::-webkit-scrollbar { display: none; }
+        .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
 
         h1, h2, h3, .font-title { font-family: var(--font-title) !important; }
         .font-sans { font-family: var(--font-ui) !important; }
@@ -51,7 +56,7 @@
             justify-content: space-between;
             align-items: center;
             position: relative;
-            z-index: 25;
+            z-index: 50;
             backdrop-filter: blur(10px);
             -webkit-backdrop-filter: blur(10px);
         }
@@ -64,33 +69,45 @@
             filter: drop-shadow(0 2px 6px rgba(0, 0, 0, 0.7));
         }
 
-        .ost-player-slot {
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            padding: 6px 12px;
-            background: rgba(16, 20, 18, 0.7);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
-            border: 1px solid #2b3630;
-            border-radius: 9999px;
-            color: #c2a675;
-            font-family: var(--font-ui);
-            font-size: clamp(0.75rem, 2.5vw, 0.85rem);
-            font-weight: bold;
-            letter-spacing: 0.1em;
-            text-transform: uppercase;
-            box-shadow: inset 0 1px 3px rgba(0,0,0,0.8), 0 2px 6px rgba(0,0,0,0.6);
-            cursor: pointer;
-            transition: all 0.2s ease;
+        /* BOTÃO ECOS */
+        .music-player-slot {
+            display: flex; align-items: center; gap: 6px; padding: 4px 12px 4px 6px;
+            background: #060807; border: 1px solid #2b3630; border-radius: 9999px;
+            color: #c2a675; font-family: var(--font-ui); font-size: clamp(0.7rem, 2.5vw, 0.8rem);
+            font-weight: bold; letter-spacing: 0.1em; text-transform: uppercase;
+            box-shadow: inset 0 1px 3px rgba(0,0,0,0.9), 0 2px 6px rgba(0,0,0,0.6); cursor: pointer; transition: all 0.2s ease;
         }
-        .ost-player-slot:hover {
-            border-color: #c2a675;
-            background: rgba(26, 33, 30, 0.9);
-            box-shadow: 0 0 8px rgba(194, 166, 117, 0.3);
+        .music-player-slot:hover { border-color: #c2a675; background: #0a0d0b; }
+        .music-player-icon {
+            background: #1a211e; color: #c2a675; width: 26px; height: 26px; border-radius: 50%;
+            display: flex; align-items: center; justify-content: center; border: 1px solid #2b3630;
         }
 
-        /* TRILHA DE JORNADA - Adaptada para 5 itens */
+        /* PLAYER FLUTUANTE (POPOVER) */
+        .player-popover {
+            background: linear-gradient(180deg, #111613 0%, #050706 100%); border: 1px solid #2b3630;
+            border-top: 1px solid #3a453f; border-radius: 4px; width: 320px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.9), 0 0 15px rgba(194, 166, 117, 0.05);
+            position: absolute; top: 70px; right: 16px; z-index: 60; overflow: hidden;
+            transform-origin: top right; transition: all 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        .player-artwork-glow { width: 72px; height: 72px; border-radius: 50%; background: radial-gradient(circle, rgba(194, 166, 117, 0.15) 0%, transparent 70%); display: flex; align-items: center; justify-content: center; border: 1px solid rgba(194, 166, 117, 0.2); box-shadow: 0 0 15px rgba(0,0,0,0.5); flex-shrink: 0; }
+        .player-ctrl-btn { color: #8c938f; background: transparent; border: none; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: all 0.2s; padding: 0; }
+        .player-ctrl-btn:hover { color: #c2a675; transform: scale(1.05); }
+        .player-ctrl-btn:active { transform: scale(0.95); }
+        .player-play-btn { width: 52px; height: 52px; border-radius: 50%; background: linear-gradient(135deg, #d4b886 0%, #9c7f4c 100%); color: #060807; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 10px rgba(0,0,0,0.6), inset 1px 1px 2px rgba(255,255,255,0.4); border: 2px solid #111613; cursor: pointer; transition: all 0.2s; }
+        .player-play-btn:hover { filter: brightness(1.1); box-shadow: 0 4px 15px rgba(194,166,117,0.4); }
+        .player-play-btn:active { transform: scale(0.95); }
+        .player-muffle-btn { padding: 4px 12px; border: 1px solid #2b3630; border-radius: 999px; font-family: var(--font-ui); font-size: 10px; font-weight: bold; text-transform: uppercase; letter-spacing: 0.1em; color: #8c938f; background: #090b0a; cursor: pointer; transition: all 0.2s; }
+        .player-muffle-btn.active { background: #1a211e; color: #c2a675; border-color: #c2a675; box-shadow: 0 0 8px rgba(194,166,117,0.2); }
+        .player-overlay { position: fixed; inset: 0; z-index: 45; display: none; }
+        
+        .config-select { background: #050706; border: 1px solid #2b3630; color: #b8b4a7; outline: none; font-family: var(--font-title); border-radius: 3px; box-shadow: inset 0 1px 3px rgba(0,0,0,0.9); padding: 0 10px; appearance: none; }
+        .custom-slider { -webkit-appearance: none; appearance: none; width: 100%; background: transparent; outline: none; margin: 0; padding: 10px 0; }
+        .custom-slider::-webkit-slider-runnable-track { width: 100%; height: 8px; background: #050706; border: 1px solid #7a6345; border-radius: 4px; box-shadow: inset 0 1px 4px rgba(0,0,0,1); }
+        .custom-slider::-webkit-slider-thumb { -webkit-appearance: none; appearance: none; width: 20px; height: 20px; background: linear-gradient(135deg, #d4b886 0%, #9c7f4c 100%); border: 2px solid #111613; border-radius: 3px; cursor: pointer; transform: rotate(45deg); box-shadow: 3px 3px 6px rgba(0,0,0,0.8), inset 1px 1px 2px rgba(255,255,255,0.4); margin-top: -7px; transition: transform 0.1s; }
+
+        /* TRILHA DE JORNADA */
         .timeline-step { 
             display: flex; flex-direction: column; align-items: center; cursor: pointer; width: 20%; position: relative; z-index: 2;
         }
@@ -247,7 +264,6 @@
         .nav-button.primary { background: #450606; border-color: #9e1515; color: #b8b4a7; }
         .nav-button.primary:active { background: #9e1515; color: #fff; }
 
-        /* INPUT PARA CRIATURAS COM AUTOCOMPLETE */
         .inline-input {
             background: rgba(0,0,0,0.4); border: 1px solid #2b3630; color: #c2a675;
             outline: none; font-family: var(--font-celtic); font-size: 1.15rem;
@@ -268,7 +284,7 @@
         .add-tracker-btn {
             background: rgba(7, 9, 8, 0.6); border: 1px solid #2b3630; color: #b8b4a7; width: 28px; height: 28px;
             display: flex; align-items: center; justify-content: center; border-radius: 4px;
-            font-size: 1.1rem; cursor: pointer; transition: all 0.2s;
+            cursor: pointer; transition: all 0.2s;
         }
         .add-tracker-btn:active, .add-tracker-btn:hover { background: #1a211e; color: #c2a675; border-color: #c2a675; }
 
@@ -309,6 +325,7 @@
         .corner-bl { bottom: 0; left: 0; border-bottom: 1px solid #2b3630; border-left: 1px solid #2b3630; }
         .corner-br { bottom: 0; right: 0; border-bottom: 1px solid #2b3630; border-right: 1px solid #2b3630; }
         
+        /* NAVEGAÇÃO INFERIOR */
         .bottom-nav-container {
             display: flex;
             justify-content: center;
@@ -352,13 +369,69 @@
     <!-- CABEÇALHO -->
     <header class="site-header flex-shrink-0">
         <img src="https://lh3.googleusercontent.com/d/1U3juHgIiAcpfSSQiW3nWN20MhMUx7tJR" alt="Kings of Ruin" class="header-logo-img">
-        <div class="ost-player-slot" title="Trilha Sonora">
-            <i class="ph-fill ph-music-notes text-base"></i>
-            <span>OST</span>
+        <div class="flex items-center gap-3">
+            <div class="music-player-slot" title="Controle de Áudio" onclick="togglePlayerMenu()">
+                <div class="music-player-icon"><span class="material-symbols-rounded text-[14px] animate-pulse">music_note_2</span></div>
+                <span>Ecos</span>
+            </div>
+            <a href="config.html" class="text-[#6d7872] hover:text-[#c2a675] transition-colors p-1 flex items-center justify-center" title="Configurações">
+                <span class="material-symbols-rounded text-[26px]">settings</span>
+            </a>
         </div>
     </header>
 
-    <!-- PROGRESSO DO WIZARD (AGORA COM 5 PASSOS) -->
+    <!-- OVERLAY E PLAYER ECOS (POPOVER) -->
+    <div id="player-overlay" class="player-overlay" onclick="togglePlayerMenu()"></div>
+    <div id="player-panel" class="player-popover opacity-0 scale-95 pointer-events-none">
+        <div class="p-5 flex flex-col items-center">
+            <div class="flex items-center w-full gap-4 mb-5">
+                <div class="player-artwork-glow">
+                    <span class="material-symbols-rounded text-[32px] text-[#c2a675] opacity-80">speaker</span>
+                </div>
+                <div class="flex-1 min-w-0 flex flex-col gap-1.5">
+                    <label class="text-[9px] font-sans uppercase font-bold text-[#6d7872]">Playlist Ativa</label>
+                    <div class="relative w-full">
+                        <select class="config-select !h-[30px] !text-[14px] !pr-8 !bg-[#060807] !border-[#2b3630]">
+                            <option>Ecos de Ruína</option>
+                            <option>Sangue e Gelo</option>
+                        </select>
+                        <span class="material-symbols-rounded icon-outlined absolute right-2.5 top-1/2 -translate-y-1/2 text-[#4a5550] pointer-events-none text-[18px]">arrow_drop_down</span>
+                    </div>
+                    <span class="font-sans text-[12px] text-[#e0d5c1] font-bold truncate mt-1">♪ Faixa 1: Vento Gélido</span>
+                </div>
+            </div>
+            <div class="w-full mb-5 px-1">
+                <div class="w-full h-1 bg-[#1a211e] rounded-full overflow-hidden">
+                    <div class="w-1/3 h-full bg-[#c2a675] rounded-full"></div>
+                </div>
+                <div class="flex justify-between mt-1.5">
+                    <span class="font-sans text-[10px] text-[#6d7872] font-bold">1:24</span>
+                    <span class="font-sans text-[10px] text-[#6d7872] font-bold">-2:15</span>
+                </div>
+            </div>
+            <div class="flex items-center justify-center gap-8 mb-6">
+                <button class="player-ctrl-btn"><span class="material-symbols-rounded text-[32px]">skip_previous</span></button>
+                <button class="player-play-btn" id="main-play-btn" onclick="togglePlayState()">
+                    <span id="play-icon" class="material-symbols-rounded text-[28px]">play_arrow</span>
+                </button>
+                <button class="player-ctrl-btn"><span class="material-symbols-rounded text-[32px]">skip_next</span></button>
+            </div>
+            <div class="w-full pt-4 border-t border-[#141a17] space-y-4">
+                <div class="flex items-center gap-3">
+                    <span class="material-symbols-rounded text-[#6d7872] text-[20px]">volume_down</span>
+                    <input type="range" id="vol-slider" min="0" max="100" value="80" class="custom-slider flex-1" oninput="updateVolume(this.value)">
+                    <span class="material-symbols-rounded text-[#c2a675] text-[20px]">volume_up</span>
+                </div>
+                <div class="flex justify-center">
+                    <button id="muffle-btn" class="player-muffle-btn flex items-center justify-center gap-1" onclick="toggleMuffle()">
+                        <span class="material-symbols-rounded icon-outlined text-[14px]">mic</span> Atenuar P/ Narrar
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- PROGRESSO DO WIZARD -->
     <div class="px-2 pt-5 pb-3 border-b border-[#1a211e] bg-[#090b0a]/95 backdrop-blur-md sticky top-0 z-20 flex-shrink-0">
         <div class="relative max-w-sm mx-auto">
             <div class="absolute top-[6px] left-[10%] right-[10%] h-[1px] bg-[#2b3630] z-0"></div>
@@ -439,7 +512,7 @@
                 
                 <div class="pt-2">
                     <label id="map-section-title" class="text-[15px] uppercase font-title tracking-widest text-[#6d7872] block mb-4 flex items-center gap-2">
-                        <i class="ph-fill ph-map-pin-line text-[#6d7872] text-[20px]"></i> Locais Revelados e Tokens
+                        <span class="material-symbols-rounded text-[#6d7872] text-[20px]">pin_drop</span> Locais Revelados e Tokens
                     </label>
                     <div class="relative mb-4">
                         <input type="text" id="new-location-input" onkeypress="handleLocationEnter(event)" class="search-input italic" style="padding-right: 95px;" placeholder="Ex: 104...">
@@ -467,7 +540,7 @@
                 <div class="space-y-3">
                     <div class="p-3.5 bg-[#070908]/70 border border-[#2b3630] rounded-sm">
                         <div class="flex items-center gap-2 mb-2 pb-1.5 border-b border-[#141a17]">
-                            <i class="ph-fill ph-user text-[#c2a675] text-[20px]"></i>
+                            <span class="material-symbols-rounded text-[#c2a675] text-[20px]">id_card</span>
                             <span class="font-title text-[14.5px] text-[#c2a675] tracking-wider uppercase font-bold">Cada Jogador (Salvamento)</span>
                         </div>
                         <ul class="text-[15px] text-[#b8b4a7] font-celtic space-y-1.5 list-disc list-inside leading-relaxed pl-1">
@@ -480,7 +553,7 @@
 
                     <div class="p-3.5 bg-[#070908]/70 border border-[#2b3630] rounded-sm">
                         <div class="flex items-center gap-2 mb-2 pb-1.5 border-b border-[#141a17]">
-                            <i class="ph-fill ph-map-trifold text-[#c2a675] text-[20px]"></i>
+                            <span class="material-symbols-rounded text-[#c2a675] text-[20px]">map</span>
                             <span class="font-title text-[14.5px] text-[#c2a675] tracking-wider uppercase font-bold">Mundo Salvo (Comp. Grande)</span>
                         </div>
                         <ul class="text-[15px] text-[#b8b4a7] font-celtic space-y-1.5 list-disc list-inside leading-relaxed pl-1">
@@ -490,7 +563,7 @@
 
                     <div class="p-3.5 bg-[#070908]/70 border border-[#2b3630] rounded-sm">
                         <div class="flex items-center gap-2 mb-2 pb-1.5 border-b border-[#141a17]">
-                            <i class="ph-fill ph-cards text-[#c2a675] text-[20px]"></i>
+                            <span class="material-symbols-rounded text-[#c2a675] text-[20px]">style</span>
                             <span class="font-title text-[14.5px] text-[#c2a675] tracking-wider uppercase font-bold">Mundo Salvo (Comp. Padrão)</span>
                         </div>
                         <ul class="text-[15px] text-[#b8b4a7] font-celtic space-y-1.5 list-disc list-inside leading-relaxed pl-1">
@@ -501,7 +574,7 @@
 
                     <div class="p-3.5 bg-[#070908]/70 border border-[#2b3630] rounded-sm">
                         <div class="flex items-center gap-2 mb-2 pb-1.5 border-b border-[#141a17]">
-                            <i class="ph-fill ph-archive-box text-[#c2a675] text-[20px]"></i>
+                            <span class="material-symbols-rounded text-[#c2a675] text-[20px]">inventory_2</span>
                             <span class="font-title text-[14.5px] text-[#c2a675] tracking-wider uppercase font-bold">Comp. Pequeno & Caixa Principal</span>
                         </div>
                         <ul class="text-[15px] text-[#b8b4a7] font-celtic space-y-1.5 list-disc list-inside leading-relaxed pl-1">
@@ -539,32 +612,11 @@
     <!-- NAVEGAÇÃO INFERIOR -->
     <nav class="fixed bottom-0 w-full z-30 bg-[#070908]/95 backdrop-blur-md border-t border-[#1a211e] pb-safe shadow-[0_-4px_20px_rgba(0,0,0,1)] flex-shrink-0">
         <div class="bottom-nav-container">
-            
-            <a href="cronica.html" class="bottom-nav-item text-[#6d7872] hover:text-[#b8b4a7]">
-                <i class="ph-fill ph-book-open text-[23px]"></i>
-                <span class="bottom-nav-label">Crônica</span>
-            </a>
-
-            <a href="grupo.html" class="bottom-nav-item text-[#6d7872] hover:text-[#b8b4a7]">
-                <i class="ph-fill ph-users-three text-[23px]"></i>
-                <span class="bottom-nav-label">Grupo</span>
-            </a>
-
-            <a href="diario.html" class="bottom-nav-item text-[#6d7872] hover:text-[#b8b4a7]">
-                <i class="ph-fill ph-feather text-[23px]"></i>
-                <span class="bottom-nav-label">Diário</span>
-            </a>
-
-            <a href="salvar.html" class="bottom-nav-item text-[#c2a675]">
-                <i class="ph-fill ph-archive text-[23px]"></i>
-                <span class="bottom-nav-label">Salvar</span>
-            </a>
-
-            <a href="config.html" class="bottom-nav-item text-[#6d7872] hover:text-[#b8b4a7]">
-                <i class="ph-fill ph-gear-six text-[23px]"></i>
-                <span class="bottom-nav-label">Config.</span>
-            </a>
-
+            <a href="cronica.html" class="bottom-nav-item text-[#6d7872] hover:text-[#b8b4a7]"><span class="material-symbols-rounded text-[26px]">hourglass_bottom</span><span class="bottom-nav-label">Crônica</span></a>
+            <a href="condicoes.html" class="bottom-nav-item text-[#6d7872] hover:text-[#b8b4a7]"><span class="material-symbols-rounded text-[26px]">library_books</span><span class="bottom-nav-label">Condições</span></a>
+            <a href="diario.html" class="bottom-nav-item text-[#6d7872] hover:text-[#b8b4a7]"><span class="material-symbols-rounded text-[26px]">auto_stories</span><span class="bottom-nav-label">Diário</span></a>
+            <a href="grupo.html" class="bottom-nav-item text-[#6d7872] hover:text-[#b8b4a7]"><span class="material-symbols-rounded text-[26px]">groups_2</span><span class="bottom-nav-label">Grupo</span></a>
+            <a href="salvar.html" class="bottom-nav-item text-[#c2a675]"><span class="material-symbols-rounded text-[26px]">book_6</span><span class="bottom-nav-label">Salvar</span></a>
         </div>
     </nav>
 
@@ -600,7 +652,7 @@
         });
 
         document.addEventListener('click', (e) => {
-            if (currentStep !== 3) return; // Agora o passo do mapa é o 3
+            if (currentStep !== 3) return;
             const clickedCard = e.target.closest('.location-card-item');
             const clickedAddBtn = e.target.closest('.world-add-btn');
             const clickedInput = e.target.closest('#new-location-input');
@@ -662,9 +714,9 @@
         function goToStep(step) { currentStep = step; updateUI(); }
 
         const photoConfig = {
-            step0: { id: 'step0', title: 'Anexar Foto da Ficha (Opcional)', icon: 'ph-identification-card' },
-            step1: { id: 'step1', title: 'Anexar Foto da Mesa', icon: 'ph-camera' },
-            step2: { id: 'step2', title: 'Anexar Foto da Área do Mapa', icon: 'ph-map-trifold' }
+            step0: { id: 'step0', title: 'Anexar Foto da Ficha (Opcional)', icon: 'id_card' },
+            step1: { id: 'step1', title: 'Anexar Foto da Mesa', icon: 'photo_camera' },
+            step2: { id: 'step2', title: 'Anexar Foto da Área do Mapa', icon: 'map' }
         };
         let photos = { step0: [], step1: [], step2: [] };
 
@@ -680,14 +732,14 @@
                 renderPhotoGallery(stepId);
             } else {
                 btnEl.classList.add('delete-confirm-photo');
-                btnEl.innerHTML = '<i class="ph-fill ph-trash text-[#ffffff] text-[16px]"></i>';
+                btnEl.innerHTML = '<span class="material-symbols-rounded text-[#ffffff] text-[16px]">delete</span>';
                 btnEl.style.backgroundColor = '#ff3333';
                 btnEl.style.borderColor = '#9e1515';
                 
                 setTimeout(() => {
                     if (document.body.contains(btnEl)) {
                         btnEl.classList.remove('delete-confirm-photo');
-                        btnEl.innerHTML = '<i class="ph-bold ph-trash text-[16px]"></i>';
+                        btnEl.innerHTML = '<span class="material-symbols-rounded text-[16px]">delete</span>';
                         btnEl.style.backgroundColor = 'rgba(7, 9, 8, 0.8)';
                         btnEl.style.borderColor = '#2b3630';
                     }
@@ -705,7 +757,7 @@
             if (data.length === 0) {
                 container.innerHTML = `
                     <button onclick="mockCapturePhoto('${stepId}')" class="photo-btn mt-2">
-                        <i class="ph ${config.icon} text-2xl"></i>
+                        <span class="material-symbols-rounded text-2xl">${config.icon}</span>
                         <span>${config.title}</span>
                     </button>
                 `;
@@ -714,7 +766,7 @@
                 
                 html += `
                     <button onclick="mockCapturePhoto('${stepId}')" class="photo-add-small snap-center" title="Adicionar outra foto">
-                        <i class="ph ph-plus text-2xl mb-1"></i>
+                        <span class="material-symbols-rounded text-2xl mb-1">add_a_photo</span>
                         <span class="text-[9px] uppercase tracking-widest font-sans font-bold">Foto</span>
                     </button>
                 `;
@@ -724,7 +776,7 @@
                     <div class="relative flex-shrink-0 snap-center">
                         <img src="${url}" class="photo-thumbnail" alt="Foto salva">
                         <button onclick="requestRemovePhoto('${stepId}', ${index}, this)" class="absolute -top-2 -right-2 w-7 h-7 bg-[#070908]/90 border border-[#2b3630] rounded-full flex items-center justify-center text-[#6d7872] shadow-lg transition-all z-10 backdrop-blur-sm">
-                            <i class="ph-bold ph-trash text-[14px]"></i>
+                            <span class="material-symbols-rounded text-[14px]">delete</span>
                         </button>
                     </div>`;
                 });
@@ -738,13 +790,13 @@
             if (btnEl.classList.contains('delete-confirm')) { removeTracker(category, index); } 
             else {
                 btnEl.classList.add('delete-confirm');
-                btnEl.innerHTML = '<i class="ph-bold ph-trash text-[18px]"></i>';
+                btnEl.innerHTML = '<span class="material-symbols-rounded text-[18px]">delete</span>';
                 btnEl.style.backgroundColor = '#ff3333'; btnEl.style.borderColor = '#9e1515'; btnEl.style.color = '#fff';
                 setTimeout(() => {
                     if (document.body.contains(btnEl)) {
                         btnEl.classList.remove('delete-confirm');
                         let iconSize = category === 'padrons' ? '22px' : '18px';
-                        btnEl.innerHTML = `<i class="ph-fill ph-trash text-[${iconSize}]"></i>`;
+                        btnEl.innerHTML = `<span class="material-symbols-rounded text-[${iconSize}]">delete</span>`;
                         btnEl.style.backgroundColor = ''; btnEl.style.borderColor = ''; btnEl.style.color = '';
                     }
                 }, 2500);
@@ -819,12 +871,12 @@
             if (btnEl.classList.contains('delete-confirm')) { removeLocation(locNum); } 
             else {
                 btnEl.classList.add('delete-confirm');
-                btnEl.innerHTML = '<i class="ph-bold ph-trash text-[18px]"></i>';
+                btnEl.innerHTML = '<span class="material-symbols-rounded text-[18px]">delete</span>';
                 btnEl.style.color = '#ff3333';
                 setTimeout(() => {
                     if (document.body.contains(btnEl)) {
                         btnEl.classList.remove('delete-confirm');
-                        btnEl.innerHTML = '<i class="ph-fill ph-trash text-[18px]"></i>';
+                        btnEl.innerHTML = '<span class="material-symbols-rounded text-[18px]">delete</span>';
                         btnEl.style.color = '';
                     }
                 }, 2500);
@@ -840,10 +892,10 @@
             if (locations.length === 0) { container.innerHTML = `<div class="text-[16px] text-[#6d7872] italic font-celtic px-2 py-1 mb-2">Nenhum em jogo.</div>`; return; }
 
             const tokenMeta = {
-                lightHourglass: { label: 'Tempo (C)', icon: 'ph-hourglass', color: 'text-[#d1d5db]' },
-                darkHourglass: { label: 'Tempo (E)', icon: 'ph-hourglass-high', color: 'text-[#6b7280]' },
-                scroll: { label: 'Demanda', icon: 'ph-scroll', color: 'text-[#c2a675]' },
-                cube: { label: 'Universal', icon: 'ph-cube', color: 'text-[#ef4444]' }
+                lightHourglass: { label: 'Tempo (C)', icon: 'hourglass_top', color: 'text-[#d1d5db]' },
+                darkHourglass: { label: 'Tempo (E)', icon: 'hourglass_bottom', color: 'text-[#6b7280]' },
+                scroll: { label: 'Demanda', icon: 'receipt_long', color: 'text-[#c2a675]' },
+                cube: { label: 'Universal', icon: 'deployed_code', color: 'text-[#ef4444]' }
             };
 
             locations.reverse().forEach(locNum => {
@@ -868,7 +920,7 @@
                         dropdownGridHtml += `
                             <div class="token-cell-card">
                                 <div class="flex items-center gap-2 overflow-hidden">
-                                    <i class="ph-fill ${meta.icon} ${meta.color} text-[18px] flex-shrink-0"></i>
+                                    <span class="material-symbols-rounded ${meta.icon} ${meta.color} text-[18px] flex-shrink-0">${meta.icon}</span>
                                     <span class="font-sans text-[13px] font-bold text-[#b8b4a7] truncate">${meta.label}</span>
                                 </div>
                                 <select class="token-select" onchange="setLocationTokenValue('${locNum}', '${k}', this.value)">
@@ -890,30 +942,32 @@
 
                             <div class="flex items-center gap-1.5">
                                 <button onclick="handleTokenIconClick('${locNum}', 'lightHourglass')" class="token-header-btn ${locData.tokens.lightHourglass > 0 ? 'active' : 'inactive'}" title="Tempo Claro">
-                                    <i class="ph-fill ph-hourglass text-[#d1d5db] text-[16px]"></i>
+                                    <span class="material-symbols-rounded text-[#d1d5db] text-[16px]">hourglass_top</span>
                                     ${locData.tokens.lightHourglass > 0 ? `<span class="badge-count">${locData.tokens.lightHourglass}</span>` : ''}
                                 </button>
                                 <button onclick="handleTokenIconClick('${locNum}', 'darkHourglass')" class="token-header-btn ${locData.tokens.darkHourglass > 0 ? 'active' : 'inactive'}" title="Tempo Escuro">
-                                    <i class="ph-fill ph-hourglass-high text-[#6b7280] text-[16px]"></i>
+                                    <span class="material-symbols-rounded text-[#6b7280] text-[16px]">hourglass_bottom</span>
                                     ${locData.tokens.darkHourglass > 0 ? `<span class="badge-count">${locData.tokens.darkHourglass}</span>` : ''}
                                 </button>
                                 <button onclick="handleTokenIconClick('${locNum}', 'scroll')" class="token-header-btn ${locData.tokens.scroll > 0 ? 'active' : 'inactive'}" title="Demanda">
-                                    <i class="ph-fill ph-scroll text-[#c2a675] text-[16px]"></i>
+                                    <span class="material-symbols-rounded text-[#c2a675] text-[16px]">receipt_long</span>
                                     ${locData.tokens.scroll > 0 ? `<span class="badge-count">${locData.tokens.scroll}</span>` : ''}
                                 </button>
                                 <button onclick="handleTokenIconClick('${locNum}', 'cube')" class="token-header-btn ${locData.tokens.cube > 0 ? 'active' : 'inactive'}" title="Universal">
-                                    <i class="ph-fill ph-cube text-[#ef4444] text-[16px]"></i>
+                                    <span class="material-symbols-rounded text-[#ef4444] text-[16px]">deployed_code</span>
                                     ${locData.tokens.cube > 0 ? `<span class="badge-count">${locData.tokens.cube}</span>` : ''}
                                 </button>
                             </div>
 
-                            <button onclick="requestRemoveLocation('${locNum}', this)" class="text-[#6d7872] hover:text-[#ff3333] transition-all p-1 flex-shrink-0"><i class="ph-fill ph-trash text-[19px]"></i></button>
+                            <button onclick="requestRemoveLocation('${locNum}', this)" class="text-[#6d7872] hover:text-[#ff3333] transition-all p-1 flex-shrink-0">
+                                <span class="material-symbols-rounded text-[19px]">delete</span>
+                            </button>
                         </div>
 
                         ${locData.isExpanded ? `
                             ${dropdownGridHtml}
                             <div class="flex items-end gap-2 pt-2 border-t border-[#141a17] mt-1">
-                                <i class="ph-fill ph-feather text-[#6d7872] text-[15px] mb-1"></i>
+                                <span class="material-symbols-rounded text-[#6d7872] text-[15px] mb-1">history_edu</span>
                                 <input type="text" class="note-input placeholder-[#343d38] italic text-[1.05rem]" placeholder="Anotações do local..." value="${locData.note}" oninput="saveWorldNote('${locNum}', this.value)" autocomplete="off">
                             </div>
                         ` : ''}
@@ -943,7 +997,7 @@
                 <div class="p-3.5 bg-[#070908]/70 border border-[#2b3630] rounded-sm">
                     <div class="flex items-center justify-between pb-1.5 border-b border-[#141a17] mb-2">
                         <span class="font-title text-[14.5px] text-[#c2a675] uppercase font-bold flex items-center gap-1.5">
-                            <i class="ph-fill ph-paw-print text-[18px]"></i> Criaturas & Totens
+                            <span class="material-symbols-rounded text-[18px]">pets</span> Criaturas & Totens
                         </span>
                         <span class="text-[12.5px] font-sans font-bold text-[#8c938f]">${activePadronsCount + monarcasCount + companheirosCount + guardioesCount} registros</span>
                     </div>
@@ -961,7 +1015,7 @@
                 <div class="p-3.5 bg-[#070908]/70 border border-[#2b3630] rounded-sm">
                     <div class="flex items-center justify-between pb-1.5 border-b border-[#141a17] mb-2">
                         <span class="font-title text-[14.5px] text-[#c2a675] uppercase font-bold flex items-center gap-1.5">
-                            <i class="ph-fill ph-map-pin-line text-[18px]"></i> Cartas do Mapa
+                            <span class="material-symbols-rounded text-[18px]">pin_drop</span> Cartas do Mapa
                         </span>
                         <span class="text-[12.5px] font-sans font-bold text-[#8c938f]">${locKeys.length} locais salvos</span>
                     </div>
@@ -990,13 +1044,12 @@
             }
             html += `</div>`;
 
-            // Lê as 3 matrizes de fotos agora
             const totalPhotos = photos.step0.length + photos.step1.length + photos.step2.length;
             html += `
                 <div class="p-3.5 bg-[#070908]/70 border border-[#2b3630] rounded-sm">
                     <div class="flex items-center justify-between pb-1.5 border-b border-[#141a17] mb-2">
                         <span class="font-title text-[14.5px] text-[#c2a675] uppercase font-bold flex items-center gap-1.5">
-                            <i class="ph-fill ph-camera text-[18px]"></i> Registros Fotográficos
+                            <span class="material-symbols-rounded text-[18px]">photo_camera</span> Registros Fotográficos
                         </span>
                         <span class="text-[12.5px] font-sans font-bold text-[#8c938f]">${totalPhotos} fotos</span>
                     </div>
@@ -1009,7 +1062,6 @@
             container.innerHTML = html;
         }
 
-        // BANCO DE DADOS ATUALIZADO (MONARCAS, COMPANHEIROS E 21 GUARDIÕES MOCK)
         const dbEntities = { 
             monarcas: [
                 "Claudyne", 
@@ -1035,10 +1087,10 @@
         let trackers = { padrons: [], monarcas: [], companheiros: [], guardioes: [] };
         
         const trackerConfig = { 
-            padrons: { title: "Padrons", icon: "ph-lighthouse", color: "text-[#c2a675] drop-shadow-[0_0_5px_rgba(194,166,117,0.5)]", max: 3, type: 'array' }, 
-            monarcas: { title: "Monarcas da Ruína", icon: "ph-crown", color: "text-[#ff3333] drop-shadow-[0_0_5px_rgba(255,51,51,0.6)]", max: 3, type: 'object' }, 
-            companheiros: { title: "Companheiros", icon: "ph-paw-print", color: "text-[#b8b4a7] drop-shadow-[0_0_3px_rgba(184,180,167,0.5)]", max: 4, type: 'object' }, 
-            guardioes: { title: "Guardiões", icon: "ph-sword", color: "text-[#c2a675] drop-shadow-[0_0_5px_rgba(194,166,117,0.5)]", max: 99, type: 'object' } 
+            padrons: { title: "Padrons", icon: "cell_tower", color: "text-[#c2a675] drop-shadow-[0_0_5px_rgba(194,166,117,0.5)]", max: 3, type: 'array' }, 
+            monarcas: { title: "Monarcas da Ruína", icon: "crown", color: "text-[#ff3333] drop-shadow-[0_0_5px_rgba(255,51,51,0.6)]", max: 3, type: 'object' }, 
+            companheiros: { title: "Companheiros", icon: "pets", color: "text-[#b8b4a7] drop-shadow-[0_0_3px_rgba(184,180,167,0.5)]", max: 4, type: 'object' }, 
+            guardioes: { title: "Guardiões", icon: "swords", color: "text-[#c2a675] drop-shadow-[0_0_5px_rgba(194,166,117,0.5)]", max: 99, type: 'object' } 
         };
 
         function addTracker(category) {
@@ -1078,15 +1130,15 @@
                 if (!container) return; const data = trackers[category];
                 
                 let btnHtml = '';
-                if (data.length === 0) btnHtml = `<button onclick="addTracker('${category}')" class="add-tracker-btn"><i class="ph ph-plus"></i></button>`;
-                else if (category === 'padrons') btnHtml = `<button onclick="requestRemoveTracker('${category}', null, this)" class="flex items-center justify-center text-[#6d7872] hover:text-[#ff3333] transition-colors p-1 rounded-sm"><i class="ph-fill ph-trash text-[22px]"></i></button>`;
-                else if (data.length < config.max) btnHtml = `<button onclick="addTracker('${category}')" class="add-tracker-btn"><i class="ph ph-plus"></i></button>`;
+                if (data.length === 0) btnHtml = `<button onclick="addTracker('${category}')" class="add-tracker-btn"><span class="material-symbols-rounded text-sm">add</span></button>`;
+                else if (category === 'padrons') btnHtml = `<button onclick="requestRemoveTracker('${category}', null, this)" class="flex items-center justify-center text-[#6d7872] hover:text-[#ff3333] transition-colors p-1 rounded-sm"><span class="material-symbols-rounded text-[22px]">delete</span></button>`;
+                else if (data.length < config.max) btnHtml = `<button onclick="addTracker('${category}')" class="add-tracker-btn"><span class="material-symbols-rounded text-sm">add</span></button>`;
 
                 let idAttr = category === 'padrons' ? 'id="title-section-padrons"' : '';
 
                 let html = `<div ${idAttr} class="flex items-center justify-between mb-4 mt-5 border-b border-[#2b3630] pb-2">
                                 <label class="text-[15px] uppercase font-title tracking-widest text-[#c2a675] flex items-center gap-2">
-                                    <i class="ph-fill ${config.icon} ${config.color} text-[22px]"></i> ${config.title}
+                                    <span class="material-symbols-rounded ${config.color} text-[22px]">${config.icon}</span> ${config.title}
                                 </label>${btnHtml}</div>`;
 
                 if (data.length === 0) { html += `<div class="text-[16px] text-[#6d7872] italic font-celtic px-2 py-1 mb-2">Nenhum em jogo.</div>`; } 
@@ -1120,12 +1172,11 @@
                                     <input type="text" class="inline-input w-full" placeholder="Nome..." value="${item.name}" 
                                         onfocus="showSuggestions(this, '${category}', ${index})" oninput="updateTrackerObject('${category}', ${index}, 'name', this.value); showSuggestions(this, '${category}', ${index})"
                                         onblur="setTimeout(() => { const el = document.getElementById('suggestions-${category}-${index}'); if(el) el.style.display = 'none'; }, 150)">
-                                    <!-- Altura máxima aumentada para caber mais itens -->
                                     <div id="suggestions-${category}-${index}" class="absolute top-full left-0 mt-1 w-full bg-[#070908] border border-[#2b3630] rounded-sm z-50 shadow-[0_4px_12px_rgba(0,0,0,1)] hidden max-h-48 overflow-y-auto"></div>
                                 </div>
                                 <input type="text" class="inline-input w-20 text-center" placeholder="Local" value="${item.loc}" oninput="updateTrackerObject('${category}', ${index}, 'loc', this.value)">
                                 <button onclick="requestRemoveTracker('${category}', ${index}, this)" class="flex items-center justify-center bg-[#0d0f0e] border border-[#2b3630] w-[32px] h-[32px] rounded-sm text-[#6d7872] hover:bg-[#1a0505] hover:text-[#ff3333] hover:border-[#ff3333] transition-all flex-shrink-0">
-                                    <i class="ph-fill ph-trash text-[18px]"></i>
+                                    <span class="material-symbols-rounded text-[18px]">delete</span>
                                 </button>
                             </div>`;
                         });
@@ -1134,6 +1185,52 @@
                 }
                 container.innerHTML = html;
             });
+        }
+
+        /* Lógica do Popover de Ecos */
+        let isPlaying = false;
+        let isMuffled = false;
+        let preMuffleVolume = 80;
+
+        function togglePlayerMenu() {
+            const panel = document.getElementById('player-panel');
+            const overlay = document.getElementById('player-overlay');
+            if (panel.classList.contains('opacity-0')) {
+                overlay.style.display = 'block';
+                panel.classList.remove('opacity-0', 'scale-95', 'pointer-events-none');
+                panel.classList.add('opacity-100', 'scale-100', 'pointer-events-auto');
+            } else {
+                overlay.style.display = 'none';
+                panel.classList.remove('opacity-100', 'scale-100', 'pointer-events-auto');
+                panel.classList.add('opacity-0', 'scale-95', 'pointer-events-none');
+            }
+        }
+
+        function togglePlayState() {
+            isPlaying = !isPlaying;
+            const icon = document.getElementById('play-icon');
+            icon.innerText = isPlaying ? "pause" : "play_arrow";
+        }
+
+        function toggleMuffle() {
+            const muffleBtn = document.getElementById('muffle-btn');
+            const volSlider = document.getElementById('vol-slider');
+            isMuffled = !isMuffled;
+            if(isMuffled) {
+                preMuffleVolume = volSlider.value;
+                volSlider.value = 15; 
+                muffleBtn.classList.add('active');
+            } else {
+                volSlider.value = preMuffleVolume; 
+                muffleBtn.classList.remove('active');
+            }
+        }
+
+        function updateVolume(val) {
+            if(isMuffled) {
+                isMuffled = false;
+                document.getElementById('muffle-btn').classList.remove('active');
+            }
         }
 
         window.onload = () => {
