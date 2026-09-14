@@ -20,31 +20,18 @@
             --font-ui: 'Alegreya Sans', sans-serif;
         }
 
-        /* Configuração Base para os Ícones Material */
         .material-symbols-rounded { font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24; display: inline-block; vertical-align: middle; line-height: 1; }
         .icon-outlined { font-variation-settings: 'FILL' 0, 'wght' 600, 'GRAD' 0, 'opsz' 24; }
 
         body {
-            background-color: transparent;
-            color: #b8b4a7;
-            -webkit-tap-highlight-color: transparent;
-            font-family: var(--font-celtic);
-            overflow-x: hidden;
-            position: relative;
-            margin: 0;
-            padding: 0;
-            font-size: 16px;
+            background-color: transparent; color: #b8b4a7; -webkit-tap-highlight-color: transparent;
+            font-family: var(--font-celtic); overflow-x: hidden; position: relative; margin: 0; padding: 0; font-size: 16px;
         }
 
         body::after {
-            content: "";
-            position: fixed;
-            top: 0; left: 0; width: 100vw; height: 100vh;
+            content: ""; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
             background-image: linear-gradient(rgba(7, 9, 8, 0.75), rgba(7, 9, 8, 0.75)), url('https://lh3.googleusercontent.com/d/1CVTwNLqVBc4Y97ZD82hIaf4wJnPeK4-L');
-            background-size: cover;
-            background-position: center;
-            pointer-events: none;
-            z-index: -2;
+            background-size: cover; background-position: center; pointer-events: none; z-index: -2;
         }
 
         ::-webkit-scrollbar { display: none; }
@@ -55,59 +42,30 @@
         .font-sans { font-family: var(--font-ui) !important; }
         .font-celtic { font-family: var(--font-celtic) !important; }
 
-        /* Remove as setinhas padrão de inputs de número */
         input[type=number]::-webkit-inner-spin-button, 
-        input[type=number]::-webkit-outer-spin-button { 
-            -webkit-appearance: none; 
-            margin: 0; 
-        }
-        input[type=number] {
-            -moz-appearance: textfield;
-            appearance: textfield;
-        }
+        input[type=number]::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
+        input[type=number] { -moz-appearance: textfield; appearance: textfield; }
 
         /* CABEÇALHO */
         .site-header {
-            background: linear-gradient(180deg, rgba(7, 9, 8, 0.95) 0%, rgba(7, 9, 8, 0.85) 100%);
-            border-bottom: 1px solid rgba(43, 54, 48, 0.5);
-            padding: 8px 16px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            position: relative;
-            z-index: 50;
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
+            background: linear-gradient(180deg, rgba(7, 9, 8, 0.95) 0%, rgba(7, 9, 8, 0.85) 100%); border-bottom: 1px solid rgba(43, 54, 48, 0.5);
+            padding: 8px 16px; display: flex; justify-content: space-between; align-items: center; position: relative; z-index: 50;
+            backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
         }
-        .header-logo-img {
-            height: clamp(44px, 11vw, 54px);
-            width: auto;
-            max-width: 260px;
-            object-fit: contain;
-            display: block;
-            filter: drop-shadow(0 2px 6px rgba(0, 0, 0, 0.7));
-        }
+        .header-logo-img { height: clamp(44px, 11vw, 54px); width: auto; max-width: 260px; object-fit: contain; display: block; filter: drop-shadow(0 2px 6px rgba(0, 0, 0, 0.7)); }
 
-        /* BOTÃO ECOS NO CABEÇALHO */
         .music-player-slot {
-            display: flex; align-items: center; gap: 6px; padding: 4px 12px 4px 6px;
-            background: #060807; border: 1px solid #2b3630; border-radius: 9999px;
-            color: #c2a675; font-family: var(--font-ui); font-size: clamp(0.7rem, 2.5vw, 0.8rem);
-            font-weight: bold; letter-spacing: 0.1em; text-transform: uppercase;
+            display: flex; align-items: center; gap: 6px; padding: 4px 12px 4px 6px; background: #060807; border: 1px solid #2b3630; border-radius: 9999px;
+            color: #c2a675; font-family: var(--font-ui); font-size: clamp(0.7rem, 2.5vw, 0.8rem); font-weight: bold; letter-spacing: 0.1em; text-transform: uppercase;
             box-shadow: inset 0 1px 3px rgba(0,0,0,0.9), 0 2px 6px rgba(0,0,0,0.6); cursor: pointer; transition: all 0.2s ease;
         }
         .music-player-slot:hover { border-color: #c2a675; background: #0a0d0b; }
-        .music-player-icon {
-            background: #1a211e; color: #c2a675; width: 26px; height: 26px; border-radius: 50%;
-            display: flex; align-items: center; justify-content: center; border: 1px solid #2b3630;
-        }
+        .music-player-icon { background: #1a211e; color: #c2a675; width: 26px; height: 26px; border-radius: 50%; display: flex; align-items: center; justify-content: center; border: 1px solid #2b3630; }
 
-        /* PLAYER FLUTUANTE (POPOVER) */
+        /* PLAYER E OVERLAYS */
         .player-popover {
-            background: linear-gradient(180deg, #111613 0%, #050706 100%); border: 1px solid #2b3630;
-            border-top: 1px solid #3a453f; border-radius: 4px; width: 320px;
-            box-shadow: 0 15px 35px rgba(0,0,0,0.9), 0 0 15px rgba(194, 166, 117, 0.05);
-            position: absolute; top: 70px; right: 16px; z-index: 60; overflow: hidden;
+            background: linear-gradient(180deg, #111613 0%, #050706 100%); border: 1px solid #2b3630; border-top: 1px solid #3a453f; border-radius: 4px; width: 320px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.9), 0 0 15px rgba(194, 166, 117, 0.05); position: absolute; top: 70px; right: 16px; z-index: 60; overflow: hidden;
             transform-origin: top right; transition: all 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
         .player-artwork-glow { width: 72px; height: 72px; border-radius: 50%; background: radial-gradient(circle, rgba(194, 166, 117, 0.15) 0%, transparent 70%); display: flex; align-items: center; justify-content: center; border: 1px solid rgba(194, 166, 117, 0.2); box-shadow: 0 0 15px rgba(0,0,0,0.5); flex-shrink: 0; }
@@ -127,199 +85,40 @@
         .custom-slider::-webkit-slider-thumb { -webkit-appearance: none; appearance: none; width: 20px; height: 20px; background: linear-gradient(135deg, #d4b886 0%, #9c7f4c 100%); border: 2px solid #111613; border-radius: 3px; cursor: pointer; transform: rotate(45deg); box-shadow: 3px 3px 6px rgba(0,0,0,0.8), inset 1px 1px 2px rgba(255,255,255,0.4); margin-top: -7px; transition: transform 0.1s; }
 
         /* FICHAS DOS HERÓIS */
-        .hero-card {
-            background: #090b0a;
-            border: 1px solid #2b3630;
-            border-radius: 3px;
-            transition: border-color 0.25s, box-shadow 0.25s;
-        }
-        .hero-card.expanded {
-            border-color: #c2a675;
-            box-shadow: 0 0 12px rgba(194,166,117,0.18), inset 0 0 15px rgba(0,0,0,0.9);
-        }
+        .hero-card { background: #090b0a; border: 1px solid #2b3630; border-radius: 3px; transition: border-color 0.25s, box-shadow 0.25s; }
+        .hero-card.expanded { border-color: #c2a675; box-shadow: 0 0 12px rgba(194,166,117,0.18), inset 0 0 15px rgba(0,0,0,0.9); }
 
-        /* COMBOBOX CUSTOMIZADO */
-        .stat-select {
-            background: #050706;
-            border: 1px solid #2b3630;
-            color: #c2a675;
-            outline: none;
-            font-family: var(--font-title);
-            font-size: 1.15rem;
-            font-weight: bold;
-            text-align: center;
-            height: 32px;
-            width: 100%;
-            border-radius: 3px;
-            box-shadow: inset 0 1px 3px rgba(0,0,0,0.9);
-            cursor: pointer;
-            padding: 0 4px;
-            transition: all 0.2s;
-            appearance: none;
-        }
-        .stat-select:focus {
-            border-color: #c2a675;
-            box-shadow: 0 0 6px rgba(194,166,117,0.4);
-        }
+        .stat-select { background: #050706; border: 1px solid #2b3630; color: #c2a675; outline: none; font-family: var(--font-title); font-size: 1.15rem; font-weight: bold; text-align: center; height: 32px; width: 100%; border-radius: 3px; box-shadow: inset 0 1px 3px rgba(0,0,0,0.9); cursor: pointer; padding: 0 4px; transition: all 0.2s; appearance: none; }
+        .stat-select:focus { border-color: #c2a675; box-shadow: 0 0 6px rgba(194,166,117,0.4); }
 
-        /* INPUTS NUMÉRICOS PADRÃO */
-        .stat-input {
-            background: #050706;
-            border: 1px solid #2b3630;
-            color: #c2a675;
-            outline: none;
-            font-family: var(--font-title);
-            font-size: 1.15rem;
-            font-weight: bold;
-            text-align: center;
-            width: 100%;
-            height: 32px;
-            border-radius: 3px;
-            box-shadow: inset 0 1px 3px rgba(0,0,0,0.9);
-            transition: all 0.2s;
-        }
-        .stat-input:focus {
-            border-color: #c2a675;
-            background: rgba(0,0,0,0.95);
-            box-shadow: 0 0 6px rgba(194,166,117,0.4);
-        }
+        .stat-input { background: #050706; border: 1px solid #2b3630; color: #c2a675; outline: none; font-family: var(--font-title); font-size: 1.15rem; font-weight: bold; text-align: center; width: 100%; height: 32px; border-radius: 3px; box-shadow: inset 0 1px 3px rgba(0,0,0,0.9); transition: all 0.2s; }
+        .stat-input:focus { border-color: #c2a675; background: rgba(0,0,0,0.95); box-shadow: 0 0 6px rgba(194,166,117,0.4); }
 
-        .attr-icon-badge {
-            width: 28px;
-            height: 28px;
-            min-width: 28px;
-            background: #ffffff;
-            border: 1px solid #c2a675;
-            border-radius: 3px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 3px;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.4);
-            flex-shrink: 0;
-            overflow: hidden;
-        }
-        .attr-icon-img {
-            width: 100%;
-            height: 100%;
-            max-width: 100%;
-            max-height: 100%;
-            object-fit: contain;
-            display: block;
-        }
+        .attr-icon-badge { width: 28px; height: 28px; min-width: 28px; background: #ffffff; border: 1px solid #c2a675; border-radius: 3px; display: flex; align-items: center; justify-content: center; padding: 3px; box-shadow: 0 1px 3px rgba(0, 0, 0, 0.4); flex-shrink: 0; overflow: hidden; }
+        .attr-icon-img { width: 100%; height: 100%; max-width: 100%; max-height: 100%; object-fit: contain; display: block; }
 
-        /* BINGO DE CARTAS ALFANUMÉRICAS */
-        .card-slot-btn {
-            position: relative;
-            width: clamp(23px, 6.5vw, 28px);
-            height: clamp(23px, 6.5vw, 28px);
-            background: #070908;
-            border: 1px solid #232d27;
-            box-shadow: inset 0 1px 3px rgba(0,0,0,0.8);
-            color: #6d7872;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-family: var(--font-title);
-            font-weight: bold;
-            font-size: 14px; 
-            border-radius: 2px;
-            transition: all 0.15s ease;
-            cursor: pointer;
-            padding: 0;
-            flex-shrink: 0;
-            line-height: 1;
-        }
-        
-        .card-slot-btn.combat-active {
-            background: #3d170b;
-            border-color: #ba4a1a;
-            color: #e0d5c1;
-            box-shadow: inset 0 0 8px rgba(0,0,0,0.8), 0 0 6px rgba(186, 74, 26, 0.4);
-        }
-        
-        .card-slot-btn.diplo-active {
-            background: #2a2015; 
-            border-color: #b59263; 
-            color: #e0d5c1;
-            box-shadow: inset 0 0 8px rgba(0,0,0,0.8), 0 0 6px rgba(181, 146, 99, 0.4);
-        }
+        .card-slot-btn { position: relative; width: clamp(23px, 6.5vw, 28px); height: clamp(23px, 6.5vw, 28px); background: #070908; border: 1px solid #232d27; box-shadow: inset 0 1px 3px rgba(0,0,0,0.8); color: #6d7872; display: flex; align-items: center; justify-content: center; font-family: var(--font-title); font-weight: bold; font-size: 14px; border-radius: 2px; transition: all 0.15s ease; cursor: pointer; padding: 0; flex-shrink: 0; line-height: 1; }
+        .card-slot-btn.combat-active { background: #3d170b; border-color: #ba4a1a; color: #e0d5c1; box-shadow: inset 0 0 8px rgba(0,0,0,0.8), 0 0 6px rgba(186, 74, 26, 0.4); }
+        .card-slot-btn.diplo-active { background: #2a2015; border-color: #b59263; color: #e0d5c1; box-shadow: inset 0 0 8px rgba(0,0,0,0.8), 0 0 6px rgba(181, 146, 99, 0.4); }
 
-        .entity-item-card {
-            background: #060807;
-            border: 1px solid #1f2722;
-            border-radius: 3px;
-            padding: 8px 10px;
-            transition: all 0.2s;
-        }
-        .entity-item-card.used {
-            opacity: 0.6;
-            border-style: dashed;
-        }
+        .entity-item-card { background: #060807; border: 1px solid #1f2722; border-radius: 3px; padding: 8px 10px; transition: all 0.2s; }
+        .entity-item-card.used { opacity: 0.6; border-style: dashed; }
 
-        .status-toggle-pill {
-            font-family: var(--font-ui);
-            font-size: 10px;
-            font-weight: bold;
-            text-transform: uppercase;
-            padding: 2px 6px;
-            border-radius: 3px;
-            border: 1px solid #2b3630;
-            background: #090b0a;
-            color: #8c938f;
-            cursor: pointer;
-            transition: all 0.15s;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 4px;
-        }
-        .status-toggle-pill.active {
-            background: #141c17;
-            border-color: #c2a675;
-            color: #c2a675;
-        }
-        .status-toggle-pill.exhausted {
-            background: #2b1111;
-            border-color: #9e1515;
-            color: #ff6b6b;
-        }
+        .status-toggle-pill { font-family: var(--font-ui); font-size: 10px; font-weight: bold; text-transform: uppercase; padding: 2px 6px; border-radius: 3px; border: 1px solid #2b3630; background: #090b0a; color: #8c938f; cursor: pointer; transition: all 0.15s; display: flex; align-items: center; justify-content: center; gap: 4px; }
+        .status-toggle-pill.active { background: #141c17; border-color: #c2a675; color: #c2a675; }
+        .status-toggle-pill.exhausted { background: #2b1111; border-color: #9e1515; color: #ff6b6b; }
 
-        .note-input {
-            background: transparent;
-            border: none;
-            color: #8c938f;
-            outline: none;
-            border-bottom: 1px dashed #2b3630;
-            transition: all 0.3s;
-            width: 100%;
-            font-family: var(--font-celtic);
-            font-size: 1.05rem;
-            padding: 3px 0 3px 4px;
-        }
-        .note-input:focus {
-            border-bottom-color: #c2a675;
-            border-bottom-style: solid;
-            color: #b8b4a7;
-        }
+        .note-input { background: transparent; border: none; color: #8c938f; outline: none; border-bottom: 1px dashed #2b3630; transition: all 0.3s; width: 100%; font-family: var(--font-celtic); font-size: 1.05rem; padding: 3px 0 3px 4px; }
+        .note-input:focus { border-bottom-color: #c2a675; border-bottom-style: solid; color: #b8b4a7; }
 
-        .skill-input {
-            background: transparent;
-            border: none;
-            border-bottom: 1px dashed #2b3630;
-            font-family: var(--font-celtic);
-            font-size: 13.5px;
-            width: 100%;
-            outline: none;
-            padding: 2px 0 2px 20px;
-            transition: all 0.2s;
-        }
+        .skill-input { background: transparent; border: none; border-bottom: 1px dashed #2b3630; font-family: var(--font-celtic); font-size: 13.5px; width: 100%; outline: none; padding: 2px 0 2px 20px; transition: all 0.2s; }
         .skill-input::placeholder { color: #4a5550; font-style: italic; }
-        .skill-input:focus {
-            border-bottom-style: solid;
-            border-bottom-color: #c2a675;
-            color: #e0d5c1;
-        }
+        .skill-input:focus { border-bottom-style: solid; border-bottom-color: #c2a675; color: #e0d5c1; }
+
+        /* MODAL DE INFORMAÇÕES DE ECOS */
+        #memory-modal { backdrop-filter: blur(4px); }
+        .modal-content { animation: popIn 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; }
+        @keyframes popIn { 0% { opacity: 0; transform: scale(0.9); } 100% { opacity: 1; transform: scale(1); } }
 
         /* NAVEGAÇÃO INFERIOR */
         .bottom-nav-container { display: flex; justify-content: center; align-items: center; height: 4rem; width: 100%; max-width: 512px; margin: 0 auto; gap: clamp(2px, 1.5vw, 12px); padding: 0 4px; }
@@ -343,7 +142,7 @@
         </div>
     </header>
 
-    <!-- OVERLAY E PLAYER ECOS (POPOVER) -->
+    <!-- PLAYER DE ECOS (POPOVER) -->
     <div id="player-overlay" class="player-overlay" onclick="togglePlayerMenu()"></div>
     <div id="player-panel" class="player-popover opacity-0 scale-95 pointer-events-none">
         <div class="p-5 flex flex-col items-center">
@@ -394,6 +193,22 @@
         </div>
     </div>
 
+    <!-- MODAL DE MEMÓRIAS (ECOS DA RUÍNA) -->
+    <div id="memory-modal" class="fixed inset-0 z-[100] bg-black/80 backdrop-blur-sm hidden flex items-center justify-center p-4 opacity-0 transition-opacity">
+        <div class="modal-content bg-[#090b0a] border border-[#c2a675] rounded p-5 max-w-sm w-full shadow-[0_0_20px_rgba(0,0,0,0.9)] relative">
+            <button onclick="closeMemoryModal()" class="absolute top-2 right-2 text-[#6d7872] hover:text-[#ff6b6b] transition-colors p-1">
+                <span class="material-symbols-rounded">close</span>
+            </button>
+            <div class="flex items-center gap-2 border-b border-[#2b3630] pb-2 mb-3">
+                <span class="material-symbols-rounded text-[#c2a675] text-[24px]">history_edu</span>
+                <h4 id="modal-memory-title" class="font-title text-[16px] text-[#e0d5c1] uppercase tracking-widest font-bold">Condição da Memória</h4>
+            </div>
+            <p id="modal-memory-desc" class="font-celtic text-[16px] text-[#b8b4a7] leading-relaxed text-center py-2">
+                <!-- Conteúdo Injetado via JS -->
+            </p>
+        </div>
+    </div>
+
     <!-- CONTEÚDO PRINCIPAL (GRUPO) -->
     <main id="main-scroll" class="flex-1 overflow-y-auto w-full max-w-lg mx-auto z-10 flex flex-col pb-24 pt-2 px-3 space-y-3.5">
         
@@ -411,17 +226,14 @@
         <div id="global-unlocks-section" class="mt-6 mb-2 pt-4 border-t border-[#141a17]">
             <h4 class="font-title text-[12px] text-[#6d7872] uppercase tracking-widest font-bold mb-3 text-center">Expansões da Campanha</h4>
             <div class="space-y-2">
-                
                 <div class="flex items-center justify-between p-3 bg-[#060807] border border-[#1f2722] rounded-sm cursor-pointer transition-all hover:border-[#ffffff] shadow-sm" onclick="toggleGlobalUnlock('serieF')">
                     <span class="font-title text-[14.5px] text-[#ffffff] tracking-wider font-bold">Cartas Série "F"</span>
                     <span id="icon-serief" class="material-symbols-rounded text-[#ffffff] text-[22px]">mail_lock</span>
                 </div>
-
                 <div class="flex items-center justify-between p-3 bg-[#060807] border border-[#1f2722] rounded-sm cursor-pointer transition-all hover:border-[#c2a675] shadow-sm" onclick="toggleGlobalUnlock('serieD')">
                     <span class="font-title text-[14.5px] text-[#c2a675] tracking-wider font-bold">Cartas Série "D"</span>
                     <span id="icon-seried" class="material-symbols-rounded text-[#c2a675] text-[22px]">mail_lock</span>
                 </div>
-
             </div>
         </div>
 
@@ -467,14 +279,13 @@
                 navContainer.innerHTML = `
                     <a href="cronica.html" class="bottom-nav-item text-[#6d7872] hover:text-[#b8b4a7]"><span class="material-symbols-rounded text-[26px]">hourglass_bottom</span><span class="bottom-nav-label">Crônica</span></a>
                     <a href="condicoes.html" class="bottom-nav-item text-[#6d7872] hover:text-[#b8b4a7]"><span class="material-symbols-rounded text-[26px]">library_books</span><span class="bottom-nav-label">Condições</span></a>
-                    <a href="diario.html" class="bottom-nav-item text-[#c2a675]"><span class="material-symbols-rounded text-[26px]">history_edu</span><span class="bottom-nav-label">Diário</span></a>
+                    <a href="diario.html" class="bottom-nav-item text-[#c2a675]"><span class="material-symbols-rounded text-[26px]">history_edu</span><span class="bottom-nav-label">Diário</span></a>                    
                     <a href="grupo.html" class="bottom-nav-item text-[#c2a675]"><span class="material-symbols-rounded text-[26px]">sports_martial_arts</span><span class="bottom-nav-label">Personagem</span></a>
                     <a href="exportar.html" class="bottom-nav-item text-[#6d7872] hover:text-[#b8b4a7]"><span class="material-symbols-rounded text-[26px]">share</span><span class="bottom-nav-label">Exportar</span></a>
                 `;
             }
         }
 
-        // Variável de Estado das Expansões (Séries F e D)
         let globalUnlocks = JSON.parse(localStorage.getItem('global_unlocks_series')) || { serieF: false, serieD: false };
 
         function toggleGlobalUnlock(type) {
@@ -487,13 +298,8 @@
         function renderGlobalUnlocks() {
             const iconF = document.getElementById('icon-serief');
             const iconD = document.getElementById('icon-seried');
-            
-            if(iconF) {
-                iconF.innerText = globalUnlocks.serieF ? "drafts" : "mail_lock";
-            }
-            if(iconD) {
-                iconD.innerText = globalUnlocks.serieD ? "drafts" : "mail_lock";
-            }
+            if(iconF) iconF.innerText = globalUnlocks.serieF ? "drafts" : "mail_lock";
+            if(iconD) iconD.innerText = globalUnlocks.serieD ? "drafts" : "mail_lock";
         }
 
         const skillCatalogs = {
@@ -507,68 +313,104 @@
             }
         };
 
+        // ECOS DA RUÍNA - BANCO DE DADOS
+        const echoesCatalog = {
+            elgan: {
+                cards: [310, 311, 312],
+                memories: [
+                    { type: "Fim do Dia", desc: "Todos os Locais em jogo estão com o lado de exploração virado para cima (ativos)." },
+                    { type: "Durante o Dia", desc: "Viaje para o Local 122 (Passarelas Inundadas)." },
+                    { type: "Durante o Dia", desc: "Realize a Ação 'Ativar um Marco' em um Local que já possui um marco ativado." },
+                    { type: "Sempre", desc: "Tenha pelo menos 8 de Magia no seu inventário." },
+                    { type: "Diplomacia", desc: "Resolva um Encontro Azul (Dificuldade 3 ou 4)." },
+                    { type: "Encontro", desc: "Tenha pelo menos 3 Chaves/Símbolos Mágicos na Sequência." },
+                    { type: "Combate", desc: "Tenha pelo menos 4 cartas na Sequência de combate." },
+                    { type: "Fim do Dia", desc: "Sofra de Estranhice no Local 113, 114 ou 115 (Straywood)." },
+                    { type: "Durante o Dia", desc: "Use 2 Itens Consumíveis 'Vela Estranya' durante um único Dia." }
+                ],
+                final: { title: "PODER SUPERIOR", desc: "No Local 111 (Stoneteeth Knolls): Procure por um grimório mágico.<br><br><em class='text-[#c2a675]'>Desbloqueia Habilidade Evoluída</em>" }
+            },
+            gerdwyn: {
+                cards: [314, 315, 316],
+                memories: [
+                    { type: "Sempre", desc: "Tenha pelo menos 10 de Riqueza no seu inventário." },
+                    { type: "Durante o Dia", desc: "Você está no Local 125 (Terras do Sul)." },
+                    { type: "Durante o Dia", desc: "Perca 2 de Energia num único dia devido à sua Fraqueza de Personagem (Sobrecarga)." },
+                    { type: "Diplomacia", desc: "Resolva um Encontro enquanto sofre do Status 'Enlouquecendo'." },
+                    { type: "Sempre", desc: "Tenha pelo menos nível 4 em qualquer Atributo (cubo na trilha)." },
+                    { type: "Combate", desc: "Vença um Encontro roxo usando sua Habilidade de Personagem (Caçar)." },
+                    { type: "Sempre", desc: "Tenha pelo menos 2 Itens com a palavra-chave 'Escudo'." },
+                    { type: "Combate", desc: "Vença o Encontro de Combate roxo 'Cavaleiro da Távola Oval'." },
+                    { type: "Combate", desc: "Vença um Encontro de Combate sem cartas restantes no seu baralho de compra." }
+                ],
+                final: { title: "A CHAMA DE ONTEM", desc: "No Local 135 (Amber Shores): Procure por seu antigo camarada, Owen.<br><br><em class='text-[#c2a675]'>Desbloqueia Habilidade Evoluída</em>" }
+            },
+            iunis: {
+                cards: [318, 319, 320],
+                memories: [
+                    { type: "Combate", desc: "Vença um Encontro com exatamente 1 de Saúde restante." },
+                    { type: "Diplomacia", desc: "Resolva um Encontro enquanto sofre do Status 'Enlouquecendo'." },
+                    { type: "Sempre", desc: "Tenha pelo menos 8 de Comida no seu inventário." },
+                    { type: "Encontro", desc: "Perca 4 ou mais atributos por efeitos de carta em uma única Ativação." },
+                    { type: "Encontro", desc: "Jogue 5 ou mais cartas durante uma única Ativação." },
+                    { type: "Durante o Dia", desc: "Viaje para o Local 150 (Caminho dos Escravos)." },
+                    { type: "Durante o Dia", desc: "Use sua Habilidade de Personagem (Banquete Aterrorizante) enquanto estiver Exausta." },
+                    { type: "Sempre", desc: "Tenha 3 marcos ativos/em jogo na mesa." },
+                    { type: "Exploração", desc: "Use o transporte costeiro Fomoriano no Local 151, 156 ou 160." }
+                ],
+                final: { title: "A GRANDE PERFORMANCE", desc: "No Local 156 (Colonia Mariana, Leste): Encomende e realize uma peça teatral (Pague 3 Riquezas).<br><br><em class='text-[#c2a675]'>Desbloqueia Habilidade Evoluída</em>" }
+            },
+            osbert: {
+                cards: [322, 323, 324],
+                memories: [
+                    { type: "Combate", desc: "Vença um Encontro verde (Fácil)." },
+                    { type: "Sempre", desc: "Tenha uma carta de Companheiro (Secret Card 304, 305, 307 ou 308)." },
+                    { type: "Sempre", desc: "Role um 6 natural em um dado de 6 faces." },
+                    { type: "Sempre", desc: "Tenha pelo menos 10 de Riqueza." },
+                    { type: "Durante o Dia", desc: "Viaje para um Local enquanto estiver com 0 ou 1 de Energia na trilha." },
+                    { type: "Encontro", desc: "Ganhe pelo menos a recompensa bônus máxima listada no card do inimigo." },
+                    { type: "Sempre", desc: "Tenha todos os 3 Itens Consumíveis listados na sua Habilidade de Personagem (Artesanato)." },
+                    { type: "Durante o Dia", desc: "Viaje para o Local 134 (Fazendas Pacíficas)." },
+                    { type: "Diplomacia", desc: "Resolva um Encontro azul em um Local que possui um Marco." }
+                ],
+                final: { title: "O FILHO PRÓDIGO", desc: "No Local 101 (Shunned Lands): Viaje para a vila que exilou sua mãe.<br><br><em class='text-[#c2a675]'>Desbloqueia Habilidade Evoluída</em>" }
+            }
+        };
+
         const initialDeckB = Array.from({ length: 10 }, (_, i) => 'B' + (i + 1));
 
         const heroesData = [
             {
-                id: 'elgan',
-                name: 'Elgan',
-                title: 'O Candelário',
-                playerName: 'Dener',
-                location: '115',
-                isExpanded: false,
-                resources: { food: 0, wealth: 0, exp: 0, magic: 0 },
-                tracks: { health: 12, energy: 6, terror: 0 },
+                id: 'elgan', name: 'Elgan', title: 'O Candelário', playerName: 'Dener', location: '115', isExpanded: false,
+                resources: { food: 0, wealth: 0, exp: 0, magic: 0 }, tracks: { health: 12, energy: 6, terror: 0 },
                 attributes: { aggressiveness: 1, empathy: 1, courage: 0, caution: 1, practicality: 2, spirituality: 1 },
                 decks: { combat: [...initialDeckB], diplomacy: [...initialDeckB] },
                 skills: { aggressiveness: ['', ''], empathy: ['', ''], courage: ['', ''], caution: ['', ''], practicality: ['', ''], spirituality: ['', ''] },
-                itemsList: [],
-                secretsList: []
+                itemsList: [], secretsList: [], echoes: { marks: Array(9).fill(false), spent: [false,false,false] }
             },
             {
-                id: 'gerdwyn',
-                name: 'Gerdwyn',
-                title: 'A Mercenária',
-                playerName: '',
-                location: '',
-                isExpanded: false,
-                resources: { food: 0, wealth: 0, exp: 0, magic: 0 },
-                tracks: { health: 14, energy: 5, terror: 0 },
+                id: 'gerdwyn', name: 'Gerdwyn', title: 'A Mercenária', playerName: '', location: '', isExpanded: false,
+                resources: { food: 0, wealth: 0, exp: 0, magic: 0 }, tracks: { health: 14, energy: 5, terror: 0 },
                 attributes: { aggressiveness: 2, empathy: 0, courage: 2, caution: 1, practicality: 1, spirituality: 0 },
                 decks: { combat: [...initialDeckB], diplomacy: [...initialDeckB] },
                 skills: { aggressiveness: ['', ''], empathy: ['', ''], courage: ['', ''], caution: ['', ''], practicality: ['', ''], spirituality: ['', ''] },
-                itemsList: [],
-                secretsList: []
+                itemsList: [], secretsList: [], echoes: { marks: Array(9).fill(false), spent: [false,false,false] }
             },
             {
-                id: 'iunis',
-                name: 'Iunis',
-                title: 'A Gladiatrix Fomoriana',
-                playerName: '',
-                location: '',
-                isExpanded: false,
-                resources: { food: 0, wealth: 0, exp: 0, magic: 0 },
-                tracks: { health: 11, energy: 7, terror: 0 },
+                id: 'iunis', name: 'Iunis', title: 'A Gladiatrix Fomoriana', playerName: '', location: '', isExpanded: false,
+                resources: { food: 0, wealth: 0, exp: 0, magic: 0 }, tracks: { health: 11, energy: 7, terror: 0 },
                 attributes: { aggressiveness: 0, empathy: 2, courage: 0, caution: 2, practicality: 1, spirituality: 2 },
                 decks: { combat: [...initialDeckB], diplomacy: [...initialDeckB] },
                 skills: { aggressiveness: ['', ''], empathy: ['', ''], courage: ['', ''], caution: ['', ''], practicality: ['', ''], spirituality: ['', ''] },
-                itemsList: [],
-                secretsList: []
+                itemsList: [], secretsList: [], echoes: { marks: Array(9).fill(false), spent: [false,false,false] }
             },
             {
-                id: 'osbert',
-                name: 'Osbert',
-                title: 'O Bufão Itinerante',
-                playerName: '',
-                location: '',
-                isExpanded: false,
-                resources: { food: 0, wealth: 0, exp: 0, magic: 0 },
-                tracks: { health: 13, energy: 6, terror: 0 },
+                id: 'osbert', name: 'Osbert', title: 'O Bufão Itinerante', playerName: '', location: '', isExpanded: false,
+                resources: { food: 0, wealth: 0, exp: 0, magic: 0 }, tracks: { health: 13, energy: 6, terror: 0 },
                 attributes: { aggressiveness: 1, empathy: 1, courage: 1, caution: 0, practicality: 2, spirituality: 1 },
                 decks: { combat: [...initialDeckB], diplomacy: [...initialDeckB] },
                 skills: { aggressiveness: ['', ''], empathy: ['', ''], courage: ['', ''], caution: ['', ''], practicality: ['', ''], spirituality: ['', ''] },
-                itemsList: [],
-                secretsList: []
+                itemsList: [], secretsList: [], echoes: { marks: Array(9).fill(false), spent: [false,false,false] }
             }
         ];
 
@@ -577,13 +419,9 @@
             if (h.isExpanded === undefined) h.isExpanded = false;
             if (h.playerName === undefined) h.playerName = '';
             if (h.location === undefined) h.location = '';
-            if (h.decks.combat.length > 0 && typeof h.decks.combat[0] === 'number') {
-                h.decks.combat = [...initialDeckB];
-                h.decks.diplomacy = [...initialDeckB];
-            }
-            if (Array.isArray(h.skills)) {
-                h.skills = { aggressiveness: ['', ''], empathy: ['', ''], courage: ['', ''], caution: ['', ''], practicality: ['', ''], spirituality: ['', ''] };
-            }
+            if (h.decks.combat.length > 0 && typeof h.decks.combat[0] === 'number') { h.decks.combat = [...initialDeckB]; h.decks.diplomacy = [...initialDeckB]; }
+            if (Array.isArray(h.skills)) { h.skills = { aggressiveness: ['', ''], empathy: ['', ''], courage: ['', ''], caution: ['', ''], practicality: ['', ''], spirituality: ['', ''] }; }
+            if (!h.echoes) { h.echoes = { marks: Array(9).fill(false), spent: [false,false,false] }; }
         });
 
         function createOptionOptions(max, current) {
@@ -596,18 +434,12 @@
 
         function toggleHeroCard(heroId) {
             const hero = heroesData.find(h => h.id === heroId);
-            if (hero) {
-                hero.isExpanded = !hero.isExpanded;
-                renderHeroes();
-            }
+            if (hero) { hero.isExpanded = !hero.isExpanded; renderHeroes(); }
         }
 
         function updateHeroField(heroId, field, val) {
             const hero = heroesData.find(h => h.id === heroId);
-            if (hero) {
-                hero[field] = val;
-                renderHeroes();
-            }
+            if (hero) { hero[field] = val; renderHeroes(); }
         }
 
         function updateHeroResource(heroId, res, val) {
@@ -627,17 +459,10 @@
 
         function updateHeroSkill(heroId, attrKey, slotIndex, val, el) {
             const hero = heroesData.find(h => h.id === heroId);
-            if (hero && hero.skills && hero.skills[attrKey]) {
-                hero.skills[attrKey][slotIndex] = val;
-            }
+            if (hero && hero.skills && hero.skills[attrKey]) { hero.skills[attrKey][slotIndex] = val; }
             if (el && el.tagName === 'SELECT') {
-                if (val === '') {
-                    el.classList.add('text-[#4a5550]', 'italic');
-                    el.classList.remove('text-[#c2a675]');
-                } else {
-                    el.classList.remove('text-[#4a5550]', 'italic');
-                    el.classList.add('text-[#c2a675]');
-                }
+                if (val === '') { el.classList.add('text-[#4a5550]', 'italic'); el.classList.remove('text-[#c2a675]'); } 
+                else { el.classList.remove('text-[#4a5550]', 'italic'); el.classList.add('text-[#c2a675]'); }
             }
         }
 
@@ -646,73 +471,199 @@
             if (!hero || !hero.decks) return;
             const list = hero.decks[deckType];
             const idx = list.indexOf(cardId);
-            if (idx === -1) {
-                list.push(cardId);
-                list.sort(); 
-            } else {
-                list.splice(idx, 1);
-            }
+            if (idx === -1) { list.push(cardId); list.sort(); } else { list.splice(idx, 1); }
             renderHeroes();
         }
 
         function addItem(heroId) {
             const hero = heroesData.find(h => h.id === heroId);
-            if (!hero) return;
-            hero.itemsList.push({ id: 'item_' + Date.now(), name: '', equipped: true, spent: false });
-            renderHeroes();
+            if (hero) { hero.itemsList.push({ id: 'item_' + Date.now(), name: '', equipped: true, spent: false }); renderHeroes(); }
         }
-
         function removeItem(heroId, itemId) {
             const hero = heroesData.find(h => h.id === heroId);
-            if (!hero) return;
-            hero.itemsList = hero.itemsList.filter(i => i.id !== itemId);
-            renderHeroes();
+            if (hero) { hero.itemsList = hero.itemsList.filter(i => i.id !== itemId); renderHeroes(); }
         }
-
         function toggleItemEquip(heroId, itemId) {
             const hero = heroesData.find(h => h.id === heroId);
-            if (!hero) return;
-            const item = hero.itemsList.find(i => i.id === itemId);
-            if (item) item.equipped = !item.equipped;
-            renderHeroes();
+            if (hero) { const item = hero.itemsList.find(i => i.id === itemId); if (item) item.equipped = !item.equipped; renderHeroes(); }
         }
-
         function toggleItemSpent(heroId, itemId) {
             const hero = heroesData.find(h => h.id === heroId);
-            if (!hero) return;
-            const item = hero.itemsList.find(i => i.id === itemId);
-            if (item) item.spent = !item.spent;
-            renderHeroes();
+            if (hero) { const item = hero.itemsList.find(i => i.id === itemId); if (item) item.spent = !item.spent; renderHeroes(); }
         }
-
         function updateItemName(heroId, itemId, name) {
             const hero = heroesData.find(h => h.id === heroId);
-            if (!hero) return;
-            const item = hero.itemsList.find(i => i.id === itemId);
-            if (item) item.name = name;
+            if (hero) { const item = hero.itemsList.find(i => i.id === itemId); if (item) item.name = name; }
         }
 
         function addSecret(heroId) {
             const hero = heroesData.find(h => h.id === heroId);
-            if (!hero) return;
-            hero.secretsList.push({ id: 'sec_' + Date.now(), number: '', desc: '' });
-            renderHeroes();
+            if (hero) { hero.secretsList.push({ id: 'sec_' + Date.now(), number: '', desc: '' }); renderHeroes(); }
         }
-
         function removeSecret(heroId, secId) {
             const hero = heroesData.find(h => h.id === heroId);
+            if (hero) { hero.secretsList = hero.secretsList.filter(s => s.id !== secId); renderHeroes(); }
+        }
+        function updateSecretField(heroId, secId, field, val) {
+            const hero = heroesData.find(h => h.id === heroId);
+            if (hero) { const sec = hero.secretsList.find(s => s.id === secId); if (sec) sec[field] = val; }
+        }
+
+        // --- SISTEMA DE ECOS DA RUÍNA --- //
+        function toggleEchoMemory(heroId, memIndex) {
+            const hero = heroesData.find(h => h.id === heroId);
             if (!hero) return;
-            hero.secretsList = hero.secretsList.filter(s => s.id !== secId);
+            hero.echoes.marks[memIndex] = !hero.echoes.marks[memIndex];
+            
+            const blockIndex = Math.floor(memIndex / 3);
+            const blockMarks = hero.echoes.marks.slice(blockIndex * 3, (blockIndex * 3) + 3);
+            const isUnlocked = blockMarks.every(m => m === true);
+            if (!isUnlocked) {
+                hero.echoes.spent[blockIndex] = false; 
+            }
             renderHeroes();
         }
 
-        function updateSecretField(heroId, secId, field, val) {
+        function toggleEchoSpent(heroId, blockIndex) {
             const hero = heroesData.find(h => h.id === heroId);
             if (!hero) return;
-            const sec = hero.secretsList.find(s => s.id === secId);
-            if (sec) sec[field] = val;
+            hero.echoes.spent[blockIndex] = !hero.echoes.spent[blockIndex];
+            renderHeroes();
         }
 
+        function openMemoryModal(heroId, memIndex) {
+            const cat = echoesCatalog[heroId];
+            if (!cat) return;
+            const memory = cat.memories[memIndex];
+            
+            document.getElementById('modal-memory-title').innerText = `Memória ${memIndex + 1}`;
+            document.getElementById('modal-memory-desc').innerHTML = `
+                <span class="block mb-2 font-sans font-bold text-[#c2a675] tracking-wider uppercase text-[12px]">[ ${memory.type} ]</span>
+                ${memory.desc}
+            `;
+            
+            const modal = document.getElementById('memory-modal');
+            modal.classList.remove('hidden');
+            setTimeout(() => { modal.classList.remove('opacity-0'); modal.classList.add('opacity-100'); }, 10);
+        }
+
+        function closeMemoryModal() {
+            const modal = document.getElementById('memory-modal');
+            modal.classList.remove('opacity-100');
+            modal.classList.add('opacity-0');
+            setTimeout(() => { modal.classList.add('hidden'); }, 300);
+        }
+
+        // RENDERIZAÇÃO ALINHADA DO ECOS (GRID DE 3 COLUNAS - CENTRALIZADO VERTICAL E SEM BORDAS CHAMATIVAS)
+        function buildEchoesHtml(hero) {
+            const cat = echoesCatalog[hero.id];
+            if (!cat) return '';
+
+            const marks = hero.echoes.marks;
+            const spent = hero.echoes.spent;
+            const totalMarks = marks.filter(m => m).length;
+
+            let html = `
+                <div class="pt-2 border-t border-[#141a17] space-y-2">
+                    <div class="flex items-center justify-between mb-2 px-1">
+                        <span class="font-title text-[12.5px] uppercase text-[#c2a675] font-bold flex items-center gap-1">
+                            <span class="material-symbols-rounded text-[18px]">history_edu</span> Ecos da Ruína
+                        </span>
+                        <span class="font-sans text-[11px] text-[#8c938f] font-bold">Progresso: <span class="text-[#c2a675]">${totalMarks}/9</span></span>
+                    </div>
+                    <div class="space-y-1.5">
+            `;
+
+            for (let b = 0; b < 3; b++) {
+                const isUnlocked = marks[b*3] && marks[b*3+1] && marks[b*3+2];
+                const isSpent = spent[b];
+                const cardNum = cat.cards[b];
+
+                let blockHtml = `<div class="bg-[#050706] border ${isUnlocked ? 'border-[#c2a675]' : 'border-transparent'} rounded p-1.5 transition-all">`;
+                
+                if (isUnlocked) {
+                    blockHtml += `
+                        <div class="flex items-center justify-between mb-1">
+                            <span class="font-title text-[11px] font-bold text-[#c2a675] flex items-center gap-1">
+                                <span class="material-symbols-rounded text-[14px]">star</span> Ação Lendária (Cód. ${cardNum})
+                            </span>
+                            <button onclick="toggleEchoSpent('${hero.id}', ${b})" class="status-toggle-pill ${isSpent ? 'exhausted' : 'active'} !m-0 !py-0.5">
+                                ${isSpent ? '<span class="material-symbols-rounded text-[12px]">battery_0_bar</span> Usado' : '<span class="material-symbols-rounded text-[12px]">battery_full</span> Pronto'}
+                            </button>
+                        </div>
+                    `;
+                } else {
+                    blockHtml += `
+                        <div class="flex items-center justify-between mb-0.5">
+                            <span class="font-title text-[11px] font-bold text-[#6d7872] flex items-center gap-1">
+                                <span class="material-symbols-rounded text-[14px]">lock</span> Carta Secreta ${cardNum}
+                            </span>
+                        </div>
+                    `;
+                }
+
+                blockHtml += `<div class="grid grid-cols-3 divide-x divide-[#101412] mt-0.5 bg-[#060807] rounded-sm py-1">`;
+                
+                for (let i = 0; i < 3; i++) {
+                    const memIndex = (b * 3) + i;
+                    const mem = cat.memories[memIndex];
+                    const isMarked = marks[memIndex];
+                    
+                    const checkIcon = isMarked ? 'check_box' : 'check_box_outline_blank';
+                    const colorClass = isMarked ? 'text-[#c2a675]' : 'text-[#6d7872]';
+                    const textClass = isMarked ? 'text-[#e0d5c1]' : 'text-[#8c938f]';
+
+                    // Separa a última palavra para grudar com o botão (i) e não deixar ele órfão
+                    const typeWords = mem.type.split(' ');
+                    const lastWord = typeWords.pop();
+                    const prefix = typeWords.length > 0 ? typeWords.join(' ') + ' ' : '';
+
+                    blockHtml += `
+                        <div class="flex items-center justify-start gap-1 px-1 w-full h-full">
+                            <button class="flex items-center justify-center p-0 outline-none ${colorClass} hover:text-[#c2a675] transition-colors flex-shrink-0" onclick="toggleEchoMemory('${hero.id}', ${memIndex})">
+                                <span class="material-symbols-rounded text-[15px]">${checkIcon}</span>
+                            </button>
+                            <div class="text-left flex-1 leading-[1.15]">
+                                <span class="font-sans text-[10.5px] uppercase font-bold tracking-[0.02em] ${textClass} cursor-pointer hover:text-[#c2a675] transition-colors" onclick="toggleEchoMemory('${hero.id}', ${memIndex})">
+                                    ${prefix}
+                                </span><span class="whitespace-nowrap">
+                                    <span class="font-sans text-[10.5px] uppercase font-bold tracking-[0.02em] ${textClass} cursor-pointer hover:text-[#c2a675] transition-colors" onclick="toggleEchoMemory('${hero.id}', ${memIndex})">${lastWord}</span>
+                                    <button class="inline align-text-bottom text-[#4a5550] hover:text-[#c2a675] transition-colors ml-[2px]" onclick="openMemoryModal('${hero.id}', ${memIndex})" title="Detalhes da Memória">
+                                        <span class="material-symbols-rounded text-[13px] leading-none block">info</span>
+                                    </button>
+                                </span>
+                            </div>
+                        </div>
+                    `;
+                }
+                
+                blockHtml += `</div></div>`;
+                html += blockHtml;
+            }
+
+            // HABILDADE EVOLUÍDA (Final)
+            const allCompleted = totalMarks === 9;
+            if (allCompleted) {
+                html += `
+                    <div class="bg-[#141a17] border border-[#c2a675] rounded p-2.5 text-center shadow-[0_0_15px_rgba(194,166,117,0.15)] mt-2">
+                        <span class="font-title text-[14px] text-[#c2a675] font-bold block mb-1 flex items-center justify-center gap-1"><span class="material-symbols-rounded text-[18px]">verified</span> ${cat.final.title}</span>
+                        <p class="font-celtic text-[13px] text-[#b8b4a7] leading-tight">${cat.final.desc}</p>
+                    </div>
+                `;
+            } else {
+                html += `
+                    <div class="bg-[#050706] border border-transparent rounded p-1.5 text-center mt-2">
+                        <span class="font-title text-[11px] text-[#6d7872] font-bold block mb-0.5 flex items-center justify-center gap-1"><span class="material-symbols-rounded text-[14px]">lock</span> HABILIDADE EVOLUÍDA</span>
+                        <p class="font-sans text-[10px] text-[#4a5550] uppercase tracking-wider">Conclua as 9 memórias para revelar</p>
+                    </div>
+                `;
+            }
+
+            html += `</div></div>`;
+            return html;
+        }
+
+        // --- RENDER SKILLS & DECKS ---
         function renderSkillSlot(hero, attrKey, slotIndex) {
             const val = hero.skills[attrKey][slotIndex] || '';
             const catalog = skillCatalogs[hero.id]?.[attrKey];
@@ -759,16 +710,13 @@
             html += renderRow('B', 10, 'text-[#c2a675]');
             html += renderRow('E', 10, 'text-[#c2a675]');
             
-            if (globalUnlocks.serieD) {
-                html += renderRow('D', 5, 'text-[#fbbf24]');
-            }
-            if (globalUnlocks.serieF) {
-                html += renderRow('F', 5, 'text-[#ffffff]');
-            }
+            if (globalUnlocks.serieD) html += renderRow('D', 5, 'text-[#fbbf24]');
+            if (globalUnlocks.serieF) html += renderRow('F', 5, 'text-[#ffffff]');
             html += `</div>`;
             return html;
         }
 
+        // --- MAIN RENDER ---
         function renderHeroes() {
             const container = document.getElementById('heroes-list');
             if (!container) return;
@@ -792,6 +740,7 @@
                 
                 let combatBingoHtml = buildDeckHtml(h, 'combat');
                 let diploBingoHtml = buildDeckHtml(h, 'diplomacy');
+                let echoesHtml = buildEchoesHtml(h);
 
                 let itemsHtml = '';
                 h.itemsList.forEach(item => {
@@ -833,7 +782,7 @@
                 html += `
                     <div id="hero-card-${h.id}" class="hero-card ${h.isExpanded ? 'expanded' : ''} shadow-md flex flex-col transition-all">
 
-                        <!-- CABEÇALHO DO PERSONAGEM (Toggle de Expansão) -->
+                        <!-- CABEÇALHO DO PERSONAGEM -->
                         <div class="flex items-center justify-between p-3.5 cursor-pointer ${h.isExpanded ? 'bg-[#0a0d0b] border-b border-[#141a17]' : ''}" onclick="toggleHeroCard('${h.id}')">
                             <div class="flex-1 pr-2">
                                 <div class="flex items-center gap-2">
@@ -859,7 +808,7 @@
                             <span class="material-symbols-rounded ${h.isExpanded ? 'text-[#c2a675]' : 'text-[#6d7872]'} text-[28px] transition-transform ${h.isExpanded ? 'rotate-180' : ''}">keyboard_arrow_down</span>
                         </div>
 
-                        <!-- GAVETA (Corpo da Ficha Ocultável) -->
+                        <!-- GAVETA DA FICHA -->
                         ${h.isExpanded ? `
                             <div class="p-3.5 space-y-3">
 
@@ -948,10 +897,7 @@
                                                     <span class="material-symbols-rounded absolute right-1 top-1/2 -translate-y-1/2 text-[#4a5550] pointer-events-none text-[16px]">arrow_drop_down</span>
                                                 </div>
                                             </div>
-                                            <div class="w-full flex flex-col gap-1">
-                                                ${renderSkillSlot(h, 'aggressiveness', 0)}
-                                                ${renderSkillSlot(h, 'aggressiveness', 1)}
-                                            </div>
+                                            <div class="w-full flex flex-col gap-1">${renderSkillSlot(h, 'aggressiveness', 0)}${renderSkillSlot(h, 'aggressiveness', 1)}</div>
                                         </div>
                                         <!-- EMP -->
                                         <div class="bg-[#060807] border border-[#1f2722] p-1.5 rounded-[3px] flex flex-col gap-1.5 shadow-sm">
@@ -967,10 +913,7 @@
                                                     <span class="material-symbols-rounded absolute right-1 top-1/2 -translate-y-1/2 text-[#4a5550] pointer-events-none text-[16px]">arrow_drop_down</span>
                                                 </div>
                                             </div>
-                                            <div class="w-full flex flex-col gap-1">
-                                                ${renderSkillSlot(h, 'empathy', 0)}
-                                                ${renderSkillSlot(h, 'empathy', 1)}
-                                            </div>
+                                            <div class="w-full flex flex-col gap-1">${renderSkillSlot(h, 'empathy', 0)}${renderSkillSlot(h, 'empathy', 1)}</div>
                                         </div>
                                         <!-- COR -->
                                         <div class="bg-[#060807] border border-[#1f2722] p-1.5 rounded-[3px] flex flex-col gap-1.5 shadow-sm">
@@ -986,10 +929,7 @@
                                                     <span class="material-symbols-rounded absolute right-1 top-1/2 -translate-y-1/2 text-[#4a5550] pointer-events-none text-[16px]">arrow_drop_down</span>
                                                 </div>
                                             </div>
-                                            <div class="w-full flex flex-col gap-1">
-                                                ${renderSkillSlot(h, 'courage', 0)}
-                                                ${renderSkillSlot(h, 'courage', 1)}
-                                            </div>
+                                            <div class="w-full flex flex-col gap-1">${renderSkillSlot(h, 'courage', 0)}${renderSkillSlot(h, 'courage', 1)}</div>
                                         </div>
                                         <!-- CAU -->
                                         <div class="bg-[#060807] border border-[#1f2722] p-1.5 rounded-[3px] flex flex-col gap-1.5 shadow-sm">
@@ -1005,10 +945,7 @@
                                                     <span class="material-symbols-rounded absolute right-1 top-1/2 -translate-y-1/2 text-[#4a5550] pointer-events-none text-[16px]">arrow_drop_down</span>
                                                 </div>
                                             </div>
-                                            <div class="w-full flex flex-col gap-1">
-                                                ${renderSkillSlot(h, 'caution', 0)}
-                                                ${renderSkillSlot(h, 'caution', 1)}
-                                            </div>
+                                            <div class="w-full flex flex-col gap-1">${renderSkillSlot(h, 'caution', 0)}${renderSkillSlot(h, 'caution', 1)}</div>
                                         </div>
                                         <!-- PRA -->
                                         <div class="bg-[#060807] border border-[#1f2722] p-1.5 rounded-[3px] flex flex-col gap-1.5 shadow-sm">
@@ -1024,10 +961,7 @@
                                                     <span class="material-symbols-rounded absolute right-1 top-1/2 -translate-y-1/2 text-[#4a5550] pointer-events-none text-[16px]">arrow_drop_down</span>
                                                 </div>
                                             </div>
-                                            <div class="w-full flex flex-col gap-1">
-                                                ${renderSkillSlot(h, 'practicality', 0)}
-                                                ${renderSkillSlot(h, 'practicality', 1)}
-                                            </div>
+                                            <div class="w-full flex flex-col gap-1">${renderSkillSlot(h, 'practicality', 0)}${renderSkillSlot(h, 'practicality', 1)}</div>
                                         </div>
                                         <!-- ESP -->
                                         <div class="bg-[#060807] border border-[#1f2722] p-1.5 rounded-[3px] flex flex-col gap-1.5 shadow-sm">
@@ -1043,57 +977,27 @@
                                                     <span class="material-symbols-rounded absolute right-1 top-1/2 -translate-y-1/2 text-[#4a5550] pointer-events-none text-[16px]">arrow_drop_down</span>
                                                 </div>
                                             </div>
-                                            <div class="w-full flex flex-col gap-1">
-                                                ${renderSkillSlot(h, 'spirituality', 0)}
-                                                ${renderSkillSlot(h, 'spirituality', 1)}
-                                            </div>
+                                            <div class="w-full flex flex-col gap-1">${renderSkillSlot(h, 'spirituality', 0)}${renderSkillSlot(h, 'spirituality', 1)}</div>
                                         </div>
                                     </div>
                                 </div>
 
-                                <!-- 4. BARALHOS & INVENTÁRIO -->
+                                <!-- 4. ITENS & SEGREDOS -->
                                 <div class="pt-2">
                                     <div class="flex items-center gap-2 border-b border-[#1f2722] pb-1.5 mb-2.5">
-                                        <span class="material-symbols-rounded text-[#8c938f] text-[12px]">playing_cards</span>
-                                        <h4 class="font-title text-[12.5px] text-[#c2a675] uppercase tracking-widest font-bold">Baralhos & Inventário</h4>
+                                        <span class="material-symbols-rounded text-[#8c938f] text-[12px]">work</span>
+                                        <h4 class="font-title text-[12.5px] text-[#c2a675] uppercase tracking-widest font-bold">Inventário & Segredos</h4>
                                     </div>
-
                                     <div class="p-2.5 bg-[#050706] border border-[#1e2621] rounded space-y-3 shadow-sm">
-
-                                        <!-- COMBATE -->
-                                        <div>
-                                            <div class="flex items-center justify-between mb-1.5">
-                                                <span class="font-sans text-[12px] font-bold text-[#ba4a1a] uppercase flex items-center gap-1">
-                                                    <span class="material-symbols-rounded text-[16px]">swords</span> Baralho de Combate
-                                                </span>
-                                                <span class="font-sans text-[11px] font-bold text-[#8c938f]">
-                                                    <strong class="text-[#ba4a1a]">${h.decks.combat.length}</strong> ativas
-                                                </span>
-                                            </div>
-                                            ${combatBingoHtml}
-                                        </div>
-
-                                        <!-- DIPLOMACIA -->
-                                        <div class="pt-2 border-t border-[#141a17]">
-                                            <div class="flex items-center justify-between mb-1.5">
-                                                <span class="font-sans text-[12px] font-bold text-[#b59263] uppercase flex items-center gap-1">
-                                                    <span class="material-symbols-rounded text-[16px]">conversation</span> Baralho de Diplomacia
-                                                </span>
-                                                <span class="font-sans text-[11px] font-bold text-[#8c938f]">
-                                                    <strong class="text-[#b59263]">${h.decks.diplomacy.length}</strong> ativas
-                                                </span>
-                                            </div>
-                                            ${diploBingoHtml}
-                                        </div>
-
-                                        <!-- ITENS INDIVIDUAIS -->
-                                        <div class="pt-2 border-t border-[#141a17] space-y-2">
+                                        
+                                        <!-- ITENS -->
+                                        <div class="space-y-2">
                                             <div class="flex items-center justify-between">
                                                 <span class="font-title text-[11.5px] uppercase text-[#c2a675] font-bold flex items-center gap-1">
                                                     <span class="material-symbols-rounded text-[16px]">money_bag</span> Itens do Personagem
                                                 </span>
                                                 <button type="button" onclick="addItem('${h.id}')" class="text-[10.5px] font-sans font-bold uppercase tracking-wider px-2 py-0.5 rounded bg-[#101613] border border-[#2b3630] text-[#c2a675] hover:border-[#c2a675]">
-                                                    + Adicionar Item
+                                                    + Adicionar
                                                 </button>
                                             </div>
                                             <div class="space-y-1.5">
@@ -1101,14 +1005,14 @@
                                             </div>
                                         </div>
 
-                                        <!-- SEGREDOS INDIVIDUAIS -->
+                                        <!-- SEGREDOS -->
                                         <div class="pt-2 border-t border-[#141a17] space-y-2">
                                             <div class="flex items-center justify-between">
                                                 <span class="font-title text-[11.5px] uppercase text-[#c2a675] font-bold flex items-center gap-1">
                                                     <span class="material-symbols-rounded text-[16px]">vpn_key</span> Segredos Adquiridos
                                                 </span>
                                                 <button type="button" onclick="addSecret('${h.id}')" class="text-[10.5px] font-sans font-bold uppercase tracking-wider px-2 py-0.5 rounded bg-[#101613] border border-[#2b3630] text-[#c2a675] hover:border-[#c2a675]">
-                                                    + Adicionar Segredo
+                                                    + Adicionar
                                                 </button>
                                             </div>
                                             <div class="space-y-1.5">
@@ -1116,6 +1020,43 @@
                                             </div>
                                         </div>
 
+                                    </div>
+                                </div>
+
+                                <!-- 5. ECOS DA RUÍNA -->
+                                ${echoesHtml}
+
+                                <!-- 6. BARALHOS -->
+                                <div class="pt-2">
+                                    <div class="flex items-center gap-2 border-b border-[#1f2722] pb-1.5 mb-2.5">
+                                        <span class="material-symbols-rounded text-[#8c938f] text-[12px]">playing_cards</span>
+                                        <h4 class="font-title text-[12.5px] text-[#c2a675] uppercase tracking-widest font-bold">Baralhos de Encontro</h4>
+                                    </div>
+                                    <div class="p-2.5 bg-[#050706] border border-[#1e2621] rounded space-y-3 shadow-sm">
+                                        <!-- COMBATE -->
+                                        <div>
+                                            <div class="flex items-center justify-between mb-1.5">
+                                                <span class="font-sans text-[12px] font-bold text-[#ba4a1a] uppercase flex items-center gap-1">
+                                                    <span class="material-symbols-rounded text-[16px]">swords</span> Combate
+                                                </span>
+                                                <span class="font-sans text-[11px] font-bold text-[#8c938f]">
+                                                    <strong class="text-[#ba4a1a]">${h.decks.combat.length}</strong> ativas
+                                                </span>
+                                            </div>
+                                            ${combatBingoHtml}
+                                        </div>
+                                        <!-- DIPLOMACIA -->
+                                        <div class="pt-2 border-t border-[#141a17]">
+                                            <div class="flex items-center justify-between mb-1.5">
+                                                <span class="font-sans text-[12px] font-bold text-[#b59263] uppercase flex items-center gap-1">
+                                                    <span class="material-symbols-rounded text-[16px]">conversation</span> Diplomacia
+                                                </span>
+                                                <span class="font-sans text-[11px] font-bold text-[#8c938f]">
+                                                    <strong class="text-[#b59263]">${h.decks.diplomacy.length}</strong> ativas
+                                                </span>
+                                            </div>
+                                            ${diploBingoHtml}
+                                        </div>
                                     </div>
                                 </div>
 
