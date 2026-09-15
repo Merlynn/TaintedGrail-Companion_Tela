@@ -226,6 +226,10 @@
         <div id="global-unlocks-section" class="mt-6 mb-2 pt-4 border-t border-[#141a17]">
             <h4 class="font-title text-[12px] text-[#6d7872] uppercase tracking-widest font-bold mb-3 text-center">Expansões da Campanha</h4>
             <div class="space-y-2">
+                <div class="flex items-center justify-between p-3 bg-[#060807] border border-[#1f2722] rounded-sm cursor-pointer transition-all hover:border-[#c2a675] shadow-sm" onclick="toggleGlobalUnlock('echoes')">
+                    <span class="font-title text-[14.5px] text-[#c2a675] tracking-wider font-bold">Ecos da Ruína</span>
+                    <span id="icon-echoes" class="material-symbols-rounded text-[#c2a675] text-[22px]">mail_lock</span>
+                </div>
                 <div class="flex items-center justify-between p-3 bg-[#060807] border border-[#1f2722] rounded-sm cursor-pointer transition-all hover:border-[#ffffff] shadow-sm" onclick="toggleGlobalUnlock('serieF')">
                     <span class="font-title text-[14.5px] text-[#ffffff] tracking-wider font-bold">Cartas Série "F"</span>
                     <span id="icon-serief" class="material-symbols-rounded text-[#ffffff] text-[22px]">mail_lock</span>
@@ -286,7 +290,8 @@
             }
         }
 
-        let globalUnlocks = JSON.parse(localStorage.getItem('global_unlocks_series')) || { serieF: false, serieD: false };
+        let globalUnlocks = JSON.parse(localStorage.getItem('global_unlocks_series')) || { serieF: false, serieD: false, echoes: false };
+        if (globalUnlocks.echoes === undefined) globalUnlocks.echoes = false;
 
         function toggleGlobalUnlock(type) {
             globalUnlocks[type] = !globalUnlocks[type];
@@ -298,8 +303,10 @@
         function renderGlobalUnlocks() {
             const iconF = document.getElementById('icon-serief');
             const iconD = document.getElementById('icon-seried');
+            const iconEchoes = document.getElementById('icon-echoes');
             if(iconF) iconF.innerText = globalUnlocks.serieF ? "drafts" : "mail_lock";
             if(iconD) iconD.innerText = globalUnlocks.serieD ? "drafts" : "mail_lock";
+            if(iconEchoes) iconEchoes.innerText = globalUnlocks.echoes ? "drafts" : "mail_lock";
         }
 
         const skillCatalogs = {
@@ -554,7 +561,7 @@
             setTimeout(() => { modal.classList.add('hidden'); }, 300);
         }
 
-        // RENDERIZAÇÃO ALINHADA DO ECOS (GRID DE 3 COLUNAS - CENTRALIZADO VERTICAL E SEM BORDAS CHAMATIVAS)
+        // RENDERIZAÇÃO ALINHADA DO ECOS (Altamente Compacto)
         function buildEchoesHtml(hero) {
             const cat = echoesCatalog[hero.id];
             if (!cat) return '';
@@ -579,11 +586,12 @@
                 const isSpent = spent[b];
                 const cardNum = cat.cards[b];
 
-                let blockHtml = `<div class="bg-[#050706] border ${isUnlocked ? 'border-[#c2a675]' : 'border-transparent'} rounded p-1.5 transition-all">`;
+                // Removido o padding desnecessário para ficar rente ao texto
+                let blockHtml = `<div class="border rounded p-1 transition-all duration-300 ${isUnlocked ? 'bg-[#0a0d0b] border-[#52412b] shadow-[0_0_10px_rgba(194,166,117,0.08)]' : 'bg-[#050706] border-[#1e2621]'}">`;
                 
                 if (isUnlocked) {
                     blockHtml += `
-                        <div class="flex items-center justify-between mb-1">
+                        <div class="flex items-center justify-between mb-0.5 px-0.5">
                             <span class="font-title text-[11px] font-bold text-[#c2a675] flex items-center gap-1">
                                 <span class="material-symbols-rounded text-[14px]">star</span> Ação Lendária (Cód. ${cardNum})
                             </span>
@@ -594,7 +602,7 @@
                     `;
                 } else {
                     blockHtml += `
-                        <div class="flex items-center justify-between mb-0.5">
+                        <div class="flex items-center justify-between mb-0.5 px-0.5">
                             <span class="font-title text-[11px] font-bold text-[#6d7872] flex items-center gap-1">
                                 <span class="material-symbols-rounded text-[14px]">lock</span> Carta Secreta ${cardNum}
                             </span>
@@ -602,7 +610,8 @@
                     `;
                 }
 
-                blockHtml += `<div class="grid grid-cols-3 divide-x divide-[#101412] mt-0.5 bg-[#060807] rounded-sm py-1">`;
+                // Grid ultra compacto
+                blockHtml += `<div class="grid grid-cols-3 divide-x divide-[#1a211e] mt-1 bg-[#070908] rounded-sm py-0.5">`;
                 
                 for (let i = 0; i < 3; i++) {
                     const memIndex = (b * 3) + i;
@@ -613,15 +622,14 @@
                     const colorClass = isMarked ? 'text-[#c2a675]' : 'text-[#6d7872]';
                     const textClass = isMarked ? 'text-[#e0d5c1]' : 'text-[#8c938f]';
 
-                    // Separa a última palavra para grudar com o botão (i) e não deixar ele órfão
                     const typeWords = mem.type.split(' ');
                     const lastWord = typeWords.pop();
                     const prefix = typeWords.length > 0 ? typeWords.join(' ') + ' ' : '';
 
                     blockHtml += `
-                        <div class="flex items-center justify-start gap-1 px-1 w-full h-full">
+                        <div class="flex items-center justify-start gap-1 px-1 w-full">
                             <button class="flex items-center justify-center p-0 outline-none ${colorClass} hover:text-[#c2a675] transition-colors flex-shrink-0" onclick="toggleEchoMemory('${hero.id}', ${memIndex})">
-                                <span class="material-symbols-rounded text-[15px]">${checkIcon}</span>
+                                <span class="material-symbols-rounded text-[16px]">${checkIcon}</span>
                             </button>
                             <div class="text-left flex-1 leading-[1.15]">
                                 <span class="font-sans text-[10.5px] uppercase font-bold tracking-[0.02em] ${textClass} cursor-pointer hover:text-[#c2a675] transition-colors" onclick="toggleEchoMemory('${hero.id}', ${memIndex})">
@@ -629,7 +637,7 @@
                                 </span><span class="whitespace-nowrap">
                                     <span class="font-sans text-[10.5px] uppercase font-bold tracking-[0.02em] ${textClass} cursor-pointer hover:text-[#c2a675] transition-colors" onclick="toggleEchoMemory('${hero.id}', ${memIndex})">${lastWord}</span>
                                     <button class="inline align-text-bottom text-[#4a5550] hover:text-[#c2a675] transition-colors ml-[2px]" onclick="openMemoryModal('${hero.id}', ${memIndex})" title="Detalhes da Memória">
-                                        <span class="material-symbols-rounded text-[13px] leading-none block">info</span>
+                                        <span class="material-symbols-rounded text-[14px] leading-none block">info</span>
                                     </button>
                                 </span>
                             </div>
@@ -645,16 +653,16 @@
             const allCompleted = totalMarks === 9;
             if (allCompleted) {
                 html += `
-                    <div class="bg-[#141a17] border border-[#c2a675] rounded p-2.5 text-center shadow-[0_0_15px_rgba(194,166,117,0.15)] mt-2">
-                        <span class="font-title text-[14px] text-[#c2a675] font-bold block mb-1 flex items-center justify-center gap-1"><span class="material-symbols-rounded text-[18px]">verified</span> ${cat.final.title}</span>
-                        <p class="font-celtic text-[13px] text-[#b8b4a7] leading-tight">${cat.final.desc}</p>
+                    <div class="bg-[#0b0e0c] border border-[#52412b] rounded p-1.5 text-center mt-2 shadow-[0_0_12px_rgba(194,166,117,0.12)] transition-all duration-300">
+                        <span class="font-title text-[13px] text-[#c2a675] font-bold block mb-0.5 flex items-center justify-center gap-1"><span class="material-symbols-rounded text-[16px]">verified</span> ${cat.final.title}</span>
+                        <p class="font-celtic text-[12.5px] text-[#b8b4a7] leading-tight">${cat.final.desc}</p>
                     </div>
                 `;
             } else {
                 html += `
-                    <div class="bg-[#050706] border border-transparent rounded p-1.5 text-center mt-2">
-                        <span class="font-title text-[11px] text-[#6d7872] font-bold block mb-0.5 flex items-center justify-center gap-1"><span class="material-symbols-rounded text-[14px]">lock</span> HABILIDADE EVOLUÍDA</span>
-                        <p class="font-sans text-[10px] text-[#4a5550] uppercase tracking-wider">Conclua as 9 memórias para revelar</p>
+                    <div class="bg-[#050706] border border-[#1e2621] rounded p-1 text-center mt-2">
+                        <span class="font-title text-[10px] text-[#6d7872] font-bold block mb-0.5 flex items-center justify-center gap-1"><span class="material-symbols-rounded text-[13px]">lock</span> HABILIDADE EVOLUÍDA</span>
+                        <p class="font-sans text-[9px] text-[#4a5550] uppercase tracking-wider">Conclua as 9 memórias para revelar</p>
                     </div>
                 `;
             }
@@ -740,7 +748,9 @@
                 
                 let combatBingoHtml = buildDeckHtml(h, 'combat');
                 let diploBingoHtml = buildDeckHtml(h, 'diplomacy');
-                let echoesHtml = buildEchoesHtml(h);
+                
+                // Condicional para renderizar o Ecos da Ruína somente se ativado
+                let echoesHtml = globalUnlocks.echoes ? buildEchoesHtml(h) : '';
 
                 let itemsHtml = '';
                 h.itemsList.forEach(item => {
