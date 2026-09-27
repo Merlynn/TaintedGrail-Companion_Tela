@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Kings of Ruin · Configurações</title>
+<link rel="stylesheet" href="theme.css">
+<style>
+.cfg + .cfg { margin-top: 12px; }
+.cfg .section-head .t-title { display: flex; align-items: center; gap: 6px; }
+.track-row { display: flex; align-items: center; gap: 10px; padding: 8px 4px 8px 10px; background: #060807; border: 1px solid var(--line); border-radius: var(--radius); }
+.track-row + .track-row { margin-top: 6px; }
+.track-icon { width: 40px; height: 40px; border-radius: var(--radius); border: 1px solid var(--line-control); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.dl-progress { height: 3px; background: #1a211e; border-radius: 2px; overflow: hidden; margin-top: 6px; }
+.dl-progress div { height: 100%; background: var(--gold); transition: width .2s linear; }
+.zoom-row { display: flex; align-items: center; gap: 12px; }
+</style>
+</head>
+<body>
+<main class="page no-nav">
+    <h1 class="t-title" style="text-align:center;font-size:1.2rem;letter-spacing:.15em;text-transform:uppercase;margin:6px 0 16px">Configurações</h1>
+
+    <section class="card cfg">
+        <div class="section-head"><span class="t-title"><span class="ms outline" style="font-size:1.1rem">library_music</span> Catálogo de ecos</span></div>
+        <p style="color:var(--text-2);margin:0 0 10px">Baixe as trilhas para tocar sem internet durante a sessão.</p>
+        <div id="tracks"></div>
+    </section>
+
+    <section class="card cfg">
+        <div class="section-head"><span class="t-title"><span class="ms outline" style="font-size:1.1rem">format_size</span> Tamanho do texto</span><span class="t-title" id="zoom-l" style="color:var(--gold);font-size:.95rem"></span></div>
+        <div class="zoom-row"><span class="t-title" style="font-size:.8rem;color:var(--text-3)">A</span><input type="range" class="range" id="zoom" min="0" max="4" step="1" aria-label="Tamanho do texto"><span class="t-title" style="font-size:1.4rem;color:var(--text-3)">A</span></div>
+        <p class="t-meta" style="margin:6px 0 0">Soma-se ao tamanho de fonte definido nas configurações do Android.</p>
+    </section>
+
+    <section class="card cfg">
+        <div class="section-head"><span class="t-title"><span class="ms outline" style="font-size:1.1rem">translate</span> Idioma</span></div>
+        <div class="select-wrap"><select class="field" aria-label="Idioma"><option>Português (Brasil)</option><option>English (US)</option><option>Español</option></select><span class="ms">expand_more</span></div>
+    </section>
+
+    <section class="card cfg">
+        <div class="section-head"><span class="t-title"><span class="ms outline" style="font-size:1.1rem">database</span> Seus dados</span></div>
+        <p style="color:var(--text-2);margin:0 0 10px">Guarde uma cópia do progresso para não perder nada ao trocar de celular.</p>
+        <button class="btn block" id="export"><span class="ms outline" style="font-size:1.2rem">download</span>Exportar cópia</button>
+        <button class="btn block danger" id="import" style="margin-top:8px"><span class="ms outline" style="font-size:1.2rem">restore</span>Restaurar cópia</button>
+    </section>
+
+    <section class="cfg proto-note" style="flex-direction:column;align-items:stretch;margin-top:20px">
+        <span>Somente para o protótipo</span>
+        <div style="display:flex;gap:8px;flex-wrap:wrap"><button id="p-role"></button><button id="p-reset">Restaurar dados de exemplo</button></div>
+    </section>
+</main>
+
+<script src="app.js"></script>
+<script>
+KR.header({ back: 'cronica.html' });
+document.querySelector('.pill-btn.back').addEventListener('click', e => {
+    if (document.referrer.includes(location.host) && history.length > 1) { e.preventDefault(); history.back(); }
+});
+const $ = id => document.getElementById(id);
+const TRACKS = [['Ecos de Ruína', 'Trilha padrão', 'music_note', '#c2a675', 38], ['Sangue e Gelo', 'Combate', 'swords', '#e0706a', 52], ['Névoa Espessa', 'Exploração e tensão', 'explore', '#8fb3c2', 45], ['Taverna do Chifre', 'Descanso e cidades', 'sports_bar', '#d9a14a', 31]];
+const dl = KR.get('downloads', { 2: 'done' });
+const timers = {};
+
+function renderTracks() {
+    $('tracks').innerHTML = TRACKS.map(([n, s, ic, col, mb], i) => {
+        const st = dl[i];
+        const action = st === 'done'
+            ? `<button class="menu-btn" data-rm="${i}" aria-label="Remover do celular"><span class="ms outline">delete</span></button>`
+            : typeof st === 'number'
+                ? `<button class="menu-btn" data-cancel="${i}" aria-label="Cancelar download"><span class="ms outline">close</span></button>`
+                : `<button class="menu-btn" data-dl="${i}" aria-label="Baixar"><span class="ms outline" style="color:var(--gold)">download</span></button>`;
+        const meta = st === 'done' ? `No celular · ${mb} MB` : typeof st === 'number' ? `Baixando · ${st}% de ${mb} MB` : `${s} · ${mb} MB`;
+        return `<div class="track-row"><div class="track-icon" style="border-color:${col}55"><span class="ms" style="color:${col}">${ic}</span></div>
+            <div style="flex:1;min-width:0"><div class="t-title" style="font-size:.9375rem">${n}</div><div class="t-meta" style="font-style:normal">${meta}</div>${typeof st === 'number' ? `<div class="dl-progress"><div style="width:${st}%"></div></div>` : ''}</div>${action}</div>`;
+    }).join('');
+}
+$('tracks').addEventListener('click', async e => {
+    const b = e.target.closest('button'); if (!b) return;
+    const i = +(b.dataset.dl ?? b.dataset.cancel ?? b.dataset.rm);
+    if (b.dataset.dl !== undefined) {
+        dl[i] = 0; renderTracks();
+        timers[i] = setInterval(() => { dl[i] = Math.min(100, dl[i] + 7); if (dl[i] >= 100) { clearInterval(timers[i]); dl[i] = 'done'; KR.set('downloads', dl); KR.snackbar(`${TRACKS[i][0]} disponível sem internet`); } renderTracks(); }, 250);
+    } else if (b.dataset.cancel !== undefined) { clearInterval(timers[i]); delete dl[i]; renderTracks(); }
+    else if (await KR.confirmDialog({ title: `Remover ${TRACKS[i][0]}?`, msg: `Libera ${TRACKS[i][4]} MB. Você pode baixar de novo depois.`, ok: 'Remover' })) { delete dl[i]; KR.set('downloads', dl); renderTracks(); }
+});
+
+const LABELS = ['85%', '92%', '100%', '110%', '125%'];
+$('zoom').value = KR.get('zoom', 2);
+$('zoom-l').textContent = LABELS[$('zoom').value];
+$('zoom').oninput = e => { KR.set('zoom', +e.target.value); KR.applyZoom(); $('zoom-l').textContent = LABELS[e.target.value]; };
+$('export').onclick = () => KR.snackbar('No app, abre o seletor de arquivos para salvar a cópia');
+$('import').onclick = async () => { if (await KR.confirmDialog({ title: 'Restaurar cópia?', msg: 'Os dados atuais serão substituídos pelos da cópia escolhida.', ok: 'Escolher arquivo' })) KR.snackbar('No app, abre o seletor de arquivos'); };
+
+const drawRole = () => { $('p-role').textContent = 'Modo atual: ' + (KR.role() === 'jogador' ? 'jogador' : 'cronista') + ' (trocar)'; };
+$('p-role').onclick = () => { KR.set('role', KR.role() === 'jogador' ? 'cronista' : 'jogador'); drawRole(); };
+$('p-reset').onclick = () => { Object.keys(localStorage).filter(k => k.startsWith('v2_')).forEach(k => localStorage.removeItem(k)); KR.applyZoom(); location.reload(); };
+drawRole();
+renderTracks();
+</script>
+</body>
+</html>

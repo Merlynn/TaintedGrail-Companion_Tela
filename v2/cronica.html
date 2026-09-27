@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Kings of Ruin · Crônica</title>
+<link rel="stylesheet" href="theme.css">
+<style>
+.stepper { display: flex; align-items: center; justify-content: center; gap: 4px; }
+.step-btn { width: 48px; height: 48px; display: flex; align-items: center; justify-content: center; color: var(--text-2); border-radius: 50%; font-family: var(--font-title); font-size: 2.2rem; line-height: 1; padding-bottom: 6px; }
+.step-btn:active { color: var(--gold); background: rgba(194,166,117,.1); }
+.chapter { font-family: var(--font-title); font-weight: 700; color: var(--gold); letter-spacing: .12em; text-transform: uppercase; font-size: clamp(1.6rem, 7.5vw, 2.2rem); padding: 4px 8px; }
+.part { font-family: var(--font-title); font-weight: 700; color: var(--title); letter-spacing: .15em; text-transform: uppercase; font-size: 1.05rem; padding: 8px; }
+.rule { height: 1px; width: 70%; margin: 14px auto 22px; background: linear-gradient(90deg, transparent, var(--gold), transparent); opacity: .5; }
+
+.dial { --g1: rgba(70, 225, 195, .95); --g2: rgba(35, 140, 120, .6); --halo: rgba(80, 230, 200, .95); --core: #e6fff9;
+    position: relative; width: clamp(230px, 74vw, 300px); aspect-ratio: 1; margin: 0 auto; border-radius: 50%; background: url('https://lh3.googleusercontent.com/d/1CsYPx6EHQ0guM14NKt8KxKmhIQccaAs9') center / cover; border: 2px solid #1a211e; box-shadow: 0 8px 25px rgba(0,0,0,.9), inset 0 0 40px rgba(0,0,0,.95); touch-action: none; isolation: isolate; }
+.dial::before { content: ""; position: absolute; inset: 0; border-radius: 50%; background: radial-gradient(circle, transparent 25%, rgba(0,0,0,.85) 100%); pointer-events: none; z-index: 1; }
+
+.spot { position: absolute; width: 22%; height: 22%; margin: -11% 0 0 -11%; border-radius: 50%; }
+.spot > div { position: absolute; border-radius: 50%; pointer-events: none; transition: opacity .5s ease; }
+.shade { inset: 8%; background: radial-gradient(circle, rgba(0,0,0,.72) 0%, rgba(0,0,0,.4) 45%, transparent 72%); mix-blend-mode: multiply; }
+.glow { inset: 0; background: radial-gradient(circle, var(--g1) 10%, var(--g2) 40%, transparent 70%); mix-blend-mode: color-dodge; opacity: 0; }
+.spot.lit .shade { opacity: 0; }
+.spot.lit .glow { opacity: 1; animation: shimmer 3s ease-in-out infinite; }
+.spot.next .shade { opacity: .55; }
+.spot.next .glow { animation: breathe 2.4s ease-in-out infinite; }
+.spot.lifting .glow { opacity: .15 !important; animation: none; }
+.spot.lighting .glow { animation: ignite .6s ease-out; }
+@keyframes shimmer { 0%, 100% { opacity: .8; } 50% { opacity: 1; } }
+@keyframes breathe { 0%, 100% { opacity: .05; } 50% { opacity: .6; } }
+@keyframes ignite { 0% { opacity: 1; transform: scale(1.3); } 100% { opacity: .9; transform: scale(1); } }
+
+.orb { position: fixed; z-index: 120; pointer-events: none; border-radius: 50%; transform: translate(-50%, -50%); background: radial-gradient(circle, var(--core) 0%, var(--halo) 22%, transparent 62%); }
+.orb.back { transition: left .22s ease, top .22s ease; }
+.orb.out { transition: transform .35s ease-in, opacity .35s; transform: translate(-50%, -50%) scale(.1); opacity: 0; }
+
+.center-target { position: absolute; left: 50%; top: 50%; width: 34%; aspect-ratio: 1; transform: translate(-50%, -50%) scale(.9); border-radius: 50%; border: 1px solid rgba(255,107,107,.5); background: radial-gradient(circle, rgba(69,6,6,.85), rgba(20,4,4,.65)); box-shadow: 0 0 18px rgba(158,21,21,.6); z-index: 3; display: flex; opacity: 0; pointer-events: none; transition: opacity .15s, transform .15s; align-items: center; justify-content: center; flex-direction: column; gap: 2px; text-align: center; color: var(--title); font-size: .75rem; font-weight: 600; line-height: 1.15; padding: 6px; }
+.center-target .ms { font-size: 1.4rem; color: #ff8a80; }
+.center-target.show { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+.center-target.hot { background: radial-gradient(circle, rgba(158,21,21,.95), rgba(69,6,6,.85)); box-shadow: 0 0 28px rgba(255,60,40,.8); transform: translate(-50%, -50%) scale(1.08); }
+
+.p1 { top: 14%; left: 50%; } .p2 { top: 20%; left: 80%; } .p3 { top: 62%; left: 85%; } .p4 { top: 77%; left: 55%; } .p5 { top: 63%; left: 20%; } .p6 { top: 20%; left: 23%; }
+.count { text-align: center; margin-top: 16px; font-family: var(--font-title); font-weight: 700; color: var(--title); font-size: 1.1rem; letter-spacing: .1em; }
+.hint { text-align: center; margin-top: 6px; }
+</style>
+</head>
+<body>
+<main class="page">
+    <div class="stepper" style="margin-top:8px">
+        <button class="step-btn" id="ch-prev" aria-label="Capítulo anterior">&laquo;</button>
+        <button class="chapter" id="ch" aria-label="Editar capítulo"></button>
+        <button class="step-btn" id="ch-next" aria-label="Próximo capítulo">&raquo;</button>
+    </div>
+    <div class="stepper">
+        <button class="step-btn" id="pt-prev" aria-label="Parte anterior" style="font-size:1.8rem">&lsaquo;</button>
+        <button class="part" id="pt" aria-label="Editar parte"></button>
+        <button class="step-btn" id="pt-next" aria-label="Próxima parte" style="font-size:1.8rem">&rsaquo;</button>
+    </div>
+    <div class="rule"></div>
+    <div class="t-title" style="text-align:center;color:var(--gold);font-size:.95rem;letter-spacing:.15em;text-transform:uppercase;margin-bottom:18px">Passagem do tempo</div>
+    <div class="dial" id="dial">
+        <div class="center-target" id="center"><span class="ms outline">block</span><span>Solte aqui para apagar</span></div>
+    </div>
+    <div class="count" id="count"></div>
+    <div class="hint t-meta">Toque na pedra que pulsa para acendê-la.<br>Arraste a última pedra acesa até o altar para apagá-la.</div>
+</main>
+
+<script src="app.js"></script>
+<script>
+KR.header();
+KR.nav('cronica');
+
+const $ = id => document.getElementById(id);
+let chapter = KR.get('chapter', 1);
+let part = KR.get('part', { branch: 'A', n: 1 });
+let time = KR.get('time', 2);
+
+const spots = [1, 2, 3, 4, 5, 6].map(i => {
+    const s = document.createElement('div');
+    s.className = 'spot p' + i; s.dataset.i = i;
+    s.innerHTML = '<div class="shade"></div><div class="glow"></div>';
+    $('dial').appendChild(s);
+    return s;
+});
+
+function draw() {
+    $('ch').textContent = 'Capítulo ' + chapter;
+    $('pt').textContent = `Parte ${part.branch}:${part.n}`;
+    spots.forEach((s, idx) => {
+        s.classList.toggle('lit', idx < time);
+        s.classList.toggle('next', idx === time);
+        s.setAttribute('aria-label', idx < time ? `Tempo ${idx + 1} aceso` : idx === time ? `Acender tempo ${idx + 1}` : `Tempo ${idx + 1} apagado`);
+    });
+    $('count').textContent = `${time} / 6`;
+    KR.set('chapter', chapter); KR.set('part', part); KR.set('time', time);
+}
+
+$('ch-prev').onclick = () => { chapter = Math.max(1, chapter - 1); draw(); };
+$('ch-next').onclick = () => { chapter += 1; draw(); };
+$('pt-prev').onclick = () => { part.n = Math.max(1, part.n - 1); draw(); };
+$('pt-next').onclick = () => { part.n += 1; draw(); };
+
+function editModal(kind) {
+    const html = kind === 'ch'
+        ? `<h3 class="t-title">Capítulo</h3><input class="field" id="m-ch" inputmode="numeric" value="${chapter}" style="text-align:center;font-size:1.5rem;margin:8px 0 16px">`
+        : `<h3 class="t-title">Código da parte</h3><div style="display:flex;align-items:flex-end;gap:10px;margin:8px 0 16px">
+            <label style="flex:1"><span class="t-label">Ramo</span><input class="field" id="m-br" maxlength="2" value="${part.branch}" style="text-align:center;font-size:1.5rem;text-transform:uppercase"></label>
+            <span class="t-title" style="font-size:1.5rem;padding-bottom:8px;color:var(--text-3)">:</span>
+            <label style="flex:1"><span class="t-label">Parte</span><input class="field" id="m-pt" inputmode="numeric" value="${part.n}" style="text-align:center;font-size:1.5rem"></label></div>`;
+    const el = KR.h(`<div class="scrim"><div class="dialog">${html}<div class="dialog-actions"><button class="btn" data-a="0">Cancelar</button><button class="btn" data-a="1">Confirmar</button></div></div></div>`);
+    document.body.appendChild(el);
+    el.querySelector('input').focus();
+    el.addEventListener('click', e => {
+        const b = e.target.closest('[data-a]');
+        if (e.target === el || (b && b.dataset.a === '0')) return el.remove();
+        if (b && b.dataset.a === '1') {
+            if (kind === 'ch') chapter = Math.max(1, parseInt(el.querySelector('#m-ch').value) || chapter);
+            else part = { branch: (el.querySelector('#m-br').value.trim() || 'A').toUpperCase(), n: Math.max(1, parseInt(el.querySelector('#m-pt').value) || 1) };
+            el.remove(); draw();
+        }
+    });
+}
+$('ch').onclick = () => editModal('ch');
+$('pt').onclick = () => editModal('pt');
+
+let drag = null;
+const inCenter = (x, y) => { const c = $('center').getBoundingClientRect(); return Math.hypot(x - (c.left + c.width / 2), y - (c.top + c.height / 2)) < c.width / 2 + 8; };
+const moveOrb = (x, y) => { drag.o.style.left = x + 'px'; drag.o.style.top = y + 'px'; };
+
+$('dial').addEventListener('pointerdown', e => {
+    const s = e.target.closest('.spot');
+    if (!s || +s.dataset.i - 1 !== time - 1) return;
+    const r = s.getBoundingClientRect();
+    const o = document.createElement('div');
+    o.className = 'orb'; o.style.width = o.style.height = (r.width * 1.3) + 'px';
+    $('dial').appendChild(o);
+    drag = { s, o, ox: r.left + r.width / 2, oy: r.top + r.height / 2 };
+    moveOrb(drag.ox, drag.oy);
+    s.classList.add('lifting');
+    $('center').classList.add('show');
+    try { $('dial').setPointerCapture(e.pointerId); } catch {}
+});
+$('dial').addEventListener('pointermove', e => {
+    if (!drag) return;
+    moveOrb(e.clientX, e.clientY);
+    $('center').classList.toggle('hot', inCenter(e.clientX, e.clientY));
+});
+function endDrag(drop) {
+    const { s, o, ox, oy } = drag; drag = null;
+    $('center').classList.remove('show', 'hot');
+    if (drop) {
+        o.classList.add('out');
+        setTimeout(() => { o.remove(); s.classList.remove('lifting'); time -= 1; draw(); KR.snackbar(`Pedra ${time + 1} apagada`, () => { time += 1; draw(); }); }, 350);
+    } else {
+        o.classList.add('back'); o.style.left = ox + 'px'; o.style.top = oy + 'px';
+        setTimeout(() => { o.remove(); s.classList.remove('lifting'); }, 220);
+    }
+}
+$('dial').addEventListener('pointerup', e => {
+    if (drag) return endDrag(inCenter(e.clientX, e.clientY));
+    const s = e.target.closest('.spot');
+    if (s && +s.dataset.i - 1 === time && time < 6) {
+        time += 1; draw();
+        s.classList.add('lighting'); setTimeout(() => s.classList.remove('lighting'), 600);
+        KR.snackbar(`Tempo avançado para ${time}`, () => { time -= 1; draw(); });
+    }
+});
+$('dial').addEventListener('pointercancel', () => { if (drag) endDrag(false); });
+
+draw();
+</script>
+</body>
+</html>

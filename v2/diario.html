@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Kings of Ruin · Diário</title>
+<link rel="stylesheet" href="theme.css">
+<style>
+.diary-top { position: sticky; top: var(--header-h); z-index: 20; margin: -12px -12px 0; }
+.diary-search { background: rgba(7,9,8,.97); padding: 8px 16px 12px; border-bottom: 1px solid var(--line); position: relative; z-index: 2; }
+.diary-search input { width: 100%; background: transparent; border: none; border-bottom: 1px solid var(--line-control); color: var(--gold); font-size: 1.125rem; text-align: center; padding: 8px 32px; outline: none; }
+.diary-search input::placeholder { color: var(--text-3); font-style: italic; }
+.ribbons { display: flex; justify-content: center; gap: 6px; padding: 0 10px; filter: drop-shadow(0 4px 6px rgba(0,0,0,.7)); }
+.ribbon { width: clamp(60px, 18vw, 72px); height: 62px; padding: 6px 2px 14px; clip-path: polygon(0 0, 100% 0, 100% 100%, 50% 82%, 0 100%); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 1px; transform: translateY(-12px); opacity: .55; transition: transform .25s, opacity .25s; color: var(--gold); }
+.ribbon.active { transform: none; opacity: 1; }
+.ribbon .ms { font-size: 1.25rem; }
+.ribbon span:last-child { color: var(--title); font-size: .75rem; font-weight: 600; letter-spacing: .01em; }
+.r-all { background: linear-gradient(#1f2722, #0d120f); } .r-local { background: linear-gradient(#1e3a5f, #0d1b2e); } .r-npc { background: linear-gradient(#243b29, #102115); } .r-demanda { background: linear-gradient(#5c4022, #291a0c); } .r-personagem { background: linear-gradient(#3d284a, #1d1024); }
+.chapter-div { position: relative; text-align: center; margin: 18px 0 16px; }
+.chapter-div::before { content: ""; position: absolute; left: 0; right: 0; top: 50%; height: 1px; background: var(--line); }
+.chapter-div span { position: relative; background: var(--bg); padding: 0 12px; font-family: var(--font-title); font-weight: 700; color: var(--gold); letter-spacing: .15em; text-transform: uppercase; font-size: .9375rem; }
+.entry { position: relative; background: rgba(9,11,10,.55); border-left: 2px solid var(--line-control); padding: 12px 6px 6px 14px; margin-bottom: 20px; }
+.entry-head { display: flex; align-items: center; gap: 8px; border-bottom: 1px solid var(--line); padding-bottom: 4px; margin-bottom: 8px; padding-right: 4px; }
+.entry-text { font-size: 1.0625rem; line-height: 1.5; white-space: pre-wrap; margin: 0 8px 0 0; }
+.tags { display: flex; gap: 5px; }
+.fitilho { width: 24px; height: 30px; display: flex; justify-content: center; padding-top: 4px; clip-path: polygon(0 0, 100% 0, 100% 100%, 50% 80%, 0 100%); color: var(--gold); }
+.fitilho .ms { font-size: .9rem; }
+.f-local { background: linear-gradient(#1e3a5f, #112238); } .f-npc { background: linear-gradient(#243b29, #132417); } .f-demanda { background: linear-gradient(#5c4022, #382410); } .f-personagem { background: linear-gradient(#3d284a, #23152e); }
+.reply { border-left: 1px solid var(--line-control); margin: 12px 0 0 6px; padding-left: 12px; }
+.reply-head { display: flex; align-items: center; gap: 8px; }
+.add-reply { display: inline-flex; align-items: center; gap: 6px; min-height: 44px; padding: 0 6px; margin-top: 4px; color: var(--text-3); font-weight: 600; letter-spacing: .08em; text-transform: uppercase; font-size: .75rem; }
+.add-reply:active { color: var(--gold); }
+.fab { position: fixed; right: 16px; bottom: calc(var(--nav-h) + 16px); z-index: 30; width: 58px; height: 58px; border-radius: 50%; background: var(--card); border: 1px solid var(--gold); color: var(--gold); display: flex; align-items: center; justify-content: center; box-shadow: 0 6px 18px rgba(0,0,0,.9); }
+.fab .ms { font-size: 1.8rem; }
+.tag-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
+.tag-btn { min-height: 44px; display: flex; align-items: center; justify-content: center; gap: 6px; border: 1px solid var(--line-control); border-radius: var(--radius); background: #060807; color: var(--text-3); font-weight: 600; font-size: .8125rem; letter-spacing: .06em; text-transform: uppercase; }
+.tag-btn.on { border-color: var(--gold); color: var(--title); background: var(--card-selected); }
+textarea.field { min-height: 130px; resize: none; line-height: 1.45; }
+</style>
+</head>
+<body>
+<main class="page">
+    <div class="diary-top">
+        <div class="diary-search"><input id="q" type="search" placeholder="Pesquisar nas memórias" aria-label="Pesquisar no diário"></div>
+        <div class="ribbons" id="ribbons"></div>
+    </div>
+    <div id="feed"></div>
+</main>
+<button class="fab" id="fab" aria-label="Nova anotação"><span class="ms">history_edu</span></button>
+
+<script src="app.js"></script>
+<script>
+KR.header();
+KR.nav('diario');
+const $ = id => document.getElementById(id);
+const TAGS = { local: ['globe_location_pin', 'Local'], npc: ['hail', 'NPC'], demanda: ['receipt_long', 'Demanda'], personagem: ['hiking', 'Personagem'] };
+const now = Date.now();
+const entries = KR.get('diary', null) || [
+    { id: 'n1', text: 'Encontramos um item suspeito escondido. Ele sumiu ao toque. Melhor voltarmos aqui depois.', tags: ['local', 'personagem'], chapter: 1, part: '115', date: now - 172800000, updated: now - 86400000,
+      replies: [{ id: 'r1', text: 'Ao dormir hoje, sonhei com o item do local 115 pegando fogo.', chapter: 2, part: 'B:1', date: now - 86400000 }] },
+    { id: 'n2', text: 'A velha deste casebre é muda, mas parece esconder algo sobre o cavaleiro de ontem. O olhar dela me causou calafrios.', tags: ['npc'], chapter: 1, part: '132', date: now, updated: now, replies: [] }
+];
+const save = () => KR.set('diary', entries);
+let filter = 'all';
+const fmt = d => new Date(d).toLocaleDateString('pt-BR', { day: '2-digit', month: 'short' }).replace('.', '');
+
+function renderRibbons() {
+    const r = [['all', 'dashboard', 'Todos'], ...Object.entries(TAGS).map(([k, [ic, lb]]) => [k, ic, lb])];
+    $('ribbons').innerHTML = r.map(([k, ic, lb]) => `<button class="ribbon r-${k} ${filter === k ? 'active' : ''}" data-filter="${k}" aria-pressed="${filter === k}"><span class="ms">${ic}</span><span>${lb}</span></button>`).join('');
+}
+
+function render() {
+    renderRibbons();
+    const q = KR.norm($('q').value);
+    let list = entries.filter(n => (filter === 'all' || n.tags.includes(filter)) && (!q || KR.norm(n.text).includes(q) || n.replies.some(r => KR.norm(r.text).includes(q))));
+    if (!list.length) { $('feed').innerHTML = `<div class="empty" style="margin-top:16px"><span class="ms outline">import_contacts</span><p>As páginas estão em branco.</p></div>`; return; }
+    const chapters = [...new Set(list.map(n => +n.chapter))].sort((a, b) => b - a);
+    $('feed').innerHTML = chapters.map(ch => `<div class="chapter-div"><span>✦ Capítulo ${ch} ✦</span></div>` + list.filter(n => +n.chapter === ch).sort((a, b) => b.updated - a.updated).map(n => `
+        <article class="entry">
+            <div class="entry-head">
+                <span class="t-title" style="font-size:.8125rem;color:var(--text-2);letter-spacing:.1em;text-transform:uppercase">Parte ${KR.esc(n.part)}</span>
+                <span class="t-meta">${fmt(n.date)}</span>
+                <div style="flex:1"></div>
+                <div class="tags">${n.tags.map(t => `<span class="fitilho f-${t}" title="${TAGS[t][1]}"><span class="ms">${TAGS[t][0]}</span></span>`).join('')}</div>
+                <button class="menu-btn" data-menu="${n.id}" aria-label="Opções da anotação"><span class="ms">more_vert</span></button>
+            </div>
+            <p class="entry-text">${KR.esc(n.text)}</p>
+            ${n.replies.map(r => `<div class="reply">
+                <div class="reply-head"><span class="t-title" style="font-size:.75rem;color:var(--gold);letter-spacing:.1em;text-transform:uppercase">Cap. ${r.chapter} · Parte ${KR.esc(r.part)}</span><span class="t-meta">${fmt(r.date)}</span><div style="flex:1"></div>
+                <button class="menu-btn" data-menu="${n.id}:${r.id}" aria-label="Opções do desdobramento"><span class="ms">more_vert</span></button></div>
+                <p class="entry-text" style="font-size:1rem">${KR.esc(r.text)}</p>
+            </div>`).join('')}
+            <button class="add-reply" data-reply="${n.id}"><span class="ms" style="font-size:1.1rem">subdirectory_arrow_right</span>Adicionar desdobramento</button>
+        </article>`).join('')).join('');
+}
+
+function openForm(mode, noteId, replyId) {
+    const n = entries.find(x => x.id === noteId), r = n?.replies.find(x => x.id === replyId);
+    const cur = mode === 'edit' ? n : mode === 'edit-reply' ? r : null;
+    const withTags = mode === 'new' || mode === 'edit';
+    const title = { new: 'Nova anotação', reply: 'Desdobramento', edit: 'Editar anotação', 'edit-reply': 'Editar desdobramento' }[mode];
+    const part = KR.get('part', { branch: 'A', n: 1 });
+    const sel = new Set(cur?.tags ?? []);
+    const { el, close } = KR.sheet(`
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px"><div class="t-title" style="color:var(--gold)">${title}</div><button class="icon-btn" data-close aria-label="Fechar"><span class="ms">close</span></button></div>
+        <div style="display:flex;gap:8px;margin-bottom:10px">
+            <label style="flex:1"><span class="t-label">Capítulo</span><input class="field" id="f-ch" inputmode="numeric" value="${cur?.chapter ?? KR.get('chapter', 1)}" style="text-align:center"></label>
+            <label style="flex:1"><span class="t-label">Parte</span><input class="field" id="f-pt" value="${KR.esc(cur?.part ?? part.branch + ':' + part.n)}" style="text-align:center"></label>
+        </div>
+        <textarea class="field" id="f-text" placeholder="${mode === 'reply' ? 'O que descobriu depois?' : 'O que aconteceu?'}">${KR.esc(cur?.text ?? '')}</textarea>
+        ${withTags ? `<div class="t-label" style="margin:12px 0 6px">Fitilhos (opcional)</div><div class="tag-grid">${Object.entries(TAGS).map(([k, [ic, lb]]) => `<button class="tag-btn ${sel.has(k) ? 'on' : ''}" data-tag="${k}"><span class="ms outline">${ic}</span>${lb}</button>`).join('')}</div>` : ''}
+        <p id="f-err" style="color:var(--danger);font-size:.875rem;margin:8px 0 0" hidden>Escreva algo antes de salvar.</p>
+        <button class="btn block" id="f-save" style="margin-top:14px"><span class="ms outline" style="font-size:1.2rem">save</span>Salvar registro</button>`);
+    el.querySelector('#f-text').focus();
+    el.querySelectorAll('[data-tag]').forEach(b => b.onclick = () => { const k = b.dataset.tag; sel.has(k) ? sel.delete(k) : sel.add(k); b.classList.toggle('on'); });
+    el.querySelector('#f-text').oninput = () => { el.querySelector('#f-err').hidden = true; };
+    el.querySelector('#f-save').onclick = () => {
+        const text = el.querySelector('#f-text').value.trim();
+        if (!text) { el.querySelector('#f-err').hidden = false; return; }
+        const chapter = parseInt(el.querySelector('#f-ch').value) || 1, pt = el.querySelector('#f-pt').value.trim() || 'A:1', t = Date.now();
+        if (mode === 'new') entries.push({ id: 'n' + t, text, tags: [...sel], chapter, part: pt, date: t, updated: t, replies: [] });
+        if (mode === 'reply') { n.replies.push({ id: 'r' + t, text, chapter, part: pt, date: t }); n.updated = t; }
+        if (mode === 'edit') Object.assign(n, { text, chapter, part: pt, tags: [...sel] });
+        if (mode === 'edit-reply') Object.assign(r, { text, chapter, part: pt });
+        save(); close(); render();
+    };
+}
+
+$('ribbons').onclick = e => { const b = e.target.closest('[data-filter]'); if (b) { filter = b.dataset.filter; render(); } };
+$('q').oninput = render;
+$('fab').onclick = () => openForm('new');
+$('feed').addEventListener('click', e => {
+    const rp = e.target.closest('[data-reply]');
+    if (rp) return openForm('reply', rp.dataset.reply);
+    const m = e.target.closest('[data-menu]');
+    if (!m) return;
+    const [nid, rid] = m.dataset.menu.split(':');
+    KR.menu(m, [
+        { icon: 'edit', label: 'Editar', action: () => openForm(rid ? 'edit-reply' : 'edit', nid, rid) },
+        { icon: 'delete', label: 'Apagar', danger: true, action: () => {
+            const n = entries.find(x => x.id === nid);
+            if (rid) { const i = n.replies.findIndex(x => x.id === rid), r = n.replies.splice(i, 1)[0]; save(); render(); KR.snackbar('Desdobramento apagado', () => { n.replies.splice(i, 0, r); save(); render(); }); }
+            else { const i = entries.indexOf(n); entries.splice(i, 1); save(); render(); KR.snackbar('Anotação apagada', () => { entries.splice(i, 0, n); save(); render(); }); }
+        } }
+    ]);
+});
+render();
+</script>
+</body>
+</html>

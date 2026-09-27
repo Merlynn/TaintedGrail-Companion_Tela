@@ -1,0 +1,17 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "prototipo-v2",
+      "runtimeExecutable": "python",
+      "runtimeArgs": [".claude/serve_nocache.py", "8765", "v2"],
+      "port": 8765
+    },
+    {
+      "name": "prototipo-original",
+      "runtimeExecutable": "python",
+      "runtimeArgs": [".claude/serve_nocache.py", "8766", "."],
+      "port": 8766
+    }
+  ]
+}

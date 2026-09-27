@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Kings of Ruin · Salvar</title>
+<link rel="stylesheet" href="theme.css">
+<style>
+.save-tabs { position: sticky; top: var(--header-h); z-index: 20; background: rgba(7,9,8,.97); margin: -12px -12px 12px; padding: 0 6px; }
+.save-tabs .tab { flex: 1 1 0; min-width: 0; flex-direction: column; gap: 2px; min-height: 56px; padding: 4px 2px; letter-spacing: .04em; font-size: .6875rem; }
+.save-tabs .tab .ms { font-size: 1.3rem; }
+.save-bar { position: fixed; left: 0; right: 0; bottom: var(--nav-h); z-index: 35; background: rgba(7,9,8,.97); border-top: 1px solid var(--line); padding: 8px 12px; display: flex; justify-content: center; }
+.save-bar .btn { width: 100%; max-width: 30rem; min-height: 48px; }
+.page { padding-bottom: calc(var(--nav-h) + 96px); }
+.snackbar { bottom: calc(var(--nav-h) + 76px); }
+.pane-intro { color: var(--text-2); text-align: center; margin: 4px 0 14px; }
+.photos { display: flex; gap: 10px; overflow-x: auto; padding: 6px 2px 4px; }
+.photo-add { width: 84px; height: 84px; flex-shrink: 0; border: 1px dashed var(--line-empty); border-radius: var(--radius); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; color: var(--text-2); }
+.photo-add .ms { font-size: 1.6rem; }
+.photo { position: relative; width: 84px; height: 84px; flex-shrink: 0; border-radius: var(--radius); border: 1px solid var(--line-control); background: repeating-linear-gradient(45deg, #111613 0 8px, #0d110f 8px 16px); display: flex; align-items: center; justify-content: center; color: var(--text-3); }
+.photo .del { position: absolute; top: -8px; right: -8px; width: 32px; height: 32px; border-radius: 50%; background: #0d110f; border: 1px solid var(--line-control); display: flex; align-items: center; justify-content: center; color: var(--text-2); }
+.photo .del.armed { background: #9e1515; border-color: #ff3333; color: #fff; }
+.photo .del .ms { font-size: 1.05rem; }
+.tracker-row { display: flex; align-items: center; gap: 8px; padding: 6px 8px; }
+.tracker-row .field { min-height: 40px; font-size: 1rem; }
+.padrons { display: flex; gap: 14px; overflow-x: auto; padding: 4px 2px; }
+.padron { flex-shrink: 0; text-align: center; }
+.padron-grid { position: relative; display: grid; grid-template-columns: 40px 40px; gap: 4px; margin-top: 4px; }
+.padron-grid input { height: 40px; width: 40px; text-align: center; background: #050706; border: 1px solid var(--line-control); border-radius: 2px; color: var(--gold); font-family: var(--font-title); font-weight: 700; outline: none; }
+.padron-grid input:focus { border-color: var(--gold); }
+.padron-grid::after { content: ""; position: absolute; left: 50%; top: 50%; width: 14px; height: 14px; transform: translate(-50%, -50%) rotate(45deg); background: #1a211e; border: 1px solid var(--gold); pointer-events: none; }
+.loc-card { padding: 8px 8px 8px 12px; }
+.loc-head { display: flex; align-items: center; gap: 8px; }
+.loc-num { font-family: var(--font-title); font-weight: 700; color: var(--gold); font-size: 1.2rem; min-width: 2.6rem; }
+.token-btn { position: relative; width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; border-radius: var(--radius); border: 1px solid transparent; opacity: .45; }
+.token-btn.on { opacity: 1; border-color: var(--gold-soft); background: var(--card-selected); }
+.token-btn .ms { font-size: 1.25rem; }
+.token-btn .count { position: absolute; top: -6px; right: -6px; min-width: 18px; height: 18px; border-radius: 9px; background: var(--gold); color: #070908; font-size: .75rem; font-weight: 700; display: flex; align-items: center; justify-content: center; padding: 0 4px; font-family: var(--font-text); }
+.box-list { margin: 0; padding-left: 18px; }
+.box-list li { margin: 4px 0; }
+</style>
+</head>
+<body>
+<main class="page">
+    <div class="save-tabs"><div class="tabs" role="tablist" id="tabs"></div></div>
+    <div id="pane"></div>
+</main>
+<div class="save-bar"><button class="btn primary" id="save-btn"><span class="ms outline" style="font-size:1.2rem">book_5</span>Salvar jogo</button></div>
+
+<script src="app.js"></script>
+<script>
+KR.header();
+KR.nav('salvar');
+const $ = id => document.getElementById(id);
+const TABS = [['herois', 'id_card', 'Heróis'], ['criaturas', 'pets', 'Criaturas'], ['mapa', 'map', 'Mapa'], ['caixa', 'inventory_2', 'Caixa'], ['resumo', 'fact_check', 'Resumo']];
+let tab = KR.get('saveTab', 'herois');
+const S = KR.get('saveState', null) || {
+    photos: { herois: [1], criaturas: [], mapa: [] },
+    padrons: [['3', '', '5', ''], ['', '', '', ''], ['', '', '', '']],
+    monarcas: [{ id: 'm1', name: 'Claudyne', loc: '104' }], companheiros: [], guardioes: [{ id: 'g1', name: 'Lobo Sangrento', loc: '118' }, { id: 'g2', name: 'Harpia Sombria', loc: '' }],
+    locais: [{ id: 'l1', num: '104', strange: false, tokens: { luz: 1, trevas: 0, demanda: 0, cubo: 0 }, note: '' }, { id: 'l2', num: '118', strange: true, tokens: { luz: 0, trevas: 2, demanda: 1, cubo: 0 }, note: 'Voltar com a chave' }]
+};
+const save = () => KR.set('saveState', S);
+let openLoc = null;
+const ENT = { monarcas: ['Claudyne', 'Nōnus', 'Veneda'], companheiros: ['Cabra Negra', 'Golem das Velas', 'Isolut', 'Kendrick'], guardioes: ['Aberração de Wyrd', 'Aparição Anciã', 'Banshee do Lamento', 'Besta da Névoa', 'Cão Infernal', 'Cavaleiro Sem Cabeça', 'Gigante da Geada', 'Harpia Sombria', 'Lobo Sangrento', 'Lorde Fomoriano', 'Troll das Cavernas'] };
+const TRK = { monarcas: ['Monarcas da Ruína', 'crown', 3], companheiros: ['Companheiros', 'pets', 4], guardioes: ['Guardiões', 'swords', 99] };
+const TOK = { luz: ['hourglass_top', '#d1d5db', 'Tempo claro'], trevas: ['hourglass_bottom', '#8b93a0', 'Tempo escuro'], demanda: ['receipt_long', '#c2a675', 'Demanda'], cubo: ['deployed_code', '#e0706a', 'Universal'] };
+
+function photos(key, label, icon) {
+    const list = S.photos[key];
+    return `<div class="section-head"><span class="t-title">${label}</span><span class="t-label">Opcional</span></div>
+    <div class="photos"><button class="photo-add" data-photo-add="${key}"><span class="ms outline">${icon}</span><span class="t-label">Foto</span></button>
+    ${list.map((p, i) => `<div class="photo"><span class="ms outline">image</span><button class="del" data-photo-del="${key}:${i}" aria-label="Remover foto"><span class="ms">delete</span></button></div>`).join('')}</div>`;
+}
+
+const panes = {
+    herois: () => `<p class="pane-intro">O app já registra estatísticas, itens e atributos da equipe. Se quiser, anexe fotos das fichas físicas ou dos baralhos.</p>${photos('herois', 'Fotos das fichas', 'add_a_photo')}`,
+    criaturas: () => {
+        let h = `<div class="section-head"><span class="t-title"><span class="ms outline" style="font-size:1.1rem">cell_tower</span> Padrons</span></div>
+        <div class="padrons">${S.padrons.map((q, i) => `<div class="padron"><span class="t-label">Padron ${['I', 'II', 'III'][i]}</span><div class="padron-grid">${q.map((v, j) => `<input inputmode="numeric" maxlength="3" data-padron="${i}:${j}" value="${KR.esc(v)}" aria-label="Padron ${i + 1} campo ${j + 1}">`).join('')}</div></div>`).join('')}</div>`;
+        for (const [k, [label, icon, max]] of Object.entries(TRK)) {
+            const list = S[k];
+            h += `<div class="section-head"><span class="t-title"><span class="ms outline" style="font-size:1.1rem">${icon}</span> ${label}</span>${list.length < max ? `<button class="btn small" data-add="${k}">+ Adicionar</button>` : ''}</div>`;
+            h += list.length ? list.map(e => `<div class="swipe-row" data-swipe="${k}" data-id="${e.id}"><div class="swipe-bg"><span class="ms">delete</span>Remover</div><div class="swipe-fg"><div class="tracker-row">
+                <input class="field" list="dl-${k}" data-ent="${k}:${e.id}:name" placeholder="Nome" value="${KR.esc(e.name)}">
+                <input class="field" inputmode="numeric" data-ent="${k}:${e.id}:loc" placeholder="Local" value="${KR.esc(e.loc)}" style="width:5.2rem;text-align:center">
+            </div></div></div>`).join('') : '<p class="t-meta">Nenhum em jogo.</p>';
+            h += `<datalist id="dl-${k}">${ENT[k].map(n => `<option value="${n}">`).join('')}</datalist>`;
+        }
+        return h + `<div class="swipe-hint"><span class="ms">swipe_left</span>Deslize uma linha para a esquerda para remover</div>${photos('criaturas', 'Fotos da mesa', 'photo_camera')}`;
+    },
+    mapa: () => `<div class="section-head"><span class="t-title"><span class="ms outline" style="font-size:1.1rem">pin_drop</span> Locais revelados</span></div>
+        <form id="loc-form" style="display:flex;gap:8px;margin-bottom:12px"><input class="field" id="loc-in" inputmode="numeric" placeholder="Número do local"><button class="btn" type="submit">Registrar</button></form>
+        ${S.locais.length ? S.locais.map(l => {
+            const open = openLoc === l.id;
+            return `<div class="swipe-row" data-swipe="locais" data-id="${l.id}"><div class="swipe-bg"><span class="ms">delete</span>Remover</div><div class="swipe-fg loc-card" style="${open ? 'border-color:var(--gold-soft)' : ''}">
+            <div class="loc-head">
+                <button class="loc-num" data-loc-open="${l.id}" aria-expanded="${open}">${KR.esc(l.num)}</button>
+                <button class="chip ${l.strange ? 'off' : ''}" data-strange="${l.id}">${l.strange ? 'Estranheza' : 'Límpido'}</button>
+                <div style="flex:1"></div>
+                ${Object.entries(TOK).map(([k, [ic, col, lb]]) => `<button class="token-btn ${l.tokens[k] ? 'on' : ''}" data-tok="${l.id}:${k}" aria-label="${lb}: ${l.tokens[k]}"><span class="ms" style="color:${col}">${ic}</span>${l.tokens[k] ? `<span class="count">${l.tokens[k]}</span>` : ''}</button>`).join('')}
+            </div>
+            ${open ? `<div style="border-top:1px solid var(--line);margin-top:8px;padding-top:8px">
+                <div class="grid2" style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px">${Object.entries(TOK).map(([k, [ic, col, lb]]) => `<label style="display:flex;align-items:center;justify-content:space-between;gap:6px;background:#060807;border:1px solid var(--line);border-radius:3px;padding:4px 6px"><span style="display:flex;align-items:center;gap:6px;font-size:.9375rem"><span class="ms" style="color:${col};font-size:1.1rem">${ic}</span>${lb}</span><select class="field" data-tokset="${l.id}:${k}" style="width:56px;min-height:36px;padding:0 4px;text-align:center">${Array.from({ length: 8 }, (_, n) => `<option ${n === l.tokens[k] ? 'selected' : ''}>${n}</option>`).join('')}</select></label>`).join('')}</div>
+                <input class="field-line" data-note="${l.id}" placeholder="Anotações do local" value="${KR.esc(l.note)}" style="margin-top:8px">
+            </div>` : ''}
+            </div></div>`;
+        }).join('') : '<p class="t-meta">Nenhum local em jogo.</p>'}
+        ${S.locais.length ? '<div class="swipe-hint"><span class="ms">swipe_left</span>Deslize um local para a esquerda para remover · toque no número para detalhes</div>' : ''}
+        ${photos('mapa', 'Fotos do mapa', 'map')}`,
+    caixa: () => `<p class="pane-intro">Recolha os componentes da mesa e guarde cada grupo no seu compartimento.</p>
+        ${[['person', 'Cada jogador', ['Cartas de Combate e Diplomacia ativas.', 'Separadores e cartas do acervo de evolução.', 'Itens e segredos pessoais.', 'Perícias adquiridas.']],
+           ['map', 'Mundo salvo · compartimento grande', ['Todos os locais revelados e cartas de consulta (não vire as cartas).']],
+           ['style', 'Mundo salvo · compartimento padrão', ['Guardiões ativos, conflitos atuais e segredos padrão ativos.', 'Baralho de incidentes, demandas ativas e incidentes ativos.']],
+           ['inventory_2', 'Compartimento pequeno e caixa', ['Baralho de itens disponíveis e segredos pequenos.', 'Miniaturas, totens e tokens restantes.']]].map(([ic, t, li]) => `<div class="card"><div class="section-head" style="margin-top:0"><span class="t-title"><span class="ms outline" style="font-size:1.1rem">${ic}</span> ${t}</span></div><ul class="box-list">${li.map(x => `<li>${x}</li>`).join('')}</ul></div>`).join('')}`,
+    resumo: () => {
+        const pad = S.padrons.filter(q => q.some(v => v.trim())).length;
+        const n = k => S[k].filter(e => e.name.trim()).length;
+        const ph = S.photos.herois.length + S.photos.criaturas.length + S.photos.mapa.length;
+        return `<p class="pane-intro">Conferência opcional antes de salvar.</p>
+        <div class="card"><div class="section-head" style="margin-top:0"><span class="t-title">Criaturas e totens</span></div>
+            <div>Padrons ativos: <b class="gold">${pad}</b></div><div>Monarcas: <b class="gold">${n('monarcas')}</b> · Companheiros: <b class="gold">${n('companheiros')}</b> · Guardiões: <b class="gold">${n('guardioes')}</b></div></div>
+        <div class="card"><div class="section-head" style="margin-top:0"><span class="t-title">Locais</span><span class="t-label">${S.locais.length}</span></div>
+            <div style="display:flex;flex-wrap:wrap;gap:6px">${S.locais.map(l => `<span class="badge" style="${l.strange ? 'color:var(--danger);border-color:var(--mark-line)' : ''}">${KR.esc(l.num)} · ${l.strange ? 'E' : 'L'}</span>`).join('')}</div></div>
+        <div class="card"><div class="section-head" style="margin-top:0"><span class="t-title">Fotos</span><span class="t-label">${ph}</span></div></div>`;
+    }
+};
+
+function render() {
+    $('tabs').innerHTML = TABS.map(([id, ic, lb]) => `<button class="tab ${id === tab ? 'active' : ''}" data-tab="${id}" role="tab"><span class="ms outline">${ic}</span>${lb}</button>`).join('');
+    $('pane').innerHTML = panes[tab]();
+    document.querySelectorAll('[data-swipe]').forEach(r => KR.swipe(r, () => removeRow(r.dataset.swipe, r.dataset.id)));
+    const f = $('loc-form');
+    if (f) f.onsubmit = e => {
+        e.preventDefault();
+        const v = $('loc-in').value.trim();
+        if (!v || S.locais.some(l => l.num === v)) { $('loc-in').value = ''; KR.snackbar(v ? `O local ${v} já está registrado` : 'Digite o número do local'); return; }
+        const id = Date.now().toString(36);
+        S.locais.unshift({ id, num: v, strange: false, tokens: { luz: 0, trevas: 0, demanda: 0, cubo: 0 }, note: '' });
+        openLoc = id; save(); render(); $('loc-in').focus();
+    };
+}
+
+function removeRow(kind, id) {
+    const arr = S[kind], i = arr.findIndex(x => x.id === id), item = arr[i];
+    arr.splice(i, 1); save(); render();
+    KR.snackbar(kind === 'locais' ? `Local ${item.num} removido` : 'Removido', () => { arr.splice(i, 0, item); save(); render(); });
+}
+
+$('tabs').onclick = e => { const b = e.target.closest('[data-tab]'); if (b) { tab = b.dataset.tab; KR.set('saveTab', tab); render(); scrollTo({ top: 0 }); } };
+
+$('pane').addEventListener('click', e => {
+    const t = e.target;
+    const add = t.closest('[data-add]');
+    if (add) { const k = add.dataset.add, id = Date.now().toString(36); S[k].push({ id, name: '', loc: '' }); save(); render(); document.querySelector(`[data-ent="${k}:${id}:name"]`)?.focus(); return; }
+    const pa = t.closest('[data-photo-add]');
+    if (pa) { S.photos[pa.dataset.photoAdd].push(Date.now()); save(); render(); return; }
+    const pd = t.closest('[data-photo-del]');
+    if (pd) {
+        if (pd.classList.contains('armed')) { const [k, i] = pd.dataset.photoDel.split(':'); S.photos[k].splice(+i, 1); save(); render(); }
+        else { pd.classList.add('armed'); setTimeout(() => pd.classList.remove('armed'), 2500); }
+        return;
+    }
+    const lo = t.closest('[data-loc-open]');
+    if (lo) { openLoc = openLoc === lo.dataset.locOpen ? null : lo.dataset.locOpen; render(); return; }
+    const st = t.closest('[data-strange]');
+    if (st) { const l = S.locais.find(x => x.id === st.dataset.strange); l.strange = !l.strange; save(); render(); return; }
+    const tk = t.closest('[data-tok]');
+    if (tk) { const [id, k] = tk.dataset.tok.split(':'); const l = S.locais.find(x => x.id === id); if (!l.tokens[k]) l.tokens[k] = 1; openLoc = id; save(); render(); }
+});
+$('pane').addEventListener('input', e => {
+    const d = e.target.dataset;
+    if (d.padron) { const [i, j] = d.padron.split(':'); S.padrons[i][j] = e.target.value; }
+    else if (d.ent) { const [k, id, f] = d.ent.split(':'); S[k].find(x => x.id === id)[f] = e.target.value; }
+    else if (d.note) S.locais.find(x => x.id === d.note).note = e.target.value;
+    else return;
+    save();
+});
+$('pane').addEventListener('change', e => {
+    const d = e.target.dataset;
+    if (d.tokset) { const [id, k] = d.tokset.split(':'); S.locais.find(x => x.id === id).tokens[k] = +e.target.value; save(); render(); }
+});
+
+let sw = null;
+$('pane').addEventListener('pointerdown', e => { if (e.target.closest('.swipe-fg, input, select, .photos, .padrons')) return; sw = { x: e.clientX, y: e.clientY }; });
+$('pane').addEventListener('pointerup', e => {
+    if (!sw) return;
+    const dx = e.clientX - sw.x, dy = e.clientY - sw.y; sw = null;
+    if (Math.abs(dx) > 70 && Math.abs(dx) > Math.abs(dy) * 1.5) {
+        const i = TABS.findIndex(t => t[0] === tab) + (dx < 0 ? 1 : -1);
+        if (i >= 0 && i < TABS.length) { tab = TABS[i][0]; KR.set('saveTab', tab); render(); scrollTo({ top: 0 }); }
+    }
+});
+
+$('save-btn').onclick = async () => {
+    const ok = await KR.confirmDialog({ title: 'Salvar jogo?', msg: `Capítulo ${KR.get('chapter', 1)} · ${S.locais.length} locais · ${S.guardioes.length + S.monarcas.length + S.companheiros.length} criaturas registradas.`, ok: 'Salvar' });
+    if (ok) KR.snackbar('Jogo salvo');
+};
+render();
+</script>
+</body>
+</html>

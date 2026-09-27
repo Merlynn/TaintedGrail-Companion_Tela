@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Kings of Ruin · Nova campanha</title>
+<link rel="stylesheet" href="theme.css">
+<style>
+.page { padding-bottom: 100px; }
+.snackbar { bottom: 84px !important; }
+.step { margin-top: 16px; padding-top: 12px; border-top: 1px solid var(--line); }
+.step:first-of-type { margin-top: 0; padding-top: 0; border-top: none; }
+.step-title { font-family: var(--font-title); font-weight: 700; color: var(--text-2); font-size: .8125rem; letter-spacing: .12em; text-transform: uppercase; margin-bottom: 8px; }
+.choice { display: flex; align-items: center; justify-content: space-between; gap: 8px; min-height: 56px; padding: 8px 12px; background: var(--card); border: 1px solid var(--line-control); border-radius: var(--radius); text-align: left; width: 100%; }
+.choice.sel { border-color: var(--gold); background: var(--card-selected); }
+.choice .t-title { font-size: .9375rem; }
+.choice.sel .t-title, .choice.sel .ms { color: var(--gold); }
+.choice .ms { color: var(--text-3); }
+.grid2 { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
+.hero-pick { background: var(--card); border: 1px solid var(--line-control); border-radius: var(--radius); }
+.hero-pick + .hero-pick { margin-top: 8px; }
+.hero-pick.sel { border-color: var(--gold); background: var(--card-selected); }
+.hero-pick-head { display: flex; align-items: center; gap: 10px; min-height: 52px; padding: 6px 12px; width: 100%; text-align: left; }
+.check { width: 22px; height: 22px; border-radius: 3px; border: 1px solid var(--line-empty); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.hero-pick.sel .check { background: var(--gold); border-color: var(--gold); color: #070908; }
+.check .ms { font-size: 1rem; }
+.mod { display: flex; align-items: flex-start; gap: 12px; padding: 10px 12px; background: #060807; border: 1px solid var(--line); border-radius: var(--radius); width: 100%; text-align: left; }
+.mod + .mod { margin-top: 6px; }
+.mod.on { border-color: var(--gold-soft); background: var(--card-raised); }
+.mod.on.challenge { border-color: var(--mark-line); background: #1a0a0a; }
+.mod.on.challenge .switch { background: var(--mark); border-color: var(--mark-line); }
+.mod.on.challenge .switch::after { background: var(--danger); }
+.start-bar { position: fixed; left: 0; right: 0; bottom: 0; z-index: 30; padding: 10px 12px; background: rgba(7,9,8,.97); border-top: 1px solid var(--line); display: flex; justify-content: center; }
+.start-bar .btn { width: 100%; max-width: 30rem; min-height: 50px; }
+</style>
+</head>
+<body>
+<main class="page">
+    <div class="frame">
+        <h2 class="t-title" style="text-align:center;color:var(--gold);font-size:1.35rem;margin:0 0 14px;padding-bottom:10px;border-bottom:1px solid var(--line-control)">Nova sessão</h2>
+        <div id="form"></div>
+    </div>
+</main>
+<div class="start-bar"><button class="btn primary" id="start"><span class="ms outline" style="font-size:1.2rem">shield</span><span id="start-l"></span></button></div>
+
+<script src="app.js"></script>
+<script>
+KR.header({ back: 'index.html', player: false });
+const $ = id => document.getElementById(id);
+const HEROES = [['elgan', 'Elgan', 'o Candelário', 'candle'], ['gerdwyn', 'Gerdwyn', 'a Mercenária', 'target'], ['iunis', 'Iunis', 'a Gladiatrix Fomoriana', 'swords'], ['osbert', 'Osbert', 'o Bufão Itinerante', 'theater_comedy']];
+const MODS = {
+    narrativo: [['Itens iniciais', 'Durante a preparação do mundo, cada personagem ganha 1 item "A".'], ['Gênio tático', 'Receba a carta de Segredo 49 para baixar cartas extras sem bônus de energia.'], ['Conflitos e incidentes', 'Ao preparar conflitos ou incidentes, trate a mesa como se houvesse 1 personagem a menos.'], ['Limitador de saúde', 'Sua Saúde não reduz mais sua Energia máxima.'], ['Custo dos padrons', 'Ative pagando 1 Magia ou Tributo de Sangue (2 Saúde e 1 Pavor).'], ['Evolução do personagem', 'Compre 1 carta a mais ao evoluir Combate ou Diplomacia.'], ['Passagem do tempo', 'Na primeira Passagem do Tempo de cada capítulo, receba 1 parte a menos.']],
+    desafiador: [['Conflitos reforçados', 'Receba a carta de Segredo 48 (+1 efeito em todo ataque e resposta do inimigo).'], ['Escapar e evitar', 'Escapar de combate exige 4–6 no dado; evitar diplomacia resolve a derrota.'], ['Incidentes aumentados', 'Trate a mesa como se houvesse 1 personagem a mais.'], ['Custo dos padrons (+1)', 'Ativar um padron custa 1 Energia a mais por personagem.'], ['Evolução encarecida', 'Custos maiores de XP para cartas, atributos e perícias.'], ['Limite de itens', 'Cada personagem carrega no máximo 5 itens.'], ['Descanso clássico', 'Recuperar no fim do dia exige 1 Comida.'], ['Estabilidade limitada', 'Na Passagem do Tempo, desvaneça o padron mais distante dos heróis.']]
+};
+const st = { mode: 'solo', role: 'cronista', name: '', heroes: new Set(['elgan']), players: {}, modTab: 'narrativo', mods: { narrativo: new Set(), desafiador: new Set() }, ecos: true, single: 'elgan', singleName: '' };
+
+function render() {
+    const multiCron = st.mode === 'multi' && st.role === 'cronista';
+    const cron = st.role === 'cronista';
+    const ml = MODS[st.modTab], allOn = ml.every((_, i) => st.mods[st.modTab].has(i));
+    $('form').innerHTML = `
+        <div class="step"><div class="step-title">1. Formato da mesa</div><div class="grid2">
+            <button class="choice ${st.mode === 'solo' ? 'sel' : ''}" data-mode="solo"><span><span class="t-title">Modo solo</span><br><span class="t-meta">Controle no app</span></span><span class="ms">person</span></button>
+            <button class="choice ${st.mode === 'multi' ? 'sel' : ''}" data-mode="multi"><span><span class="t-title">Multiplayer</span><br><span class="t-meta">Mesa em grupo</span></span><span class="ms">groups</span></button>
+        </div></div>
+        ${st.mode === 'multi' ? `<div class="step"><div class="step-title">2. Seu papel</div><div class="grid2">
+            <button class="choice ${cron ? 'sel' : ''}" data-role="cronista"><span><span class="t-title">Cronista</span><br><span class="t-meta">Gerencia a campanha</span></span><span class="ms">menu_book</span></button>
+            <button class="choice ${!cron ? 'sel' : ''}" data-role="jogador"><span><span class="t-title">Jogador</span><br><span class="t-meta">Só a minha ficha</span></span><span class="ms">swords</span></button>
+        </div></div>` : ''}
+        ${cron ? `
+        <div class="step"><div class="step-title">Nome da mesa</div><input class="field" id="name" placeholder="Campanha principal" value="${KR.esc(st.name)}" autocomplete="off"></div>
+        <div class="step"><div style="display:flex;justify-content:space-between;align-items:baseline"><div class="step-title">Heróis participantes</div><span class="t-label gold">${st.heroes.size} de 4</span></div>
+            ${HEROES.map(([id, n, t, ic]) => { const sel = st.heroes.has(id); return `<div class="hero-pick ${sel ? 'sel' : ''}">
+                <button class="hero-pick-head" data-hero="${id}" aria-pressed="${sel}"><span class="check">${sel ? '<span class="ms">check</span>' : ''}</span><span style="flex:1;min-width:0"><span class="t-title" style="font-size:.9375rem;color:${sel ? 'var(--gold)' : 'var(--title)'}">${n}</span> <i class="t-meta">${t}</i></span><span class="ms outline" style="color:var(--text-3)">${ic}</span></button>
+                ${sel && multiCron ? `<div style="display:flex;align-items:center;gap:8px;padding:0 12px 10px 44px"><input class="field-line" data-player="${id}" placeholder="Nome do jogador" value="${KR.esc(st.players[id] ?? '')}"><button class="btn small" data-qr="${id}"><span class="ms outline" style="font-size:1rem">qr_code_2</span>Importar</button></div>` : ''}
+            </div>`; }).join('')}
+        </div>
+        <div class="step"><div class="step-title">Expansões</div>
+            <button class="mod ${st.ecos ? 'on' : ''}" data-ecos><span style="flex:1"><span class="t-title" style="font-size:.875rem;color:var(--gold)">Ecos da Ruína</span><br><span style="font-size:.9375rem;color:var(--text-2)">Memórias, ações lendárias e habilidades evoluídas para cada herói.</span></span><span class="switch ${st.ecos ? 'on' : ''}" style="margin-top:4px"></span></button>
+        </div>
+        <div class="step"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px"><div class="step-title" style="margin:0">Modificadores de regra</div><button class="btn small" data-allmods>${allOn ? 'Desativar todos' : 'Ativar todos'}</button></div>
+            <div class="tabs" style="margin-bottom:8px">${[['narrativo', 'menu_book', 'Narrativo'], ['desafiador', 'skull', 'Desafiador']].map(([k, ic, lb]) => `<button class="tab ${st.modTab === k ? 'active' : ''}" data-modtab="${k}" style="${st.modTab === k && k === 'desafiador' ? 'color:var(--danger);border-bottom-color:var(--danger)' : ''}"><span class="ms outline">${ic}</span>${lb} <span class="badge">${st.mods[k].size}/${MODS[k].length}</span></button>`).join('')}</div>
+            ${ml.map(([t, d], i) => { const on = st.mods[st.modTab].has(i); return `<button class="mod ${on ? 'on' : ''} ${st.modTab === 'desafiador' ? 'challenge' : ''}" data-mod="${i}"><span style="flex:1"><span class="t-title" style="font-size:.875rem;color:${st.modTab === 'desafiador' ? '#e88c85' : 'var(--gold)'}">${t}</span><br><span style="font-size:.9375rem;color:var(--text-2)">${d}</span></span><span class="switch ${on ? 'on' : ''}" style="margin-top:4px"></span></button>`; }).join('')}
+        </div>` : `
+        <div class="step"><div class="step-title">Seu nome</div><input class="field" id="single-name" placeholder="Carlos" value="${KR.esc(st.singleName)}" autocomplete="off"></div>
+        <div class="step"><div class="step-title">Escolha seu herói</div>
+            ${HEROES.map(([id, n, t, ic]) => `<button class="choice ${st.single === id ? 'sel' : ''}" data-single="${id}" style="margin-top:6px"><span><span class="t-title">${n}</span> <i class="t-meta">${t}</i></span><span class="ms outline">${ic}</span></button>`).join('')}
+        </div>`}`;
+    $('start-l').textContent = !cron ? 'Criar minha ficha' : st.mode === 'solo' ? 'Iniciar jornada solo' : 'Iniciar mesa (cronista)';
+}
+
+$('form').addEventListener('click', e => {
+    const t = e.target, d = k => t.closest(`[data-${k}]`);
+    let b;
+    if ((b = d('mode'))) { st.mode = b.dataset.mode; if (st.mode === 'solo') st.role = 'cronista'; }
+    else if ((b = d('role'))) st.role = b.dataset.role;
+    else if ((b = d('hero'))) {
+        const id = b.dataset.hero;
+        if (st.heroes.has(id)) { if (st.heroes.size === 1) return KR.snackbar('A expedição precisa de pelo menos 1 herói'); st.heroes.delete(id); } else st.heroes.add(id);
+    }
+    else if (d('ecos')) st.ecos = !st.ecos;
+    else if ((b = d('modtab'))) st.modTab = b.dataset.modtab;
+    else if ((b = d('mod'))) { const s = st.mods[st.modTab], i = +b.dataset.mod; s.has(i) ? s.delete(i) : s.add(i); }
+    else if (d('allmods')) { const s = st.mods[st.modTab], all = MODS[st.modTab].every((_, i) => s.has(i)); MODS[st.modTab].forEach((_, i) => all ? s.delete(i) : s.add(i)); }
+    else if ((b = d('single'))) st.single = b.dataset.single;
+    else if ((b = d('qr'))) return openQr(b.dataset.qr);
+    else return;
+    render();
+});
+$('form').addEventListener('input', e => {
+    if (e.target.id === 'name') st.name = e.target.value;
+    else if (e.target.id === 'single-name') st.singleName = e.target.value;
+    else if (e.target.dataset.player) st.players[e.target.dataset.player] = e.target.value;
+});
+
+function openQr(id) {
+    const hero = HEROES.find(h => h[0] === id)[1];
+    const { el, close } = KR.sheet(`
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px"><div class="t-title" style="color:var(--gold)">Importar ficha · ${hero}</div><button class="icon-btn" data-close aria-label="Fechar"><span class="ms">close</span></button></div>
+        <div style="aspect-ratio:1;max-height:240px;margin:0 auto;border:1px dashed var(--line-empty);border-radius:var(--radius);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;color:var(--text-3)"><span class="ms outline" style="font-size:3rem">qr_code_scanner</span><span class="t-meta">A câmera abre aqui no app</span></div>
+        <label class="t-label" style="display:block;margin:14px 0 4px">Ou cole o código da ficha</label>
+        <div style="display:flex;gap:8px"><input class="field" id="qr-in" placeholder="Código da ficha" autocomplete="off"><button class="btn" id="qr-ok">Aplicar</button></div>`);
+    el.querySelector('#qr-ok').onclick = () => {
+        const v = el.querySelector('#qr-in').value.trim(); if (!v) return;
+        let name = v; try { name = JSON.parse(v).playerName || v; } catch {}
+        st.players[id] = name; close(); render(); KR.snackbar(`Ficha de ${hero} importada`);
+    };
+}
+
+$('start').onclick = () => {
+    if (st.role === 'cronista') {
+        KR.set('role', 'cronista'); KR.set('expEcos', st.ecos);
+        KR.set('campaign', { name: st.name || `Expedição ${new Date().toLocaleDateString('pt-BR')}`, mode: st.mode, heroes: [...st.heroes] });
+        location.href = 'cronica.html';
+    } else {
+        KR.set('role', 'jogador'); KR.set('playerHero', st.single);
+        location.href = 'grupo.html';
+    }
+};
+render();
+</script>
+</body>
+</html>

@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Kings of Ruin · Condições</title>
+<link rel="stylesheet" href="theme.css">
+<style>
+.search { position: sticky; top: var(--header-h); z-index: 20; background: rgba(7,9,8,.96); margin: -12px -12px 10px; padding: 10px 16px 12px; border-bottom: 1px solid var(--line); }
+.search-box { position: relative; }
+.search-box input { width: 100%; background: transparent; border: none; border-bottom: 1px solid var(--line-control); color: var(--gold); font-size: 1.125rem; text-align: center; padding: 8px 40px; outline: none; }
+.search-box input:focus { border-bottom-color: var(--gold); }
+.search-box input::placeholder { color: var(--text-3); font-style: italic; }
+.search-box .icon-btn { position: absolute; right: -6px; top: 50%; transform: translateY(-50%); }
+.cond + .cond { margin-top: 8px; }
+.cond .slots { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); gap: 3px; }
+.cond .slot { max-width: none; }
+.cond .t-title { font-size: .9375rem; margin-bottom: 10px; }
+.note-row { display: flex; align-items: flex-end; gap: 8px; margin-top: 10px; padding-top: 8px; border-top: 1px solid var(--line); }
+.note-row .ref { font-family: var(--font-title); font-weight: 700; color: var(--gold); font-size: .8125rem; padding-bottom: 5px; }
+</style>
+</head>
+<body>
+<main class="page">
+    <div class="search">
+        <div class="search-box">
+            <input id="q" type="search" placeholder="Buscar condição" autocomplete="off" aria-label="Buscar condição">
+            <button class="icon-btn" id="clear" aria-label="Limpar busca" hidden><span class="ms">close</span></button>
+        </div>
+    </div>
+    <div id="list"></div>
+</main>
+
+<script src="app.js"></script>
+<script>
+KR.header();
+KR.nav('condicoes');
+
+const DB = [
+    { id: 'free_1', name: 'Sobreviventes do Ermo', free: 3 },
+    { id: 'free_2', name: 'Andarilhos das Brumas', free: 6 },
+    { id: 'c1', name: 'Abandonados', nums: [1, 2] },
+    { id: 'c2', name: 'Abastecimento', nums: [1, 2, 3, 4, 5, 6, 7, 8, 9] },
+    { id: 'c3', name: 'Coração de Gelo', nums: [2, 1, 3, 4, 5, 6, 7, 8, 9, 10] },
+    { id: 'c4', name: 'Curiosidades', nums: [2, 1, 7, 9, 10, 3, 4, 5, 8, 6] },
+    { id: 'c5', name: 'Defensor da Arraia', nums: [2, 3, 4, 5, 6, 7, 1] },
+    { id: 'c6', name: 'Estranhos Ensinamentos', nums: [4, 1, 2, 3, 8, 9, 7, 5, 6] },
+    { id: 'c7', name: 'Futuro de Avalon', nums: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11] },
+    { id: 'c8', name: 'Pequenos Favores', nums: [1, 8, 9, 10, 2, 3, 4, 5, 6, 7] },
+    { id: 'c9', name: 'Revelações do Vidrestranyo', nums: [1, 2, 9, 10, 11, 3, 4, 5, 6, 7, 8, 12] },
+    { id: 'c10', name: 'Safra Estranya', nums: [7, 8, 6, 5, 4, 3, 2, 1] },
+    { id: 'c11', name: 'Topografia', nums: [1, 7, 6, 5, 4, 10, 9, 8, 3, 2] }
+];
+const state = KR.get('conditions', {
+    c3: { marks: [2, 5], notes: { 5: 'Falar com o ferreiro antes do inverno' } },
+    c9: { marks: [1, 9, 4], notes: {} },
+    free_1: { marks: ['7', null, null], notes: {} }
+});
+DB.forEach(c => { if (!state[c.id]) state[c.id] = { marks: c.free ? Array(c.free).fill(null) : [], notes: {} }; });
+const save = () => KR.set('conditions', state);
+
+let expanded = null;   // { id, key }
+let armed = null;      // { id, key }
+let editingFree = null; // { id, idx }
+
+const $ = id => document.getElementById(id);
+
+const hasMarks = c => state[c.id].marks.some(v => v !== null && v !== '');
+const same = (a, id, key) => a && a.id === id && String(a.key) === String(key);
+
+function render() {
+    const q = KR.norm($('q').value);
+    $('clear').hidden = !q;
+    const list = DB.filter(c => q ? KR.norm(c.name).includes(q) : hasMarks(c));
+    if (!list.length) {
+        $('list').innerHTML = q
+            ? `<p class="t-meta" style="text-align:center;margin-top:32px;font-size:1.0625rem">Nenhum registro encontrado nas brumas.</p>`
+            : `<div class="empty"><span class="ms outline">auto_awesome</span><p>O ermo está silencioso.</p><div class="t-label" style="margin-top:8px">Busque uma condição para marcá-la</div></div>`;
+        return;
+    }
+    $('list').innerHTML = list.map(c => {
+        const s = state[c.id];
+        let slots;
+        if (c.free) {
+            slots = s.marks.map((v, i) => {
+                if (editingFree && editingFree.id === c.id && editingFree.idx === i)
+                    return `<div class="slot marked focus" data-id="${c.id}" data-key="${i}"><input id="free-in" inputmode="numeric" maxlength="2" value="${KR.esc(v ?? '')}" aria-label="Número"></div>`;
+                const filled = v !== null && v !== '';
+                const cls = ['slot', filled ? 'marked' : 'open-free', same(expanded, c.id, i) ? 'focus' : '', filled && s.notes[i] && !same(expanded, c.id, i) ? 'has-note' : '', same(armed, c.id, i) ? 'armed' : ''].join(' ');
+                const inner = same(armed, c.id, i) ? '<span class="ms">delete</span>' : filled ? KR.esc(v) : '+';
+                return `<div class="${cls}" data-id="${c.id}" data-key="${i}" data-label="${filled ? KR.esc(v) : '+'}">${inner}</div>`;
+            }).join('');
+        } else {
+            slots = c.nums.map(n => {
+                const on = s.marks.includes(n);
+                const cls = ['slot', on ? 'marked' : '', same(expanded, c.id, n) ? 'focus' : '', on && s.notes[n] && !same(expanded, c.id, n) ? 'has-note' : '', same(armed, c.id, n) ? 'armed' : ''].join(' ');
+                return `<div class="${cls}" data-id="${c.id}" data-key="${n}" data-label="${n}">${same(armed, c.id, n) ? '<span class="ms">delete</span>' : n}</div>`;
+            }).join('');
+        }
+        let note = '';
+        if (expanded && expanded.id === c.id) {
+            const k = expanded.key;
+            const ref = c.free ? (s.marks[k] ?? '') : k;
+            note = `<div class="note-row"><span class="ref">[${KR.esc(ref)}]</span><input class="field-line" id="note-in" placeholder="Adicionar nota" value="${KR.esc(s.notes[k] ?? '')}" autocomplete="off"></div>`;
+        }
+        return `<div class="card cond"><div class="t-title">${KR.esc(c.name)}</div><div class="slots">${slots}</div>${note}</div>`;
+    }).join('');
+
+    const fi = $('free-in');
+    if (fi) {
+        fi.focus();
+        fi.oninput = () => { fi.value = fi.value.replace(/\D/g, '').slice(0, 2); };
+        fi.onkeydown = e => { if (e.key === 'Enter') fi.blur(); };
+        fi.onblur = () => {
+            const { id, idx } = editingFree; editingFree = null;
+            const v = fi.value.trim();
+            state[id].marks[idx] = v || null;
+            expanded = v ? { id, key: idx } : null;
+            save(); render();
+            if (v) $('note-in')?.focus();
+        };
+    }
+    const ni = $('note-in');
+    if (ni) {
+        ni.oninput = () => { state[expanded.id].notes[expanded.key] = ni.value; save(); };
+        ni.onkeydown = e => { if (e.key === 'Enter') ni.blur(); };
+    }
+}
+
+function tapSlot(el) {
+    const id = el.dataset.id, c = DB.find(x => x.id === id), s = state[id];
+    const key = c.free ? +el.dataset.key : +el.dataset.key;
+    if (armed && !same(armed, id, key)) armed = null;
+
+    if (c.free) {
+        const v = s.marks[key];
+        if (v === null || v === '') { editingFree = { id, idx: key }; expanded = null; render(); return; }
+    } else if (!s.marks.includes(key)) {
+        s.marks.push(key); expanded = { id, key }; save(); render(); $('note-in')?.focus(); return;
+    }
+    const hasNote = (s.notes[key] ?? '').trim() !== '';
+    if (hasNote) { expanded = same(expanded, id, key) ? null : { id, key }; armed = null; render(); return; }
+    if (same(armed, id, key)) {
+        if (c.free) s.marks[key] = null; else s.marks.splice(s.marks.indexOf(key), 1);
+        delete s.notes[key]; armed = null; expanded = null; save(); render(); return;
+    }
+    armed = { id, key }; expanded = { id, key }; render();
+}
+
+KR.pressPreview($('list'), { onCommit: tapSlot, enabled: () => true });
+
+document.addEventListener('pointerdown', e => {
+    if (e.target.closest('.slot, #note-in, .pop-menu')) return;
+    let changed = false;
+    if (armed) { armed = null; changed = true; }
+    if (expanded && !e.target.closest('.search')) { expanded = null; changed = true; }
+    if (changed) render();
+});
+
+$('q').oninput = render;
+$('clear').onclick = () => { $('q').value = ''; render(); $('q').focus(); };
+render();
+</script>
+</body>
+</html>

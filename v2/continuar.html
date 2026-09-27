@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Kings of Ruin · Continuar</title>
+<link rel="stylesheet" href="theme.css">
+<style>
+.save-card { display: flex; align-items: flex-start; gap: 8px; background: var(--card); border: 1px solid var(--line-control); border-radius: var(--radius); padding: 12px 4px 12px 12px; cursor: pointer; }
+.save-card + .save-card { margin-top: 10px; }
+.save-card:active { border-color: var(--gold); background: var(--card-raised); }
+.hero-chip { display: inline-flex; align-items: baseline; gap: 4px; padding: 2px 8px; border: 1px solid var(--line-control); background: #141a17; border-radius: var(--radius); font-size: .875rem; }
+.hero-chip b { font-family: var(--font-title); color: var(--gold); font-size: .8125rem; }
+.badge.multi { color: #c9a0f0; border-color: #4a2a6b; background: #1b112b; }
+.stats { display: flex; gap: 12px; font-weight: 600; font-size: .9375rem; margin-top: 4px; }
+.stats .ms { font-size: 1rem; }
+</style>
+</head>
+<body>
+<main class="page no-nav">
+    <div class="frame">
+        <h2 class="t-title" style="text-align:center;color:var(--gold);font-size:1.35rem;margin:0 0 12px;padding-bottom:10px;border-bottom:1px solid var(--line-control)">Carregar registro</h2>
+        <div class="tabs" id="tabs" style="margin-bottom:12px"></div>
+        <div id="list"></div>
+    </div>
+</main>
+
+<script src="app.js"></script>
+<script>
+KR.header({ back: 'index.html', player: false });
+const $ = id => document.getElementById(id);
+const HERO = { elgan: 'Elgan', gerdwyn: 'Gerdwyn', iunis: 'Iunis', osbert: 'Osbert' };
+const ICON = { elgan: 'candle', gerdwyn: 'target', iunis: 'swords', osbert: 'theater_comedy' };
+const data = KR.get('saves', null) || {
+    camps: [
+        { id: 'c1', name: 'Mesa de Sexta · Avalon', type: 'multi', chapter: 2, part: 'B:2', date: Date.now(), heroes: [['elgan', 'Carlos'], ['gerdwyn', 'Mariana']] },
+        { id: 'c2', name: 'Jornada Solitária no Ermo', type: 'solo', chapter: 1, part: 'A:2', date: Date.now() - 7200000, heroes: [['osbert', ''], ['iunis', '']] }
+    ],
+    sheets: [{ id: 'p1', player: 'Carlos', hero: 'elgan', camp: 'Mesa de Sexta · Avalon', health: 12, energy: 6, exp: 4, date: Date.now() }]
+};
+const save = () => KR.set('saves', data);
+let tab = 'camps';
+const fmt = d => new Date(d).toLocaleDateString('pt-BR');
+
+function render() {
+    $('tabs').innerHTML = [['camps', 'menu_book', 'Campanhas'], ['sheets', 'id_card', 'Fichas']].map(([id, ic, lb]) => `<button class="tab ${tab === id ? 'active' : ''}" data-tab="${id}"><span class="ms outline">${ic}</span>${lb}</button>`).join('');
+    const list = data[tab];
+    if (!list.length) { $('list').innerHTML = `<div class="empty"><span class="ms outline">${tab === 'camps' ? 'menu_book' : 'person'}</span><p>${tab === 'camps' ? 'Nenhuma campanha salva.' : 'Nenhuma ficha salva.'}</p></div>`; return; }
+    $('list').innerHTML = list.map(s => tab === 'camps' ? `
+        <div class="save-card" data-load="${s.id}">
+            <div style="flex:1;min-width:0">
+                <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap"><span class="t-title" style="font-size:1rem;color:var(--title)">${KR.esc(s.name)}</span><span class="badge ${s.type === 'multi' ? 'multi' : ''}">${s.type === 'multi' ? 'Multi' : 'Solo'}</span></div>
+                <div class="t-meta" style="margin-top:2px">Capítulo ${s.chapter} (${s.part}) · ${fmt(s.date)}</div>
+                <div style="display:flex;flex-wrap:wrap;gap:6px;margin-top:8px">${s.heroes.map(([h, p]) => `<span class="hero-chip"><b>${HERO[h]}</b>${p ? `<i class="t-meta" style="font-size:.8125rem">(${KR.esc(p)})</i>` : ''}</span>`).join('')}</div>
+            </div>
+            <button class="menu-btn" data-menu="${s.id}" aria-label="Opções da campanha"><span class="ms">more_vert</span></button>
+        </div>` : `
+        <div class="save-card" data-load="${s.id}">
+            <div style="width:44px;height:44px;border-radius:3px;border:1px solid var(--line-control);background:#141a17;display:flex;align-items:center;justify-content:center;color:var(--gold);flex-shrink:0"><span class="ms">${ICON[s.hero]}</span></div>
+            <div style="flex:1;min-width:0">
+                <div style="display:flex;align-items:baseline;gap:6px"><span class="t-title" style="font-size:1rem;color:var(--title)">${HERO[s.hero]}</span><i class="t-meta">(${KR.esc(s.player)})</i></div>
+                <div class="t-meta"><span class="ms outline" style="font-size:.95rem">import_contacts</span> ${KR.esc(s.camp)}</div>
+                <div class="stats"><span style="color:#e57373"><span class="ms">favorite</span> ${s.health}</span><span style="color:#d4b04a"><span class="ms">bolt</span> ${s.energy}</span><span class="gold"><span class="ms">star</span> ${s.exp} XP</span><span class="t-meta" style="font-weight:400">${fmt(s.date)}</span></div>
+            </div>
+            <button class="menu-btn" data-menu="${s.id}" aria-label="Opções da ficha"><span class="ms">more_vert</span></button>
+        </div>`).join('');
+}
+
+$('tabs').onclick = e => { const b = e.target.closest('[data-tab]'); if (b) { tab = b.dataset.tab; render(); } };
+$('list').addEventListener('click', e => {
+    const m = e.target.closest('[data-menu]');
+    if (m) {
+        const s = data[tab].find(x => x.id === m.dataset.menu), label = tab === 'camps' ? s.name : `${HERO[s.hero]} (${s.player})`;
+        KR.menu(m, [
+            { icon: 'edit', label: 'Renomear', action: () => KR.snackbar('Renomear: fora do escopo do protótipo') },
+            { icon: 'ios_share', label: 'Exportar', action: () => KR.snackbar('Exportar: fora do escopo do protótipo') },
+            { icon: 'delete', label: 'Apagar…', danger: true, action: async () => {
+                const ok = await KR.confirmDialog({ title: `Apagar ${label}?`, msg: 'Isso não pode ser desfeito.', ok: 'Apagar', danger: true });
+                if (ok) { data[tab] = data[tab].filter(x => x !== s); save(); render(); KR.snackbar('Registro apagado'); }
+            } }
+        ]);
+        return;
+    }
+    const c = e.target.closest('[data-load]');
+    if (c) { KR.set('role', tab === 'camps' ? 'cronista' : 'jogador'); location.href = tab === 'camps' ? 'cronica.html' : 'grupo.html'; }
+});
+render();
+</script>
+</body>
+</html>

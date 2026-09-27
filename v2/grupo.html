@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Kings of Ruin · Grupo</title>
+<link rel="stylesheet" href="theme.css">
+<style>
+.hero { background: var(--card); border: 1px solid var(--line-control); border-radius: var(--radius); }
+.hero + .hero { margin-top: 10px; }
+.hero.open { border-color: var(--gold-soft); }
+.hero-head { display: flex; align-items: center; gap: 8px; padding: 12px 8px 12px 14px; cursor: pointer; }
+.hero-head .t-title { font-size: 1.125rem; }
+.hero-sub { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 14px; margin-top: 4px; color: var(--text); font-size: 1rem; }
+.hero-sub .ms { font-size: 1.05rem; color: var(--text-3); }
+.loc-btn { background: transparent; border: none; border-bottom: 1px dashed var(--line-control); color: var(--gold); font-family: var(--font-title); font-weight: 700; font-size: .9rem; padding: 0 1px; min-height: 28px; }
+.loc-input { width: 3.4rem; background: transparent; border: none; border-bottom: 1px solid var(--gold); color: var(--gold); font-family: var(--font-title); font-weight: 700; font-size: .9rem; text-align: center; outline: none; padding: 0; }
+.hero-body { padding: 0 12px 14px; }
+.hero .tabs { margin: 0 0 12px; padding: 3px; gap: 2px; background: #050706; border: 1px solid var(--line); border-radius: var(--radius); }
+.hero .tab { flex: 0 1 40px; min-width: 40px; height: 42px; flex-direction: row; gap: 5px; padding: 0 2px; border-radius: 2px; border-bottom: none; overflow: hidden; color: var(--text-3); transition: flex-basis .15s; }
+.hero .tab .ms { font-size: 1.2rem; flex-shrink: 0; }
+.hero .tab .label { display: none; letter-spacing: .01em; font-size: .6875rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.hero .tab.active { flex: 1 1 auto; background: var(--card-selected); color: var(--gold); box-shadow: inset 0 0 0 1px var(--gold-soft); }
+.hero .tab.active .label { display: inline; }
+.grid2 { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
+.grid3 { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
+.grid4 { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 6px; }
+.stat { background: #060807; border: 1px solid var(--line); border-radius: var(--radius); padding: 6px; }
+.stat .t-label { display: block; text-align: center; margin-bottom: 4px; }
+.stat select, .stat input { width: 100%; min-height: 40px; background: #050706; border: 1px solid var(--line-control); border-radius: var(--radius); color: var(--gold); font-family: var(--font-title); font-weight: 700; font-size: 1.1rem; text-align: center; text-align-last: center; appearance: none; outline: none; }
+.stat select:focus, .stat input:focus { border-color: var(--gold); }
+.track { display: flex; align-items: center; gap: 6px; }
+.track img { width: 34px; height: 34px; border-radius: 3px; flex-shrink: 0; }
+.attr-icon { width: 30px; height: 30px; object-fit: contain; flex-shrink: 0; }
+.stat .skill { min-height: 38px; font-family: var(--font-text); font-weight: 400; font-size: .9375rem; color: var(--title); text-align: left; text-align-last: auto; padding: 4px 28px 4px 8px; }
+.stat .skill::placeholder { color: var(--text-3); font-style: italic; }
+.item-row { display: flex; align-items: center; gap: 8px; padding: 6px 10px; }
+.item-row .field-line { border-bottom: none; padding: 6px 0; }
+.deck-row { display: flex; align-items: center; gap: 6px; }
+.deck-row + .deck-row { margin-top: 6px; }
+.deck-row .letter { width: 18px; font-family: var(--font-title); font-weight: 700; font-size: .95rem; text-align: center; flex-shrink: 0; }
+.deck-row .slots { flex: 1; }
+.deck-row .slot { height: 34px; font-size: .8125rem; max-width: none; }
+.deck-row .slots.half { max-width: calc(50% - 1px); }
+.echo-block { border: 1px solid var(--line); border-radius: var(--radius); padding: 8px; background: #050706; }
+.echo-block + .echo-block { margin-top: 8px; }
+.echo-block.unlocked { border-color: #52412b; background: #0a0d0b; }
+.echo-cells { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 6px; margin-top: 6px; }
+.echo-cell { min-height: 52px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; border: 1px solid var(--line-control); border-radius: var(--radius); background: var(--bg); color: var(--text-3); font-weight: 600; font-size: .75rem; letter-spacing: .06em; text-transform: uppercase; text-align: center; line-height: 1.15; padding: 4px; user-select: none; -webkit-user-select: none; -webkit-touch-callout: none; }
+.echo-cell .ms { font-size: 1.1rem; }
+.echo-cell.on { border-color: var(--gold); background: var(--card-selected); color: var(--title); }
+.echo-cell.on .ms { color: var(--gold); }
+.envelope { display: flex; align-items: center; justify-content: space-between; gap: 10px; min-height: 56px; padding: 8px 8px 8px 14px; background: #060807; border: 1px solid var(--line); border-radius: var(--radius); }
+.envelope + .envelope { margin-top: 8px; }
+.mem { padding: 10px 0; border-bottom: 1px solid var(--line); }
+.mem.hl { background: var(--card-selected); margin: 0 -16px; padding: 10px 16px; }
+</style>
+</head>
+<body>
+<main class="page">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin:4px 2px 12px">
+        <div class="t-title" id="screen-title" style="font-size:.95rem;color:var(--text-2);text-transform:uppercase;letter-spacing:.1em"></div>
+        <span class="badge" id="role-badge" style="white-space:nowrap"></span>
+    </div>
+    <div id="heroes"></div>
+    <div id="envelopes" style="margin-top:24px"></div>
+</main>
+
+<script src="app.js"></script>
+<script>
+KR.header();
+KR.nav('grupo');
+const $ = id => document.getElementById(id);
+const role = KR.role();
+
+const ATTRS = [['aggressiveness', 'AGR', 'agression'], ['empathy', 'EMP', 'empathy'], ['courage', 'COR', 'courage'], ['caution', 'CAU', 'caution'], ['practicality', 'PRA', 'practicality'], ['spirituality', 'ESP', 'spirituality']];
+const SKILLS = { gerdwyn: { aggressiveness: ['Magistral', 'Linha de Frente', 'Foco', 'Sono Pesado'], empathy: ['Alívio de Tensão', 'Aprendizado Acelerado', 'Caçadora de Recompensas', 'Líder Nata'], courage: ['Domínio do Escudo', 'Caçadora', 'Reconhecimento', 'Protetora'], caution: ['Donzela Escudeira', 'Presença', 'Fortalecer', 'Bem Preparada'], practicality: ['Contratática', 'Audácia', 'Pechinchar', 'Saque Rápido'], spirituality: ['Disparo a Esmo', 'Esperança Exemplar', 'Pressentimento', 'Suprimentos Mágicos'] } };
+const ECHOES = {
+    elgan: { cards: [310, 311, 312], mem: [['Fim do dia', 'Todos os Locais em jogo estão com o lado de exploração virado para cima.'], ['Durante o dia', 'Viaje para o Local 122 (Passarelas Inundadas).'], ['Durante o dia', "Realize a ação 'Ativar um Marco' em um Local que já possui um marco ativado."], ['Sempre', 'Tenha pelo menos 8 de Magia no seu inventário.'], ['Diplomacia', 'Resolva um Encontro azul (dificuldade 3 ou 4).'], ['Encontro', 'Tenha pelo menos 3 chaves ou símbolos mágicos na sequência.'], ['Combate', 'Tenha pelo menos 4 cartas na sequência de combate.'], ['Fim do dia', 'Sofra de Estranhice no Local 113, 114 ou 115.'], ['Durante o dia', "Use 2 itens consumíveis 'Vela Estranya' durante um único dia."]], final: ['Poder superior', 'No Local 111: procure por um grimório mágico.'] },
+    gerdwyn: { cards: [314, 315, 316], mem: [['Sempre', 'Tenha pelo menos 10 de Riqueza no seu inventário.'], ['Durante o dia', 'Você está no Local 125 (Terras do Sul).'], ['Durante o dia', 'Perca 2 de Energia num único dia devido à sua Fraqueza de Personagem.'], ['Diplomacia', "Resolva um Encontro enquanto sofre do status 'Enlouquecendo'."], ['Sempre', 'Tenha pelo menos nível 4 em qualquer atributo.'], ['Combate', 'Vença um Encontro roxo usando sua habilidade de personagem.'], ['Sempre', "Tenha pelo menos 2 itens com a palavra-chave 'Escudo'."], ['Combate', "Vença o Encontro roxo 'Cavaleiro da Távola Oval'."], ['Combate', 'Vença um Encontro sem cartas restantes no baralho de compra.']], final: ['A chama de ontem', 'No Local 135: procure por seu antigo camarada, Owen.'] },
+    iunis: { cards: [318, 319, 320], mem: [['Combate', 'Vença um Encontro com exatamente 1 de Saúde restante.'], ['Diplomacia', "Resolva um Encontro enquanto sofre do status 'Enlouquecendo'."], ['Sempre', 'Tenha pelo menos 8 de Comida no seu inventário.'], ['Encontro', 'Perca 4 ou mais atributos por efeitos de carta em uma única ativação.'], ['Encontro', 'Jogue 5 ou mais cartas durante uma única ativação.'], ['Durante o dia', 'Viaje para o Local 150 (Caminho dos Escravos).'], ['Durante o dia', 'Use sua habilidade de personagem enquanto estiver exausta.'], ['Sempre', 'Tenha 3 marcos ativos na mesa.'], ['Exploração', 'Use o transporte costeiro fomoriano no Local 151, 156 ou 160.']], final: ['A grande performance', 'No Local 156: encomende e realize uma peça teatral (pague 3 Riquezas).'] },
+    osbert: { cards: [322, 323, 324], mem: [['Combate', 'Vença um Encontro verde.'], ['Sempre', 'Tenha uma carta de Companheiro.'], ['Sempre', 'Role um 6 natural em um dado de 6 faces.'], ['Sempre', 'Tenha pelo menos 10 de Riqueza.'], ['Durante o dia', 'Viaje para um Local com 0 ou 1 de Energia.'], ['Encontro', 'Ganhe a recompensa bônus máxima listada no card do inimigo.'], ['Sempre', 'Tenha os 3 itens consumíveis da sua habilidade de personagem.'], ['Durante o dia', 'Viaje para o Local 134 (Fazendas Pacíficas).'], ['Diplomacia', 'Resolva um Encontro azul em um Local que possui um marco.']], final: ['O filho pródigo', 'No Local 101: viaje para a vila que exilou sua mãe.'] }
+};
+const deckB = Array.from({ length: 10 }, (_, i) => 'B' + (i + 1));
+const newHero = (id, name, title, player, loc, tracks, attrs) => ({ id, name, title, player, loc, tracks, res: { food: 0, wealth: 0, exp: 0, magic: 0 }, attrs, skills: Object.fromEntries(ATTRS.map(a => [a[0], ['', '']])), decks: { combat: [...deckB], diplomacy: [...deckB] }, items: [], secrets: [], echoes: { marks: Array(9).fill(false), spent: [false, false, false] } });
+const heroes = KR.get('heroes', null) || seed([
+    newHero('elgan', 'Elgan', 'o Candelário', 'Dener', '115', { health: 12, energy: 6, terror: 0 }, { aggressiveness: 1, empathy: 1, courage: 0, caution: 1, practicality: 2, spirituality: 1 }),
+    newHero('gerdwyn', 'Gerdwyn', 'a Mercenária', 'Mariana', '', { health: 14, energy: 5, terror: 0 }, { aggressiveness: 2, empathy: 0, courage: 2, caution: 1, practicality: 1, spirituality: 0 }),
+    newHero('iunis', 'Iunis', 'a Gladiatrix Fomoriana', '', '', { health: 11, energy: 7, terror: 0 }, { aggressiveness: 0, empathy: 2, courage: 0, caution: 2, practicality: 1, spirituality: 2 }),
+    newHero('osbert', 'Osbert', 'o Bufão Itinerante', '', '', { health: 13, energy: 6, terror: 0 }, { aggressiveness: 1, empathy: 1, courage: 1, caution: 0, practicality: 2, spirituality: 1 })
+]);
+function seed(list) {
+    list[0].items = [{ id: 'i1', name: 'Lanterna Encantada', equipped: true, spent: false }, { id: 'i2', name: 'Poção de Cura', equipped: false, spent: true }];
+    list[0].secrets = [{ id: 's1', num: '48', desc: 'Conflitos reforçados' }];
+    list[0].echoes.marks = [true, true, true, true, false, false, false, false, false];
+    KR.set('heroes', list);
+    return list;
+}
+const save = () => KR.set('heroes', heroes);
+const env = KR.get('envelopes', { D: false, F: false });
+const echoesOn = KR.get('expEcos', true);
+let openId = KR.get('openHero', 'elgan');
+let tab = KR.get('heroTab', 'status');
+let editingLoc = null;
+const byId = id => heroes.find(h => h.id === id);
+const opts = (max, cur) => Array.from({ length: max + 1 }, (_, i) => `<option value="${i}" ${i === cur ? 'selected' : ''}>${i}</option>`).join('');
+
+function tabs() {
+    const t = [['status', 'monitor_heart', 'Status'], ['attrs', 'star', 'Atributos'], ['inv', 'backpack', 'Itens']];
+    if (echoesOn) t.push(['echoes', 'history_edu', 'Ecos']);
+    t.push(['decks', 'playing_cards', 'Cartas']);
+    if (!t.some(x => x[0] === tab)) tab = 'status';
+    return `<div class="tabs" role="tablist">${t.map(([id, ic, lb]) => `<button class="tab ${id === tab ? 'active' : ''}" data-tab="${id}" role="tab" aria-label="${lb}"><span class="ms outline">${ic}</span><span class="label">${lb}</span></button>`).join('')}</div>`;
+}
+
+function statusTab(h) {
+    const tr = (k, img, lb) => `<div class="stat"><span class="t-label">${lb}</span><div class="track"><img src="icons/${img}.png" alt=""><select data-f="tracks.${k}" aria-label="${lb}">${opts(15, h.tracks[k])}</select></div></div>`;
+    const rs = (k, lb) => `<div class="stat"><span class="t-label">${lb}</span><input data-f="res.${k}" inputmode="numeric" value="${h.res[k]}" aria-label="${lb}"></div>`;
+    return `
+        <div class="section-head" style="margin-top:0"><span class="t-title">Trilhas</span></div>
+        <div class="grid3">${tr('health', 'health', 'Saúde')}${tr('energy', 'energy', 'Energia')}${tr('terror', 'terror', 'Pavor')}</div>
+        <div class="section-head"><span class="t-title">Recursos</span></div>
+        <div class="grid4">${rs('food', 'Comida')}${rs('wealth', 'Riqueza')}${rs('exp', 'Exp')}${rs('magic', 'Magia')}</div>`;
+}
+
+function attrsTab(h) {
+    return `<div class="grid2">${ATTRS.map(([k, code, img]) => {
+        const cat = SKILLS[h.id]?.[k];
+        const skill = i => cat
+            ? `<div class="select-wrap"><select class="field skill" data-f="skills.${k}.${i}"><option value="">Perícia</option>${cat.map(s => `<option ${s === h.skills[k][i] ? 'selected' : ''}>${s}</option>`).join('')}</select><span class="ms">expand_more</span></div>`
+            : `<input class="field skill" data-f="skills.${k}.${i}" placeholder="Perícia" value="${KR.esc(h.skills[k][i])}">`;
+        return `<div class="stat attr" style="padding:8px">
+            <div style="display:flex;align-items:center;justify-content:space-between;gap:6px;margin-bottom:6px">
+                <div style="display:flex;align-items:center;gap:6px"><img class="attr-icon" src="icons/${img}.png" alt=""><span class="t-title" style="font-size:.875rem;letter-spacing:.1em">${code}</span></div>
+                <select data-f="attrs.${k}" aria-label="${code}" style="width:52px">${opts(5, h.attrs[k])}</select>
+            </div>
+            <div style="display:grid;gap:6px">${skill(0)}${skill(1)}</div>
+        </div>`;
+    }).join('')}</div>`;
+}
+
+function invTab(h) {
+    const items = h.items.map(it => KR.swipeRow(`<div class="item-row" style="flex-direction:column;align-items:stretch;gap:4px">
+        <input class="field-line" data-item="${it.id}" data-k="name" placeholder="Nome do item" value="${KR.esc(it.name)}">
+        <div style="display:flex;gap:8px"><button class="chip ${it.equipped ? 'on' : ''}" data-toggle="${it.id}" data-k="equipped"><span class="ms outline">${it.equipped ? 'check_circle' : 'backpack'}</span>${it.equipped ? 'Equipado' : 'Mochila'}</button>
+        <button class="chip ${it.spent ? 'off' : ''}" data-toggle="${it.id}" data-k="spent"><span class="ms outline">${it.spent ? 'battery_0_bar' : 'battery_full'}</span>${it.spent ? 'Usado' : 'Pronto'}</button></div>
+    </div>`).replace('class="swipe-row"', `class="swipe-row" data-swipe="item" data-id="${it.id}"`)).join('');
+    const secrets = h.secrets.map(s => KR.swipeRow(`<div class="item-row">
+        <input class="field-line" data-secret="${s.id}" data-k="num" inputmode="numeric" placeholder="Nº" value="${KR.esc(s.num)}" style="width:3.2rem;text-align:center;font-family:var(--font-title);color:var(--gold)">
+        <input class="field-line" data-secret="${s.id}" data-k="desc" placeholder="Descrição do segredo" value="${KR.esc(s.desc)}">
+    </div>`).replace('class="swipe-row"', `class="swipe-row" data-swipe="secret" data-id="${s.id}"`)).join('');
+    return `
+        <div class="section-head"><span class="t-title">Itens</span><button class="btn small" data-add="item">+ Adicionar</button></div>
+        ${items || '<p class="t-meta">Nenhum item registrado.</p>'}
+        <div class="section-head"><span class="t-title">Segredos</span><button class="btn small" data-add="secret">+ Adicionar</button></div>
+        ${secrets || '<p class="t-meta">Nenhum segredo registrado.</p>'}
+        ${(h.items.length || h.secrets.length) ? '<div class="swipe-hint"><span class="ms">swipe_left</span>Deslize uma linha para a esquerda para remover</div>' : ''}`;
+}
+
+function echoesTab(h) {
+    const cat = ECHOES[h.id], m = h.echoes.marks, done = m.filter(Boolean).length;
+    let html = `<div class="section-head"><span class="t-title">Ecos da Ruína</span><span style="display:flex;align-items:center;gap:2px"><span class="t-label">${done}/9</span><button class="icon-btn" data-help="-1" aria-label="Ver todas as memórias"><span class="ms outline" style="font-size:1.3rem">info</span></button></span></div>`;
+    for (let b = 0; b < 3; b++) {
+        const unlocked = m[b * 3] && m[b * 3 + 1] && m[b * 3 + 2], spent = h.echoes.spent[b];
+        html += `<div class="echo-block ${unlocked ? 'unlocked' : ''}">
+            <div style="display:flex;align-items:center;justify-content:space-between;min-height:30px">
+                <span class="t-title" style="font-size:.8125rem;color:${unlocked ? 'var(--gold)' : 'var(--text-3)'}"><span class="ms" style="font-size:1rem">${unlocked ? 'star' : 'lock'}</span> ${unlocked ? 'Ação lendária · ' : 'Carta secreta '}${cat.cards[b]}</span>
+                ${unlocked ? `<button class="chip ${spent ? 'off' : 'on'}" data-spent="${b}"><span class="ms outline">${spent ? 'battery_0_bar' : 'battery_full'}</span>${spent ? 'Usada' : 'Pronta'}</button>` : ''}
+            </div>
+            <div class="echo-cells">${[0, 1, 2].map(i => { const k = b * 3 + i; return `<div class="echo-cell ${m[k] ? 'on' : ''}" data-mem="${k}" role="checkbox" aria-checked="${m[k]}"><span class="ms outline">${m[k] ? 'check' : 'radio_button_unchecked'}</span>${cat.mem[k][0]}</div>`; }).join('')}</div>
+        </div>`;
+    }
+    html += done === 9
+        ? `<div class="echo-block unlocked" style="text-align:center;margin-top:8px"><div class="t-title" style="color:var(--gold);font-size:.875rem"><span class="ms" style="font-size:1rem">verified</span> ${cat.final[0]}</div><p style="margin:4px 0 0">${cat.final[1]}</p></div>`
+        : `<div class="echo-block" style="text-align:center;margin-top:8px"><span class="t-label"><span class="ms" style="font-size:.9rem">lock</span> Habilidade evoluída · conclua as 9 memórias</span></div>`;
+    return html + `<p class="t-meta" style="margin:8px 0 0;text-align:center">Toque para marcar · segure para ler a memória</p>`;
+}
+
+function decksTab(h) {
+    const row = (type, letter, n, color) => {
+        let s = '';
+        for (let i = 1; i <= n; i++) { const id = letter + i, on = h.decks[type].includes(id); s += `<div class="slot ${on ? (type === 'combat' ? 'c-on' : 'd-on') : ''}" data-card="${type}:${id}" data-label="${id}">${i}</div>`; }
+        return `<div class="deck-row"><span class="letter" style="color:${color}">${letter}</span><div class="slots ${n === 5 ? 'half' : ''}">${s}</div></div>`;
+    };
+    const block = (type, label, color, icon) => `
+        <div class="section-head"><span class="t-title" style="color:${color}"><span class="ms outline" style="font-size:1.1rem">${icon}</span> ${label}</span><span class="t-label">${h.decks[type].length} ativas</span></div>
+        ${row(type, 'B', 10, 'var(--gold)')}${row(type, 'E', 10, 'var(--gold)')}${env.D ? row(type, 'D', 5, 'var(--gold)') : ''}${env.F ? row(type, 'F', 5, 'var(--serie-f)') : ''}`;
+    return block('combat', 'Combate', 'var(--combat)', 'swords') + block('diplomacy', 'Diplomacia', 'var(--diplo)', 'forum');
+}
+
+function render() {
+    const list = role === 'jogador' ? heroes.filter(h => h.id === KR.get('playerHero', 'elgan')) : heroes;
+    if (role === 'jogador') openId = list[0].id;
+    $('screen-title').textContent = role === 'jogador' ? 'Minha ficha' : 'Integrantes da expedição';
+    $('role-badge').textContent = role === 'jogador' ? 'Modo jogador' : 'Modo cronista';
+    $('heroes').innerHTML = list.map(h => {
+        const open = h.id === openId;
+        const body = !open ? '' : { status: statusTab, attrs: attrsTab, inv: invTab, echoes: echoesTab, decks: decksTab }[tab](h);
+        return `<section class="hero ${open ? 'open' : ''}" data-hero="${h.id}">
+            <div class="hero-head" data-head="${h.id}" role="button" aria-expanded="${open}">
+                <div style="flex:1;min-width:0">
+                    <div style="display:flex;align-items:baseline;gap:8px;flex-wrap:wrap"><span class="t-title">${h.name}</span><span class="t-meta">${h.title}</span></div>
+                    <div class="hero-sub"><span><span class="ms outline">person</span> ${KR.esc(h.player) || '<span class="t-meta">sem jogador</span>'}</span><span><span class="ms outline">location_on</span> Local
+                        ${editingLoc === h.id
+                            ? `<input class="loc-input" data-locedit="${h.id}" inputmode="numeric" maxlength="4" value="${KR.esc(h.loc)}">`
+                            : `<button class="loc-btn" data-locview="${h.id}">${KR.esc(h.loc) || '?'}</button>`}
+                    </span></div>
+                </div>
+                <span class="ms" style="color:${open ? 'var(--gold)' : 'var(--text-3)'};transform:rotate(${open ? 180 : 0}deg);transition:transform .2s">expand_more</span>
+            </div>
+            ${open ? `<div class="hero-body">${tabs()}${body}</div>` : ''}
+        </section>`;
+    }).join('');
+    document.querySelectorAll('[data-swipe]').forEach(r => KR.swipe(r, () => removeRow(r.dataset.swipe, r.dataset.id)));
+    renderEnvelopes();
+}
+
+function renderEnvelopes() {
+    const e = (k, label, color) => `<div class="envelope">
+        <div><div class="t-title" style="font-size:.9375rem;color:${color}">Cartas série ${k}</div><div class="t-meta">${env[k] ? 'Envelope aberto · cartas disponíveis nos baralhos' : 'Abra somente quando o jogo mandar'}</div></div>
+        ${env[k] ? `<span class="ms outline" style="color:${color};padding:0 10px">drafts</span>` : `<button class="btn small" data-env="${k}"><span class="ms outline" style="font-size:1rem">mail_lock</span>Abrir</button>`}
+    </div>`;
+    $('envelopes').innerHTML = `<div class="t-label" style="text-align:center;margin-bottom:8px">Envelopes da caixa</div>${e('D', 'D', 'var(--gold)')}${e('F', 'F', 'var(--serie-f)')}`;
+}
+
+function removeRow(kind, id) {
+    const h = byId(openId), arr = kind === 'item' ? h.items : h.secrets;
+    const idx = arr.findIndex(x => x.id === id), removed = arr[idx];
+    arr.splice(idx, 1); save(); render();
+    KR.snackbar(kind === 'item' ? 'Item removido' : 'Segredo removido', () => { arr.splice(idx, 0, removed); save(); render(); });
+}
+
+function setPath(obj, path, val) { const k = path.split('.'); let o = obj; while (k.length > 1) o = o[k.shift()]; o[k[0]] = val; }
+
+$('heroes').addEventListener('click', e => {
+    const t = e.target;
+    const locBtn = t.closest('[data-locview]');
+    if (locBtn) { editingLoc = locBtn.dataset.locview; render(); const inp = document.querySelector('[data-locedit]'); inp?.focus(); inp?.select(); return; }
+    const head = t.closest('[data-head]');
+    if (head && role !== 'jogador') { openId = openId === head.dataset.head ? null : head.dataset.head; KR.set('openHero', openId); render(); head.scrollIntoView({ block: 'nearest' }); return; }
+    const tb = t.closest('[data-tab]');
+    if (tb) { tab = tb.dataset.tab; KR.set('heroTab', tab); render(); return; }
+    const h = byId(openId); if (!h) return;
+    const add = t.closest('[data-add]');
+    if (add) {
+        const id = Date.now().toString(36);
+        if (add.dataset.add === 'item') h.items.push({ id, name: '', equipped: true, spent: false }); else h.secrets.push({ id, num: '', desc: '' });
+        save(); render();
+        document.querySelector(`[data-${add.dataset.add === 'item' ? 'item' : 'secret'}="${id}"]`)?.focus();
+        return;
+    }
+    const tg = t.closest('[data-toggle]');
+    if (tg) { const it = h.items.find(x => x.id === tg.dataset.toggle); it[tg.dataset.k] = !it[tg.dataset.k]; save(); render(); return; }
+    const sp = t.closest('[data-spent]');
+    if (sp) { h.echoes.spent[+sp.dataset.spent] = !h.echoes.spent[+sp.dataset.spent]; save(); render(); return; }
+    const help = t.closest('[data-help]');
+    if (help) openMemories(h, -1);
+});
+
+$('heroes').addEventListener('change', e => {
+    const f = e.target.dataset.f; if (!f) return;
+    const h = byId(openId), num = e.target.tagName === 'SELECT' && !f.startsWith('skills');
+    setPath(h, f, num || f.startsWith('res') ? (parseInt(e.target.value) || 0) : e.target.value);
+    save();
+});
+$('heroes').addEventListener('blur', e => {
+    const inp = e.target.closest?.('[data-locedit]'); if (!inp) return;
+    byId(inp.dataset.locedit).loc = inp.value.trim();
+    editingLoc = null; save(); render();
+}, true);
+$('heroes').addEventListener('keydown', e => { if (e.target.closest('[data-locedit]') && e.key === 'Enter') e.target.blur(); });
+$('heroes').addEventListener('input', e => {
+    const h = byId(openId); if (!h) return;
+    const d = e.target.dataset;
+    if (d.item) h.items.find(x => x.id === d.item)[d.k] = e.target.value;
+    else if (d.secret) h.secrets.find(x => x.id === d.secret)[d.k] = e.target.value;
+    else if (d.f && e.target.tagName === 'INPUT' && !d.f.startsWith('res')) setPath(h, d.f, e.target.value);
+    else return;
+    save();
+});
+
+let lp = null;
+$('heroes').addEventListener('pointerdown', e => {
+    const c = e.target.closest('[data-mem]'); if (!c) return;
+    lp = { k: +c.dataset.mem, long: false, timer: setTimeout(() => { lp.long = true; openMemoryDetail(byId(openId), +c.dataset.mem); }, 500) };
+});
+$('heroes').addEventListener('pointerup', e => {
+    if (!lp) return;
+    clearTimeout(lp.timer);
+    const c = e.target.closest('[data-mem]');
+    if (!lp.long && c && +c.dataset.mem === lp.k) {
+        const h = byId(openId), m = h.echoes.marks, k = lp.k;
+        m[k] = !m[k];
+        const b = Math.floor(k / 3); if (!(m[b * 3] && m[b * 3 + 1] && m[b * 3 + 2])) h.echoes.spent[b] = false;
+        save(); render();
+    }
+    lp = null;
+});
+$('heroes').addEventListener('pointercancel', () => { if (lp) clearTimeout(lp.timer); lp = null; });
+$('heroes').addEventListener('contextmenu', e => { if (e.target.closest('[data-mem]')) e.preventDefault(); });
+
+function openMemoryDetail(h, k) {
+    const cat = ECHOES[h.id], [type, desc] = cat.mem[k], marked = h.echoes.marks[k];
+    KR.sheet(`
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
+            <div class="t-title" style="color:var(--gold);font-size:.9375rem">Memória ${k + 1} de ${h.name}</div>
+            <button class="icon-btn" data-close aria-label="Fechar"><span class="ms">close</span></button>
+        </div>
+        <div style="display:flex;align-items:center;gap:6px;margin-bottom:6px">
+            <span class="ms outline" style="font-size:1.1rem;color:${marked ? 'var(--gold)' : 'var(--text-3)'}">${marked ? 'check_circle' : 'radio_button_unchecked'}</span>
+            <span class="t-label">${KR.esc(type)}</span>
+        </div>
+        <p style="margin:0">${KR.esc(desc)}</p>`);
+}
+
+function openMemories(h, focus) {
+    const cat = ECHOES[h.id];
+    const { el } = KR.sheet(`<div style="display:flex;align-items:center;justify-content:space-between"><div class="t-title" style="color:var(--gold)">Memórias de ${h.name}</div><button class="icon-btn" data-close aria-label="Fechar"><span class="ms">close</span></button></div>
+        ${cat.mem.map(([type, desc], i) => `<div class="mem ${i === focus ? 'hl' : ''}" id="mem-${i}"><div style="display:flex;align-items:center;gap:6px"><span class="ms outline" style="font-size:1rem;color:${h.echoes.marks[i] ? 'var(--gold)' : 'var(--text-3)'}">${h.echoes.marks[i] ? 'check_circle' : 'radio_button_unchecked'}</span><span class="t-label">Memória ${i + 1} · ${type}</span></div><p style="margin:4px 0 0">${desc}</p></div>`).join('')}
+        <div class="mem"><span class="t-label" style="color:var(--gold)">Habilidade evoluída · ${cat.final[0]}</span><p style="margin:4px 0 0">${cat.final[1]}</p></div>`);
+    if (focus >= 0) setTimeout(() => el.querySelector('#mem-' + focus)?.scrollIntoView({ block: 'center' }), 50);
+}
+
+KR.pressPreview($('heroes'), {
+    onCommit: s => {
+        const [type, id] = s.dataset.card.split(':'), h = byId(openId), list = h.decks[type];
+        const i = list.indexOf(id); if (i === -1) list.push(id); else list.splice(i, 1);
+        list.sort((a, b) => a.localeCompare(b, undefined, { numeric: true }));
+        save(); render();
+    },
+    enabled: () => true
+});
+
+$('envelopes').addEventListener('click', async e => {
+    const b = e.target.closest('[data-env]'); if (!b) return;
+    const k = b.dataset.env;
+    const ok = await KR.confirmDialog({ title: `Abrir envelope série ${k}?`, msg: 'Estas cartas são reveladas durante a história. Abra somente quando o jogo mandar.', ok: 'Abrir envelope' });
+    if (ok) { env[k] = true; KR.set('envelopes', env); render(); }
+});
+
+render();
+</script>
+</body>
+</html>

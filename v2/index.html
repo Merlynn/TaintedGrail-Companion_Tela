@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Kings of Ruin · Início</title>
+<link rel="stylesheet" href="theme.css">
+<style>
+.hub { min-height: 100vh; display: flex; flex-direction: column; }
+.hub-head { display: flex; justify-content: center; padding: 14px 16px; border-bottom: 1px solid var(--line); background: rgba(7,9,8,.95); }
+.hub-head img { height: clamp(56px, 15vw, 76px); filter: drop-shadow(0 2px 8px rgba(0,0,0,.8)); }
+.hub-main { flex: 1; display: flex; align-items: center; justify-content: center; padding: 20px 16px; }
+.hub-btn { display: flex; align-items: center; gap: 14px; width: 100%; min-height: 76px; padding: 14px 16px; background: var(--card); border: 1px solid var(--line-control); border-radius: 4px; text-align: left; }
+.hub-btn + .hub-btn { margin-top: 12px; }
+.hub-btn:active { border-color: var(--gold); background: var(--card-raised); }
+.hub-btn.primary { background: linear-gradient(#1b0a0a, #0c0505); border-color: #451212; }
+.hub-btn.primary:active { border-color: var(--mark-line); }
+.hub-icon { width: 46px; height: 46px; border-radius: 4px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; border: 1px solid var(--line-control); background: #101613; color: var(--gold); }
+.hub-btn.primary .hub-icon { background: #2b0c0c; border-color: #5c1919; color: #ff8a80; }
+</style>
+</head>
+<body>
+<div class="hub">
+    <header class="hub-head"><img src="https://lh3.googleusercontent.com/d/1U3juHgIiAcpfSSQiW3nWN20MhMUx7tJR" alt="Kings of Ruin"></header>
+    <main class="hub-main">
+        <div class="frame" style="width:100%;max-width:24rem">
+            <div style="text-align:center;padding-bottom:12px;margin-bottom:16px;border-bottom:1px solid var(--line)">
+                <div class="t-title" style="color:var(--gold);font-size:1.3rem;letter-spacing:.15em;text-transform:uppercase">Companion app</div>
+                <div class="t-label" style="margin-top:4px">Assistente de campanha e registro</div>
+            </div>
+            <a class="hub-btn primary" href="nova_campanha.html">
+                <span class="hub-icon"><span class="ms">add_circle</span></span>
+                <span style="flex:1"><span class="t-title" style="font-size:1rem">Nova campanha</span><br><span style="color:var(--text-2);font-size:.9375rem">Solo, multiplayer ou ficha individual</span></span>
+                <span class="ms" style="color:var(--text-3)">chevron_right</span>
+            </a>
+            <a class="hub-btn" href="continuar.html">
+                <span class="hub-icon"><span class="ms">archive</span></span>
+                <span style="flex:1"><span class="t-title" style="font-size:1rem">Continuar</span><br><span style="color:var(--text-2);font-size:.9375rem">Carregar campanha ou ficha salva</span></span>
+                <span class="ms" style="color:var(--text-3)">chevron_right</span>
+            </a>
+        </div>
+    </main>
+    <footer class="t-label" style="text-align:center;padding:14px">Tainted Grail: Monarcas da Ruína</footer>
+</div>
+<script src="app.js"></script>
+</body>
+</html>
