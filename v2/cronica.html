@@ -23,12 +23,11 @@
 .glow { inset: 0; background: radial-gradient(circle, var(--g1) 10%, var(--g2) 40%, transparent 70%); mix-blend-mode: color-dodge; opacity: 0; }
 .spot.lit .shade { opacity: 0; }
 .spot.lit .glow { opacity: 1; animation: shimmer 3s ease-in-out infinite; }
-.spot.next .shade { opacity: .55; }
-.spot.next .glow { animation: breathe 2.4s ease-in-out infinite; }
+.spot.next .glow { background: radial-gradient(circle, rgba(50, 170, 150, .75) 10%, rgba(28, 110, 95, .5) 40%, transparent 70%); animation: breathe 2.4s ease-in-out infinite; }
 .spot.lifting .glow { opacity: .15 !important; animation: none; }
 .spot.lighting .glow { animation: ignite .6s ease-out; }
 @keyframes shimmer { 0%, 100% { opacity: .8; } 50% { opacity: 1; } }
-@keyframes breathe { 0%, 100% { opacity: .05; } 50% { opacity: .6; } }
+@keyframes breathe { 0%, 100% { opacity: 0; } 50% { opacity: .45; } }
 @keyframes ignite { 0% { opacity: 1; transform: scale(1.3); } 100% { opacity: .9; transform: scale(1); } }
 
 .orb { position: fixed; z-index: 120; pointer-events: none; border-radius: 50%; transform: translate(-50%, -50%); background: radial-gradient(circle, var(--core) 0%, var(--halo) 22%, transparent 62%); }
