@@ -3,14 +3,14 @@
   "configurations": [
     {
       "name": "prototipo-v2",
-      "runtimeExecutable": "python",
-      "runtimeArgs": [".claude/serve_nocache.py", "8765", "v2"],
+      "runtimeExecutable": "serve-nocache",
+      "runtimeArgs": ["--root=v2", "--port=8765"],
       "port": 8765
     },
     {
       "name": "prototipo-original",
-      "runtimeExecutable": "python",
-      "runtimeArgs": [".claude/serve_nocache.py", "8766", "."],
+      "runtimeExecutable": "serve-nocache",
+      "runtimeArgs": ["--root=.", "--port=8766"],
       "port": 8766
     }
   ]

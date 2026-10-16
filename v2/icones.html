@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Kings of Ruin · Comparar ícones</title>
+<link rel="stylesheet" href="theme.css">
+<script src="https://cdn.jsdelivr.net/npm/iconify-icon@2.1.0/dist/iconify-icon.min.js"></script>
+<style>
+.page { padding-bottom: 96px; }
+.controls { display: grid; gap: 10px; }
+.ctl-row { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.ctl-row .t-label { min-width: 5.5rem; }
+.cols { position: sticky; top: var(--header-h); z-index: 20; margin: 14px -12px 0; padding: 8px 12px; background: rgba(7, 9, 8, .97); border-bottom: 1px solid var(--line); display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 4px; }
+.cols button { min-height: 44px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 1px; border: 1px solid var(--line-control); border-radius: var(--radius); background: var(--card); color: var(--gold); font-weight: 600; font-size: .6875rem; letter-spacing: .04em; text-transform: uppercase; line-height: 1.1; }
+.cols button small { color: var(--text-3); font-size: .625rem; letter-spacing: 0; text-transform: none; font-weight: 400; }
+.cols button:active { background: var(--card-selected); }
+.slot-row { padding: 10px 0; border-bottom: 1px solid var(--line); }
+.slot-name { display: flex; align-items: baseline; justify-content: space-between; gap: 8px; margin-bottom: 6px; }
+.slot-name .t-title { font-size: .875rem; }
+.picks { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 4px; }
+.pick { min-height: 56px; display: flex; align-items: center; justify-content: center; border: 1px solid var(--line); border-radius: var(--radius); background: #060807; color: var(--text); }
+.pick:active { background: var(--card-raised); }
+.pick[aria-pressed="true"] { border-color: var(--gold); background: var(--card-selected); color: var(--gold); box-shadow: 0 0 8px rgba(194,166,117,.25); }
+.pick:disabled { color: var(--line-empty); }
+.pick .ms { font-size: var(--sz); }
+.pick iconify-icon { font-size: var(--sz); display: block; }
+.bar { position: fixed; left: 0; right: 0; bottom: 0; z-index: 30; padding: 10px 12px; background: rgba(7,9,8,.97); border-top: 1px solid var(--line); display: flex; justify-content: center; }
+.bar > div { width: 100%; max-width: 30rem; display: flex; align-items: center; gap: 10px; }
+.bar .btn { flex: 1; }
+textarea.field { min-height: 220px; font-family: ui-monospace, monospace; font-size: .8125rem; resize: none; }
+</style>
+</head>
+<body>
+<main class="page no-nav">
+    <h1 class="t-title" style="text-align:center;font-size:1.1rem;letter-spacing:.15em;text-transform:uppercase;margin:6px 0 4px">Comparar ícones</h1>
+    <p class="t-meta" style="text-align:center;margin:0 0 14px">Toque no ícone preferido em cada linha. As escolhas ficam salvas neste navegador.</p>
+    <div class="card controls">
+        <div class="ctl-row"><span class="t-label">Phosphor</span><span id="weights" style="display:flex;gap:6px;flex-wrap:wrap"></span></div>
+        <div class="ctl-row"><span class="t-label">Tamanho</span><span id="sizes" style="display:flex;gap:6px"></span></div>
+        <div class="ctl-row"><span class="t-label">Cor</span><span id="tones" style="display:flex;gap:6px"></span></div>
+    </div>
+    <div class="cols" id="cols"></div>
+    <p class="t-meta" style="margin:6px 0 0;text-align:center">Toque no nome de um pacote acima para marcá-lo em todas as linhas.</p>
+    <div id="list"></div>
+</main>
+<div class="bar"><div><span class="t-label" id="count" style="white-space:nowrap"></span><button class="btn primary" id="export"><span class="ms outline" style="font-size:1.2rem">content_copy</span>Copiar escolhas</button></div></div>
+
+<script src="app.js"></script>
+<script>
+KR.header({ back: 'config.html', player: false });
+const $ = id => document.getElementById(id);
+// [seção, [[id, rótulo, material, phosphor, lucide, tabler, game-icons], ...]]
+const SLOTS = [["Menu inferior",[["cronica","Crônica","hourglass_bottom","hourglass-medium","hourglass","hourglass","hourglass"],["condicoes","Condições","library_books","list-checks","list-checks","checklist","scroll-unfurled"],["diario","Diário","auto_stories","book-open-text","notebook-pen","notebook","quill-ink"],["grupo","Grupo","groups","users-three","users","users-group","backup"],["personagem","Personagem (modo jogador)","person","user","user","user","hooded-figure"],["salvar","Salvar","book_5","floppy-disk","save","device-floppy","campfire"],["exportar","Exportar (modo jogador)","share","share-network","share-2","share","paper-arrow"]]],["Abas da ficha",[["t_status","Status","monitor_heart","heartbeat","heart-pulse","heartbeat","heart-beats"],["t_attrs","Atributos","star","medal","award","chart-radar","skills"],["t_itens","Itens","backpack","backpack","backpack","backpack","knapsack"],["t_cartas","Cartas","playing_cards","cards","layers","cards","card-draw"],["t_ecos","Ecos","history_edu","spiral","orbit","spiral","echo-ripples"]]],["Ficha do herói",[["combate","Combate","swords","sword","swords","swords","crossed-swords"],["diplomacia","Diplomacia","forum","handshake","handshake","heart-handshake","shaking-hands"],["lendaria","Ação lendária","auto_awesome","star-four","sparkles","sparkles","star-swirl"],["secreta","Carta secreta (bloqueada)","lock","lock","lock","lock","padlock"],["evoluida","Habilidade evoluída","verified","seal-check","badge-check","rosette-discount-check","upgrade"],["local","Local do herói","location_on","map-pin","map-pin","map-pin","position-marker"],["saude","Saúde","favorite","heart","heart","heart","hearts"],["energia","Energia","bolt","lightning","zap","bolt","lightning-trio"]]],["Diário (fitilhos)",[["d_todos","Todos","dashboard","squares-four","layout-grid","layout-grid","book-cover"],["d_local","Local","globe_location_pin","map-trifold","map","map-2","village"],["d_npc","NPC","hail","chat-teardrop-dots","message-circle-more","message-circle","conversation"],["d_demanda","Demanda","receipt_long","scroll","scroll-text","script","scroll-quill"],["d_personagem","Personagem","hiking","person-simple-hike","footprints","walk","walking-boot"],["d_nova","Nova anotação","history_edu","pen-nib","feather","feather","quill"]]],["Salvar",[["s_herois","Heróis","id_card","identification-card","id-card","id","id-card"],["s_criaturas","Criaturas","pets","paw-print","paw-print","paw","wolf-head"],["s_mapa","Mapa","map","map-trifold","map","map","treasure-map"],["s_caixa","Caixa","inventory_2","package","package","box","chest"],["s_resumo","Resumo","fact_check","clipboard-text","clipboard-check","clipboard-check","checklist"],["s_padrons","Padrons","cell_tower","broadcast","radio-tower","building-broadcast-tower","totem"],["s_monarcas","Monarcas","crown","crown","crown","crown","crown"],["s_guardioes","Guardiões","swords","skull","skull","skull","dragon-head"],["s_claro","Tempo claro","hourglass_top","sun","sun","sun","sun"],["s_escuro","Tempo escuro","hourglass_bottom","moon","moon","moon","moon"],["s_universal","Cubo universal","deployed_code","cube","box","cube","cube"]]],["Nova campanha",[["h_elgan","Elgan · o Candelário","candle","fire-simple","flame","candle","candle-light"],["h_gerdwyn","Gerdwyn · a Mercenária","target","crosshair","crosshair","target-arrow","archery-target"],["h_iunis","Iunis · a Gladiatrix","swords","sword","sword","sword","gladius"],["h_osbert","Osbert · o Bufão","theater_comedy","mask-happy","drama","masks-theater","duality-mask"],["cronista","Cronista / Narrativo","menu_book","book-bookmark","book-open","book","spell-book"],["desafiador","Desafiador","skull","skull","skull","skull","skull-crossed-bones"]]],["Cabeçalho e player",[["musica","Ecos (música)","music_note","music-notes","music","music","lyre"],["config","Configurações","settings","gear-six","settings","settings","cog"],["exploracao","Playlist exploração","explore","compass","compass","compass","compass"],["taverna","Playlist taverna","sports_bar","beer-stein","beer","beer","beer-stein"]]],["Utilitários",[["u_voltar","Voltar","arrow_back","arrow-left","arrow-left","arrow-left",""],["u_fechar","Fechar","close","x","x","x",""],["u_menu","Mais opções","more_vert","dots-three-vertical","ellipsis-vertical","dots-vertical",""],["u_add","Adicionar","add_circle","plus-circle","circle-plus","circle-plus",""],["u_apagar","Apagar","delete","trash","trash-2","trash",""],["u_editar","Editar","edit","pencil-simple","pencil","pencil",""],["u_ok","Confirmar","check","check","check","check",""],["u_abrir","Expandir","expand_more","caret-down","chevron-down","chevron-down",""],["u_info","Informação","info","info","info","info-circle",""],["u_busca","Buscar","search","magnifying-glass","search","search",""],["u_baixar","Baixar","download","download-simple","download","download",""]]]];
+const PACKS = [['material', 'Material', 'atual'], ['ph', 'Phosphor', ''], ['lucide', 'Lucide', ''], ['tabler', 'Tabler', ''], ['game-icons', 'Game', 'RPG']];
+const WEIGHTS = [['thin', 'Fino'], ['light', 'Leve'], ['', 'Regular'], ['bold', 'Negrito'], ['fill', 'Cheio'], ['duotone', 'Duotone']];
+const SIZES = [[24, '24'], [32, '32']];
+const TONES = [['text', 'Texto'], ['gold', 'Dourado']];
+const rows = SLOTS.flatMap(([, r]) => r);
+
+const picks = KR.get('iconPicks', {});
+let weight = KR.get('iconWeight', 'light'), size = KR.get('iconSize', 24), tone = KR.get('iconTone', 'text');
+
+const iconName = (pack, r) => {
+    const n = r[PACKS.findIndex(p => p[0] === pack) + 2];
+    if (!n) return '';
+    return pack === 'material' ? n : pack === 'ph' ? `ph:${n}${weight ? '-' + weight : ''}` : `${pack}:${n}`;
+};
+const iconHtml = (pack, r) => {
+    const n = iconName(pack, r);
+    if (!n) return '—';
+    return pack === 'material' ? `<span class="ms">${n}</span>` : `<iconify-icon icon="${n}" aria-hidden="true"></iconify-icon>`;
+};
+const chips = (list, cur, key) => list.map(([v, lb]) => `<button class="chip ${String(v) === String(cur) ? 'on' : ''}" data-${key}="${v}">${lb}</button>`).join('');
+
+function renderControls() {
+    $('weights').innerHTML = chips(WEIGHTS, weight, 'w');
+    $('sizes').innerHTML = chips(SIZES, size, 's');
+    $('tones').innerHTML = chips(TONES, tone, 't');
+    document.documentElement.style.setProperty('--sz', size + 'px');
+    document.querySelector('main').style.setProperty('color', tone === 'gold' ? 'var(--gold)' : '');
+}
+
+function renderList() {
+    $('cols').innerHTML = PACKS.map(([k, lb, sub]) => `<button data-all="${k}" aria-label="Marcar ${lb} em todas as linhas">${lb}${sub ? `<small>${sub}</small>` : ''}</button>`).join('');
+    $('list').innerHTML = SLOTS.map(([sec, rs]) => `<div class="section-head" style="margin-top:20px"><span class="t-title">${sec}</span></div>` + rs.map(r => `
+        <div class="slot-row">
+            <div class="slot-name"><span class="t-title">${r[1]}</span><span class="t-meta" style="font-size:.75rem">${picks[r[0]] ? PACKS.find(p => p[0] === picks[r[0]])[1] : 'sem escolha'}</span></div>
+            <div class="picks">${PACKS.map(([k, lb]) => `<button class="pick" data-row="${r[0]}" data-pack="${k}" aria-pressed="${picks[r[0]] === k}" aria-label="${r[1]}: ${lb}" ${iconName(k, r) ? '' : 'disabled'} style="${tone === 'gold' && picks[r[0]] !== k ? 'color:var(--gold-soft)' : ''}">${iconHtml(k, r)}</button>`).join('')}</div>
+        </div>`).join('')).join('');
+    $('count').textContent = `${rows.filter(r => picks[r[0]]).length} de ${rows.length}`;
+}
+
+const persist = () => { KR.set('iconPicks', picks); KR.set('iconWeight', weight); KR.set('iconSize', size); KR.set('iconTone', tone); };
+
+document.querySelector('.controls').addEventListener('click', e => {
+    const b = e.target.closest('button'); if (!b) return;
+    if (b.dataset.w !== undefined) weight = b.dataset.w;
+    else if (b.dataset.s) size = +b.dataset.s;
+    else if (b.dataset.t) tone = b.dataset.t;
+    persist(); renderControls(); renderList();
+});
+$('cols').addEventListener('click', e => {
+    const b = e.target.closest('[data-all]'); if (!b) return;
+    const k = b.dataset.all;
+    rows.forEach(r => { if (iconName(k, r)) picks[r[0]] = k; });
+    persist(); renderList();
+    KR.snackbar(`${PACKS.find(p => p[0] === k)[1]} marcado onde existe`);
+});
+$('list').addEventListener('click', e => {
+    const b = e.target.closest('[data-row]'); if (!b) return;
+    const id = b.dataset.row, k = b.dataset.pack;
+    if (picks[id] === k) delete picks[id]; else picks[id] = k;
+    persist(); renderList();
+});
+
+function exportText() {
+    const w = WEIGHTS.find(x => x[0] === weight)[1];
+    const lines = SLOTS.flatMap(([sec, rs]) => [`# ${sec}`, ...rs.map(r => {
+        const k = picks[r[0]];
+        return `${r[0]} | ${r[1]} | ${k ? (k === 'material' ? 'material:' + r[2] : iconName(k, r)) : '(sem escolha)'}`;
+    })]);
+    return [`Phosphor: peso ${w}`, ...lines].join('\n');
+}
+$('export').onclick = async () => {
+    const text = exportText();
+    try { await navigator.clipboard.writeText(text); KR.snackbar('Escolhas copiadas · cole na conversa'); return; } catch {}
+    // http na rede local não tem acesso à área de transferência: mostra o texto para copiar à mão
+    const { el } = KR.sheet(`<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px"><div class="t-title" style="color:var(--gold)">Suas escolhas</div><button class="icon-btn" data-close aria-label="Fechar"><span class="ms">close</span></button></div>
+        <p class="t-meta" style="margin:0 0 8px">Segure no texto, selecione tudo e copie.</p>
+        <textarea class="field" readonly>${KR.esc(text)}</textarea>`);
+    const ta = el.querySelector('textarea'); ta.focus(); ta.select();
+};
+
+renderControls();
+renderList();
+</script>
+</body>
+</html>

@@ -660,6 +660,29 @@
         narrativeModifiers.forEach(m => modifiersState[m.id] = false);
         challengeModifiers.forEach(m => modifiersState[m.id] = false);
 
+        function applyRoleButtonState(role) {
+            const btnCronista = document.getElementById('btn-role-cronista');
+            const btnJogador = document.getElementById('btn-role-jogador');
+            const isCronista = role === 'cronista';
+
+            btnCronista.className = isCronista ? 'choice-card selected' : 'choice-card';
+            btnJogador.className = isCronista ? 'choice-card' : 'choice-card selected';
+
+            btnCronista.querySelector('.material-symbols-rounded').className = isCronista
+                ? 'material-symbols-rounded text-[20px] text-[#c2a675]'
+                : 'material-symbols-rounded text-[20px] text-[#6d7872]';
+            btnCronista.querySelector('.font-title').className = isCronista
+                ? 'font-title text-[14px] text-[#c2a675] font-bold block leading-tight'
+                : 'font-title text-[14px] text-[#b8b4a7] font-bold block leading-tight';
+
+            btnJogador.querySelector('.material-symbols-rounded').className = isCronista
+                ? 'material-symbols-rounded text-[20px] text-[#6d7872]'
+                : 'material-symbols-rounded text-[20px] text-[#c2a675]';
+            btnJogador.querySelector('.font-title').className = isCronista
+                ? 'font-title text-[14px] text-[#b8b4a7] font-bold block leading-tight'
+                : 'font-title text-[14px] text-[#c2a675] font-bold block leading-tight';
+        }
+
         function setSessionType(type) {
             sessionType = type;
             const btnSolo = document.getElementById('btn-mode-solo');
@@ -673,7 +696,7 @@
                 btnSolo.querySelector('.font-title').className = 'font-title text-[14px] text-[#c2a675] font-bold block leading-tight';
                 btnMulti.querySelector('.material-symbols-rounded').className = 'material-symbols-rounded text-[20px] text-[#6d7872]';
                 btnMulti.querySelector('.font-title').className = 'font-title text-[14px] text-[#b8b4a7] font-bold block leading-tight';
-                
+
                 sectionRole.classList.add('hidden');
                 userRole = 'cronista';
             } else {
@@ -683,35 +706,18 @@
                 btnMulti.querySelector('.font-title').className = 'font-title text-[14px] text-[#c2a675] font-bold block leading-tight';
                 btnSolo.querySelector('.material-symbols-rounded').className = 'material-symbols-rounded text-[20px] text-[#6d7872]';
                 btnSolo.querySelector('.font-title').className = 'font-title text-[14px] text-[#b8b4a7] font-bold block leading-tight';
-                
+
                 sectionRole.classList.remove('hidden');
             }
 
+            applyRoleButtonState(userRole);
             updateLayoutFlow();
             renderHeroCards();
         }
 
         function setUserRole(role) {
             userRole = role;
-            const btnCronista = document.getElementById('btn-role-cronista');
-            const btnJogador = document.getElementById('btn-role-jogador');
-
-            if (role === 'cronista') {
-                btnCronista.className = 'choice-card selected';
-                btnJogador.className = 'choice-card';
-                btnCronista.querySelector('.material-symbols-rounded').className = 'material-symbols-rounded text-[20px] text-[#c2a675]';
-                btnCronista.querySelector('.font-title').className = 'font-title text-[14px] text-[#c2a675] font-bold block leading-tight';
-                btnJogador.querySelector('.material-symbols-rounded').className = 'material-symbols-rounded text-[20px] text-[#6d7872]';
-                btnJogador.querySelector('.font-title').className = 'font-title text-[14px] text-[#b8b4a7] font-bold block leading-tight';
-            } else {
-                btnJogador.className = 'choice-card selected';
-                btnCronista.className = 'choice-card';
-                btnJogador.querySelector('.material-symbols-rounded').className = 'material-symbols-rounded text-[20px] text-[#c2a675]';
-                btnJogador.querySelector('.font-title').className = 'font-title text-[14px] text-[#c2a675] font-bold block leading-tight';
-                btnCronista.querySelector('.material-symbols-rounded').className = 'material-symbols-rounded text-[20px] text-[#6d7872]';
-                btnCronista.querySelector('.font-title').className = 'font-title text-[14px] text-[#b8b4a7] font-bold block leading-tight';
-            }
-
+            applyRoleButtonState(role);
             updateLayoutFlow();
             renderHeroCards();
         }
