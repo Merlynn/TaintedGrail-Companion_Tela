@@ -109,11 +109,11 @@ const byId = id => heroes.find(h => h.id === id);
 const opts = (max, cur) => Array.from({ length: max + 1 }, (_, i) => `<option value="${i}" ${i === cur ? 'selected' : ''}>${i}</option>`).join('');
 
 function tabs() {
-    const t = [['status', 'monitor_heart', 'Status'], ['attrs', 'star', 'Atributos', 'Atrib.'], ['inv', 'backpack', 'Itens'], ['decks', 'playing_cards', 'Cartas']];
+    const t = [['status', 't_status', 'Status'], ['attrs', 't_attrs', 'Atributos', 'Atrib.'], ['inv', 't_itens', 'Itens'], ['decks', 't_cartas', 'Cartas']];
     // Ecos fica por último: só existe com a expansão, e assim as outras abas não mudam de lugar
-    if (echoesOn) t.push(['echoes', 'history_edu', 'Ecos']);
+    if (echoesOn) t.push(['echoes', 't_ecos', 'Ecos']);
     if (!t.some(x => x[0] === tab)) tab = 'status';
-    return `<div class="tabs" role="tablist">${t.map(([id, ic, lb, short]) => `<button class="tab ${id === tab ? 'active' : ''}" data-tab="${id}" role="tab" aria-selected="${id === tab}" aria-label="${lb}"><span class="ms outline">${ic}</span><span class="label"><span class="full ${short ? 'has-short' : ''}">${lb}</span>${short ? `<span class="short">${short}</span>` : ''}</span></button>`).join('')}</div>`;
+    return `<div class="tabs" role="tablist">${t.map(([id, ic, lb, short]) => `<button class="tab ${id === tab ? 'active' : ''}" data-tab="${id}" role="tab" aria-selected="${id === tab}" aria-label="${lb}">${KR.gi(ic)}<span class="label"><span class="full ${short ? 'has-short' : ''}">${lb}</span>${short ? `<span class="short">${short}</span>` : ''}</span></button>`).join('')}</div>`;
 }
 
 function statusTab(h) {
@@ -167,15 +167,15 @@ function echoesTab(h) {
         const unlocked = m[b * 3] && m[b * 3 + 1] && m[b * 3 + 2], spent = h.echoes.spent[b];
         html += `<div class="echo-block ${unlocked ? 'unlocked' : ''}">
             <div style="display:flex;align-items:center;justify-content:space-between;min-height:30px">
-                <span class="t-title" style="font-size:.8125rem;color:${unlocked ? 'var(--gold)' : 'var(--text-3)'}"><span class="ms" style="font-size:1rem">${unlocked ? 'star' : 'lock'}</span> ${unlocked ? 'Ação lendária · ' : 'Carta secreta '}${cat.cards[b]}</span>
+                <span class="t-title" style="font-size:.8125rem;color:${unlocked ? 'var(--gold)' : 'var(--text-3)'}">${KR.gi(unlocked ? 'lendaria' : 'secreta', 'font-size:1rem')} ${unlocked ? 'Ação lendária · ' : 'Carta secreta '}${cat.cards[b]}</span>
                 ${unlocked ? `<button class="chip ${spent ? 'off' : 'on'}" data-spent="${b}"><span class="ms outline">${spent ? 'battery_0_bar' : 'battery_full'}</span>${spent ? 'Usada' : 'Pronta'}</button>` : ''}
             </div>
             <div class="echo-cells">${[0, 1, 2].map(i => { const k = b * 3 + i; return `<div class="echo-cell ${m[k] ? 'on' : ''}" data-mem="${k}" role="checkbox" aria-checked="${m[k]}"><span class="ms outline">${m[k] ? 'check' : 'radio_button_unchecked'}</span>${cat.mem[k][0]}</div>`; }).join('')}</div>
         </div>`;
     }
     html += done === 9
-        ? `<div class="echo-block unlocked" style="text-align:center;margin-top:8px"><div class="t-title" style="color:var(--gold);font-size:.875rem"><span class="ms" style="font-size:1rem">verified</span> ${cat.final[0]}</div><p style="margin:4px 0 0">${cat.final[1]}</p></div>`
-        : `<div class="echo-block" style="text-align:center;margin-top:8px"><span class="t-label"><span class="ms" style="font-size:.9rem">lock</span> Habilidade evoluída · conclua as 9 memórias</span></div>`;
+        ? `<div class="echo-block unlocked" style="text-align:center;margin-top:8px"><div class="t-title" style="color:var(--gold);font-size:.875rem">${KR.gi('evoluida', 'font-size:1rem')} ${cat.final[0]}</div><p style="margin:4px 0 0">${cat.final[1]}</p></div>`
+        : `<div class="echo-block" style="text-align:center;margin-top:8px"><span class="t-label">${KR.gi('secreta', 'font-size:.9rem')} Habilidade evoluída · conclua as 9 memórias</span></div>`;
     return html + `<p class="t-meta" style="margin:8px 0 0;text-align:center">Toque para marcar · segure para ler a memória</p>`;
 }
 
@@ -186,9 +186,9 @@ function decksTab(h) {
         return `<div class="deck-row"><span class="letter" style="color:${color}">${letter}</span><div class="slots ${n === 5 ? 'half' : ''}">${s}</div></div>`;
     };
     const block = (type, label, color, icon) => `
-        <div class="section-head"><span class="t-title" style="color:${color}"><span class="ms outline" style="font-size:1.1rem">${icon}</span> ${label}</span><span class="t-label">${h.decks[type].length} ativas</span></div>
+        <div class="section-head"><span class="t-title" style="color:${color}">${KR.gi(icon, 'font-size:1.1rem')} ${label}</span><span class="t-label">${h.decks[type].length} ativas</span></div>
         ${row(type, 'B', 10, 'var(--gold)')}${row(type, 'E', 10, 'var(--gold)')}${env.D ? row(type, 'D', 5, 'var(--gold)') : ''}${env.F ? row(type, 'F', 5, 'var(--serie-f)') : ''}`;
-    return block('combat', 'Combate', 'var(--combat)', 'swords') + block('diplomacy', 'Diplomacia', 'var(--diplo)', 'forum');
+    return block('combat', 'Combate', 'var(--combat)', 'combate') + block('diplomacy', 'Diplomacia', 'var(--diplo)', 'diplomacia');
 }
 
 function render() {

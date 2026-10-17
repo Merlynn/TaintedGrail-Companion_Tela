@@ -12,6 +12,37 @@ const KR = (() => {
     const applyZoom = () => { document.documentElement.style.fontSize = (16 * ZOOMS[get('zoom', 2)]) + 'px'; };
     applyZoom();
 
+    // Ícones temáticos (game-icons.net, CC BY 3.0) por lugar de uso; utilitários seguem no Material.
+    // icones.html permite trocar qualquer um para teste (fica em 'iconOverrides').
+    const GAME_ICONS = {
+        cronica: 'hourglass', condicoes: 'scroll-unfurled', diario: 'quill-ink', grupo: 'kr-grupo', personagem: 'hooded-figure', salvar: 'campfire', exportar: 'paper-arrow',
+        t_status: 'heart-beats', t_attrs: 'skills', t_itens: 'knapsack', t_cartas: 'card-draw', t_ecos: 'echo-ripples',
+        combate: 'crossed-swords', diplomacia: 'shaking-hands', lendaria: 'star-swirl', secreta: 'padlock', evoluida: 'upgrade',
+        d_todos: 'book-cover', d_local: 'village', d_npc: 'conversation', d_demanda: 'scroll-quill', d_personagem: 'walking-boot', d_nova: 'quill',
+        s_herois: 'id-card', s_criaturas: 'wolf-head', s_mapa: 'treasure-map', s_caixa: 'chest', s_resumo: 'checklist', s_padrons: 'totem',
+        s_monarcas: 'crown', s_guardioes: 'dragon-head', s_claro: 'empty-hourglass', s_escuro: 'hourglass', s_universal: 'cube',
+        h_elgan: 'candle-light', h_gerdwyn: 'archery-target', h_iunis: 'gladius', h_osbert: 'duality-mask', cronista: 'spell-book', desafiador: 'skull-crossed-bones',
+        musica: 'lyre', exploracao: 'compass', taverna: 'beer-stein'
+    };
+    // Ícones próprios, montados a partir de peças do game-icons (CC BY 3.0: crédito mantido)
+    // kr-grupo: escudo com chapéu de mago vazado, espada e adaga cruzadas atrás (pointy-hat, broadsword, plain-dagger)
+    const CUSTOM_ICONS = {
+        'kr-grupo': `<defs><mask id="kr-grupo-cut"><rect width="512" height="512" fill="#fff"/><path fill="#000" d="M416.125 42.406c-57.576.457-104.863 25.804-144.813 64.875c-41.984 41.063-75 97.61-100 155.5c.78 4.503 3.06 8.946 7.094 13.658c5.158 6.024 13.183 12.113 23.188 17.593c20.01 10.962 47.79 19.545 75.5 24.47s55.505 6.21 75.156 3.438c9.825-1.386 17.538-3.91 21.813-6.563s4.916-3.957 4.812-6.625l.72-.03c-3.408-42.828-6-88.797.092-131.94c2.82-19.972 7.668-39.434 15.22-57.624c-31.573 31.44-62.918 65.425-86.844 94.72c35.418-70.2 86.2-121.398 141.125-168.97c-11.376-1.71-22.42-2.584-33.063-2.5zM155.21 238.994a407 407 0 0 0-13.334.131c-23.138.575-44.227 2.91-61.876 7.188c-23.532 5.703-40.466 14.888-48.78 26.03c-8.317 11.144-10.08 24.667-.97 45.532c32.86 75.263 117.185 130.26 207.844 148.594c90.66 18.33 186.108.147 242.28-66.75c13.59-16.185 15.297-29.312 9.938-43.22c-5.358-13.908-19.586-28.878-40.78-42.75c-14.745-9.65-32.683-18.737-52.75-27.03c1.506 22.59 3.555 44.877 5.124 65.967v.219c.607 11.402-5.49 21.585-14.344 27.938s-20.268 10.08-33.437 12.406c-26.337 4.654-60.026 3.398-93.344-2.188c-33.317-5.585-66.085-15.466-90.28-29.312c-12.097-6.923-22.145-14.85-28.875-24.47c-6.73-9.617-9.76-21.554-6.594-33.374l.095-.375l.125-.374c7.637-21.206 16.308-42.79 26.094-64.094a634 634 0 0 0-6.133-.068zm6.634 46.662A839 839 0 0 0 153.031 309c-1.595 6.246-.4 11.407 3.907 17.563c4.374 6.25 12.28 12.923 22.844 18.968c21.128 12.09 52.4 21.78 84.095 27.095c31.694 5.314 64.016 6.28 87 2.22c11.492-2.032 20.53-5.42 25.78-9.19c5.25-3.766 6.864-6.726 6.595-11.78c-.517-6.93-1.088-14.027-1.688-21.25c-7.448 4.03-16.47 6.367-26.718 7.813c-22.732 3.206-51.79 1.665-81.03-3.532c-29.242-5.196-58.5-14.055-81.22-26.5c-11.36-6.222-21.122-13.34-28.375-21.812a59 59 0 0 1-2.376-2.938z" transform="translate(128.0 117.0) scale(0.5)"/></mask></defs><g mask="url(#kr-grupo-cut)" fill="currentColor"><g transform="translate(5.1 79.1) scale(0.98)"><g transform=""><path fill="currentColor" d="m491.844 22.533l-83.42 14.865L196.572 249.25c3.262 4.815 5.37 10.72 5.37 16.932c0 5.863-1.71 11.35-4.643 15.996a53 53 0 0 0-16.027-2.477c-15.724 0-29.904 6.89-39.69 17.796l-9.112-9.113l17.237-17.237a546 546 0 0 1-13.19-17.6l-19.443 19.44l-13.215-13.215l21.828-21.827a548 548 0 0 1-12.792-20.068L72.093 258.68l58.314 58.314a53 53 0 0 0-2.49 16.063a52.9 52.9 0 0 0 4.592 21.564l-72.14 72.14l-14.56-14.56L21.013 437l14.558 14.56l-8.607 8.608l27.246 27.246l8.606-8.61l14.56 14.56l24.798-24.8l-14.557-14.556l72.158-72.16a52.9 52.9 0 0 0 21.498 4.562a53 53 0 0 0 16.063-2.49l58.363 58.363L296.5 401.48a549 549 0 0 1-20.068-12.793l-21.83 21.83L241.39 397.3l19.442-19.44a550 550 0 0 1-17.603-13.194l-17.238 17.238l-9.16-9.16c10.905-9.785 17.795-23.965 17.795-39.69c0-5.346-.806-10.51-2.285-15.39c4.703-3.04 10.288-4.817 16.265-4.816c6.21 0 11.776 1.77 16.52 4.955L476.98 105.95zm-66.227 53.012l13.215 13.215l-191.684 191.68l-13.214-13.213zM181.273 298.39c19.257 0 34.665 15.41 34.665 34.665c0 19.256-15.408 34.666-34.665 34.666s-34.666-15.41-34.666-34.665s15.41-34.666 34.666-34.666"/></g></g><g transform="translate(30.2 104.2) scale(0.882)"><g transform="rotate(180 256 256)"><path fill="currentColor" d="M43.53 15.75c-15.73 0-28.31 12.583-28.31 28.313c0 14.086 10.092 25.644 23.5 27.906L42.687 68L68.81 41.906l2.626-2.625C69.188 25.86 57.63 15.75 43.53 15.75m33.72 44.125l-17 17c15.885 39.37 43.45 66.684 78.75 87.406a513 513 0 0 1 25.438-24.936c-22.488-35.103-51.535-62.294-87.188-79.47M322.594 79.03l-51.25 4.314c-79.356 48.134-143.878 108.1-186.72 186.53l-4.31 51.47l44.155-18.656l-2.94-34.094l-.25-3.063l1.626-2.624c35.94-58.47 79.93-109.41 141.5-141.25l2.406-1.25l2.688.25l34.125 2.906l18.97-44.53zm-62.438 66.376c-10.008 5.886-19.5 12.338-28.562 19.313c46.688 47.93 87.208 108.588 114.72 166.5l11.248 23.717l-23.718-11.28c-57.995-27.554-117.918-67.57-165.688-113.907a497 497 0 0 0-20.625 29.28c101.918 94.91 227.05 177.304 347.845 234.69c-57.063-120.125-140.038-246.18-235.22-348.314zm-43.03 31.22c-13.37 11.703-25.72 24.58-37.282 38.436c39.36 38.452 88.085 72.83 136.687 98.844c-26.054-48.633-60.754-97.847-99.405-137.28"/></g></g><path d="M120 120H392V286C392 398 316 460 256 490C196 460 120 398 120 286Z"/></g>`
+    };
+    if (!document.querySelector('script[src*="iconify-icon"]')) {
+        const s = document.createElement('script');
+        s.src = 'https://cdn.jsdelivr.net/npm/iconify-icon@2.1.0/dist/iconify-icon.min.js';
+        document.head.appendChild(s);
+    }
+    const giName = slot => ({ ...GAME_ICONS, ...get('iconOverrides', {}) })[slot];
+    // class "ms" para herdar os mesmos tamanhos e cores definidos para os ícones Material
+    const gi = (slot, style = '') => {
+        const n = giName(slot), st = style ? ` style="${style}"` : '';
+        return CUSTOM_ICONS[n]
+            ? `<svg class="ms gi" viewBox="0 0 512 512" aria-hidden="true"${st}>${CUSTOM_ICONS[n]}</svg>`
+            : `<iconify-icon class="ms gi" icon="game-icons:${n}" aria-hidden="true"${st}></iconify-icon>`;
+    };
+
     const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
     const norm = s => String(s).normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase().trim();
     const h = html => { const t = document.createElement('template'); t.innerHTML = html.trim(); return t.content.firstElementChild; };
@@ -32,10 +63,10 @@ const KR = (() => {
     function nav(active) {
         const r = role();
         const items = r === 'jogador'
-            ? [['cronica', 'hourglass_bottom', 'Crônica'], ['condicoes', 'library_books', 'Condições'], ['diario', 'auto_stories', 'Diário'], ['grupo', 'person', 'Personagem'], ['exportar', 'share', 'Exportar']]
-            : [['cronica', 'hourglass_bottom', 'Crônica'], ['condicoes', 'library_books', 'Condições'], ['diario', 'auto_stories', 'Diário'], ['grupo', 'groups', 'Grupo'], ['salvar', 'book_5', 'Salvar']];
+            ? [['cronica', 'cronica', 'Crônica'], ['condicoes', 'condicoes', 'Condições'], ['diario', 'diario', 'Diário'], ['grupo', 'personagem', 'Personagem'], ['exportar', 'exportar', 'Exportar']]
+            : [['cronica', 'cronica', 'Crônica'], ['condicoes', 'condicoes', 'Condições'], ['diario', 'diario', 'Diário'], ['grupo', 'grupo', 'Grupo'], ['salvar', 'salvar', 'Salvar']];
         const el = h(`<nav class="nav"><div class="nav-inner">${items.map(([id, ic, lb]) =>
-            `<a href="${id}.html" class="${id === active ? 'active' : ''}"><span class="ms">${ic}</span><span>${lb}</span></a>`).join('')}</div></nav>`);
+            `<a href="${id}.html" class="${id === active ? 'active' : ''}">${gi(ic)}<span>${lb}</span></a>`).join('')}</div></nav>`);
         document.body.appendChild(el);
     }
 
@@ -154,21 +185,21 @@ const KR = (() => {
     const swipeRow = inner => `<div class="swipe-row"><div class="swipe-bg"><span class="ms">delete</span>Remover</div><div class="swipe-fg">${inner}</div></div>`;
 
     const PLAYLISTS = [
-        { name: 'Ecos de Ruína', icon: 'music_note', color: '#c2a675' },
-        { name: 'Sangue e Gelo', icon: 'swords', color: '#e0706a' },
-        { name: 'Névoa Espessa', icon: 'explore', color: '#8fb3c2' },
-        { name: 'Taverna do Chifre', icon: 'sports_bar', color: '#d9a14a' }
+        { name: 'Ecos de Ruína', icon: 'musica', color: '#c2a675' },
+        { name: 'Sangue e Gelo', icon: 'combate', color: '#e0706a' },
+        { name: 'Névoa Espessa', icon: 'exploracao', color: '#8fb3c2' },
+        { name: 'Taverna do Chifre', icon: 'taverna', color: '#d9a14a' }
     ];
     function initPlayer() {
         const st = { playing: get('playing', false), pl: get('playlist', 0), vol: get('volume', 80), muffled: get('muffled', false), eff: 0 };
         const el = h(`<div class="player" hidden role="dialog" aria-label="Player de áudio">
             <div style="display:flex;gap:12px;align-items:center;margin-bottom:14px">
-                <div class="player-art"><span class="ms" id="kr-art"></span></div>
+                <div class="player-art" id="kr-art"></div>
                 <div style="flex:1;min-width:0">
                     <div class="t-label" style="margin-bottom:4px">Playlist ativa</div>
                     <div style="position:relative" id="kr-plwrap">
                         <button class="pl-trigger" id="kr-pltrig"><span id="kr-plname" class="t-title" style="font-size:.875rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis"></span><span class="ms" style="color:var(--text-3)">expand_more</span></button>
-                        <div class="pl-list" id="kr-pllist" hidden>${PLAYLISTS.map((p, i) => `<button data-i="${i}"><span class="ms" style="color:${p.color}">${p.icon}</span>${p.name}</button>`).join('')}</div>
+                        <div class="pl-list" id="kr-pllist" hidden>${PLAYLISTS.map((p, i) => `<button data-i="${i}">${gi(p.icon, `color:${p.color}`)}${p.name}</button>`).join('')}</div>
                     </div>
                     <div class="t-meta" style="margin-top:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">Faixa 1 · Vento Gélido</div>
                 </div>
@@ -204,8 +235,8 @@ const KR = (() => {
         };
         const draw = () => {
             const p = PLAYLISTS[st.pl];
-            $('kr-art').textContent = p.icon; $('kr-art').style.color = p.color;
-            el.querySelector('.player-art').style.borderColor = p.color + '66';
+            $('kr-art').innerHTML = gi(p.icon, `color:${p.color}`);
+            $('kr-art').style.borderColor = p.color + '66';
             $('kr-plname').textContent = p.name;
             el.querySelectorAll('#kr-pllist button').forEach((b, i) => b.classList.toggle('sel', i === st.pl));
             $('kr-playic').textContent = st.playing ? 'pause' : 'play_arrow';
@@ -229,5 +260,5 @@ const KR = (() => {
         draw(); drawEff();
     }
 
-    return { get, set, role, esc, norm, h, header, nav, snackbar, confirmDialog, menu, sheet, pressPreview, swipe, swipeRow, applyZoom, ZOOMS };
+    return { get, set, role, esc, norm, h, gi, GAME_ICONS, header, nav, snackbar, confirmDialog, menu, sheet, pressPreview, swipe, swipeRow, applyZoom, ZOOMS };
 })();

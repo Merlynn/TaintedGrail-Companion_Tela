@@ -45,14 +45,15 @@
     <div class="save-tabs"><div class="tabs" role="tablist" id="tabs"></div></div>
     <div id="pane"></div>
 </main>
-<div class="save-bar"><button class="btn primary" id="save-btn"><span class="ms outline" style="font-size:1.2rem">book_5</span>Salvar jogo</button></div>
+<div class="save-bar"><button class="btn primary" id="save-btn"><span id="save-ic"></span>Salvar jogo</button></div>
 
 <script src="app.js"></script>
 <script>
 KR.header();
 KR.nav('salvar');
+document.getElementById('save-ic').outerHTML = KR.gi('salvar', 'font-size:1.2rem');
 const $ = id => document.getElementById(id);
-const TABS = [['herois', 'id_card', 'Heróis'], ['criaturas', 'pets', 'Criaturas'], ['mapa', 'map', 'Mapa'], ['caixa', 'inventory_2', 'Caixa'], ['resumo', 'fact_check', 'Resumo']];
+const TABS = [['herois', 's_herois', 'Heróis'], ['criaturas', 's_criaturas', 'Criaturas'], ['mapa', 's_mapa', 'Mapa'], ['caixa', 's_caixa', 'Caixa'], ['resumo', 's_resumo', 'Resumo']];
 let tab = KR.get('saveTab', 'herois');
 const S = KR.get('saveState', null) || {
     photos: { herois: [1], criaturas: [], mapa: [] },
@@ -63,8 +64,8 @@ const S = KR.get('saveState', null) || {
 const save = () => KR.set('saveState', S);
 let openLoc = null;
 const ENT = { monarcas: ['Claudyne', 'Nōnus', 'Veneda'], companheiros: ['Cabra Negra', 'Golem das Velas', 'Isolut', 'Kendrick'], guardioes: ['Aberração de Wyrd', 'Aparição Anciã', 'Banshee do Lamento', 'Besta da Névoa', 'Cão Infernal', 'Cavaleiro Sem Cabeça', 'Gigante da Geada', 'Harpia Sombria', 'Lobo Sangrento', 'Lorde Fomoriano', 'Troll das Cavernas'] };
-const TRK = { monarcas: ['Monarcas da Ruína', 'crown', 3], companheiros: ['Companheiros', 'pets', 4], guardioes: ['Guardiões', 'swords', 99] };
-const TOK = { luz: ['hourglass_top', '#d1d5db', 'Tempo claro'], trevas: ['hourglass_bottom', '#8b93a0', 'Tempo escuro'], demanda: ['receipt_long', '#c2a675', 'Demanda'], cubo: ['deployed_code', '#e0706a', 'Universal'] };
+const TRK = { monarcas: ['Monarcas da Ruína', 's_monarcas', 3], companheiros: ['Companheiros', 's_criaturas', 4], guardioes: ['Guardiões', 's_guardioes', 99] };
+const TOK = { luz: ['s_claro', '#d1d5db', 'Tempo claro'], trevas: ['s_escuro', '#5f6773', 'Tempo escuro'], demanda: ['d_demanda', '#c2a675', 'Demanda'], cubo: ['s_universal', '#e0706a', 'Universal'] };
 
 function photos(key, label, icon) {
     const list = S.photos[key];
@@ -76,11 +77,11 @@ function photos(key, label, icon) {
 const panes = {
     herois: () => `<p class="pane-intro">O app já registra estatísticas, itens e atributos da equipe. Se quiser, anexe fotos das fichas físicas ou dos baralhos.</p>${photos('herois', 'Fotos das fichas', 'add_a_photo')}`,
     criaturas: () => {
-        let h = `<div class="section-head"><span class="t-title"><span class="ms outline" style="font-size:1.1rem">cell_tower</span> Padrons</span></div>
+        let h = `<div class="section-head"><span class="t-title">${KR.gi('s_padrons', 'font-size:1.1rem')} Padrons</span></div>
         <div class="padrons">${S.padrons.map((q, i) => `<div class="padron"><span class="t-label">Padron ${['I', 'II', 'III'][i]}</span><div class="padron-grid">${q.map((v, j) => `<input inputmode="numeric" maxlength="3" data-padron="${i}:${j}" value="${KR.esc(v)}" aria-label="Padron ${i + 1} campo ${j + 1}">`).join('')}</div></div>`).join('')}</div>`;
         for (const [k, [label, icon, max]] of Object.entries(TRK)) {
             const list = S[k];
-            h += `<div class="section-head"><span class="t-title"><span class="ms outline" style="font-size:1.1rem">${icon}</span> ${label}</span>${list.length < max ? `<button class="btn small" data-add="${k}">+ Adicionar</button>` : ''}</div>`;
+            h += `<div class="section-head"><span class="t-title">${KR.gi(icon, 'font-size:1.1rem')} ${label}</span>${list.length < max ? `<button class="btn small" data-add="${k}">+ Adicionar</button>` : ''}</div>`;
             h += list.length ? list.map(e => `<div class="swipe-row" data-swipe="${k}" data-id="${e.id}"><div class="swipe-bg"><span class="ms">delete</span>Remover</div><div class="swipe-fg"><div class="tracker-row">
                 <input class="field" list="dl-${k}" data-ent="${k}:${e.id}:name" placeholder="Nome" value="${KR.esc(e.name)}">
                 <input class="field" inputmode="numeric" data-ent="${k}:${e.id}:loc" placeholder="Local" value="${KR.esc(e.loc)}" style="width:5.2rem;text-align:center">
@@ -98,10 +99,10 @@ const panes = {
                 <button class="loc-num" data-loc-open="${l.id}" aria-expanded="${open}">${KR.esc(l.num)}</button>
                 <button class="chip ${l.strange ? 'off' : ''}" data-strange="${l.id}">${l.strange ? 'Estranheza' : 'Límpido'}</button>
                 <div style="flex:1"></div>
-                ${Object.entries(TOK).map(([k, [ic, col, lb]]) => `<button class="token-btn ${l.tokens[k] ? 'on' : ''}" data-tok="${l.id}:${k}" aria-label="${lb}: ${l.tokens[k]}"><span class="ms" style="color:${col}">${ic}</span>${l.tokens[k] ? `<span class="count">${l.tokens[k]}</span>` : ''}</button>`).join('')}
+                ${Object.entries(TOK).map(([k, [ic, col, lb]]) => `<button class="token-btn ${l.tokens[k] ? 'on' : ''}" data-tok="${l.id}:${k}" aria-label="${lb}: ${l.tokens[k]}">${KR.gi(ic, `color:${col}`)}${l.tokens[k] ? `<span class="count">${l.tokens[k]}</span>` : ''}</button>`).join('')}
             </div>
             ${open ? `<div style="border-top:1px solid var(--line);margin-top:8px;padding-top:8px">
-                <div class="grid2" style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px">${Object.entries(TOK).map(([k, [ic, col, lb]]) => `<label style="display:flex;align-items:center;justify-content:space-between;gap:6px;background:#060807;border:1px solid var(--line);border-radius:3px;padding:4px 6px"><span style="display:flex;align-items:center;gap:6px;font-size:.9375rem"><span class="ms" style="color:${col};font-size:1.1rem">${ic}</span>${lb}</span><select class="field" data-tokset="${l.id}:${k}" style="width:56px;min-height:36px;padding:0 4px;text-align:center">${Array.from({ length: 8 }, (_, n) => `<option ${n === l.tokens[k] ? 'selected' : ''}>${n}</option>`).join('')}</select></label>`).join('')}</div>
+                <div class="grid2" style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px">${Object.entries(TOK).map(([k, [ic, col, lb]]) => `<label style="display:flex;align-items:center;justify-content:space-between;gap:6px;background:#060807;border:1px solid var(--line);border-radius:3px;padding:4px 6px"><span style="display:flex;align-items:center;gap:6px;font-size:.9375rem">${KR.gi(ic, `color:${col};font-size:1.1rem`)}${lb}</span><select class="field" data-tokset="${l.id}:${k}" style="width:56px;min-height:36px;padding:0 4px;text-align:center">${Array.from({ length: 8 }, (_, n) => `<option ${n === l.tokens[k] ? 'selected' : ''}>${n}</option>`).join('')}</select></label>`).join('')}</div>
                 <input class="field-line" data-note="${l.id}" placeholder="Anotações do local" value="${KR.esc(l.note)}" style="margin-top:8px">
             </div>` : ''}
             </div></div>`;
@@ -127,7 +128,7 @@ const panes = {
 };
 
 function render() {
-    $('tabs').innerHTML = TABS.map(([id, ic, lb]) => `<button class="tab ${id === tab ? 'active' : ''}" data-tab="${id}" role="tab"><span class="ms outline">${ic}</span>${lb}</button>`).join('');
+    $('tabs').innerHTML = TABS.map(([id, ic, lb]) => `<button class="tab ${id === tab ? 'active' : ''}" data-tab="${id}" role="tab">${KR.gi(ic)}${lb}</button>`).join('');
     $('pane').innerHTML = panes[tab]();
     document.querySelectorAll('[data-swipe]').forEach(r => KR.swipe(r, () => removeRow(r.dataset.swipe, r.dataset.id)));
     const f = $('loc-form');

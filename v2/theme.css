@@ -61,6 +61,9 @@ button, input, select, textarea { font: inherit; color: inherit; }
 button { cursor: pointer; background: none; border: none; padding: 0; }
 .ms { font-family: 'Material Symbols Rounded'; font-weight: normal; font-style: normal; font-size: 1.5rem; line-height: 1; display: inline-block; vertical-align: middle; font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24; user-select: none; }
 .ms.outline { font-variation-settings: 'FILL' 0, 'wght' 500, 'GRAD' 0, 'opsz' 24; }
+/* game-icons: traço cheio parece maior que o Material no mesmo tamanho; reduz um pouco sem mexer no layout */
+iconify-icon.gi, svg.gi { width: 1em; height: 1em; scale: .9; }
+svg.gi { fill: currentColor; }
 
 /* TIPOGRAFIA */
 .t-title { font-family: var(--font-title); font-weight: 700; color: var(--title); letter-spacing: .03em; line-height: 1.15; }

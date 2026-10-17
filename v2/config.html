@@ -46,7 +46,7 @@
 
     <section class="cfg proto-note" style="flex-direction:column;align-items:stretch;margin-top:20px">
         <span>Somente para o protótipo</span>
-        <div style="display:flex;gap:8px;flex-wrap:wrap"><button id="p-role"></button><button id="p-reset">Restaurar dados de exemplo</button><button onclick="location.href='icones.html'">Comparar ícones</button></div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap"><button id="p-role"></button><button id="p-reset">Restaurar dados de exemplo</button><button onclick="location.href='icones.html'">Ícones temáticos</button></div>
     </section>
 </main>
 
@@ -57,7 +57,7 @@ document.querySelector('.pill-btn.back').addEventListener('click', e => {
     if (document.referrer.includes(location.host) && history.length > 1) { e.preventDefault(); history.back(); }
 });
 const $ = id => document.getElementById(id);
-const TRACKS = [['Ecos de Ruína', 'Trilha padrão', 'music_note', '#c2a675', 38], ['Sangue e Gelo', 'Combate', 'swords', '#e0706a', 52], ['Névoa Espessa', 'Exploração e tensão', 'explore', '#8fb3c2', 45], ['Taverna do Chifre', 'Descanso e cidades', 'sports_bar', '#d9a14a', 31]];
+const TRACKS = [['Ecos de Ruína', 'Trilha padrão', 'musica', '#c2a675', 38], ['Sangue e Gelo', 'Combate', 'combate', '#e0706a', 52], ['Névoa Espessa', 'Exploração e tensão', 'exploracao', '#8fb3c2', 45], ['Taverna do Chifre', 'Descanso e cidades', 'taverna', '#d9a14a', 31]];
 const dl = KR.get('downloads', { 2: 'done' });
 const timers = {};
 
@@ -70,7 +70,7 @@ function renderTracks() {
                 ? `<button class="menu-btn" data-cancel="${i}" aria-label="Cancelar download"><span class="ms outline">close</span></button>`
                 : `<button class="menu-btn" data-dl="${i}" aria-label="Baixar"><span class="ms outline" style="color:var(--gold)">download</span></button>`;
         const meta = st === 'done' ? `No celular · ${mb} MB` : typeof st === 'number' ? `Baixando · ${st}% de ${mb} MB` : `${s} · ${mb} MB`;
-        return `<div class="track-row"><div class="track-icon" style="border-color:${col}55"><span class="ms" style="color:${col}">${ic}</span></div>
+        return `<div class="track-row"><div class="track-icon" style="border-color:${col}55">${KR.gi(ic, `color:${col}`)}</div>
             <div style="flex:1;min-width:0"><div class="t-title" style="font-size:.9375rem">${n}</div><div class="t-meta" style="font-style:normal">${meta}</div>${typeof st === 'number' ? `<div class="dl-progress"><div style="width:${st}%"></div></div>` : ''}</div>${action}</div>`;
     }).join('');
 }

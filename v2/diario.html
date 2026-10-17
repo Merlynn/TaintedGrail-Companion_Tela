@@ -46,14 +46,15 @@ textarea.field { min-height: 130px; resize: none; line-height: 1.45; }
     </div>
     <div id="feed"></div>
 </main>
-<button class="fab" id="fab" aria-label="Nova anotação"><span class="ms">history_edu</span></button>
+<button class="fab" id="fab" aria-label="Nova anotação"></button>
 
 <script src="app.js"></script>
 <script>
 KR.header();
 KR.nav('diario');
+document.getElementById('fab').innerHTML = KR.gi('d_nova');
 const $ = id => document.getElementById(id);
-const TAGS = { local: ['globe_location_pin', 'Local'], npc: ['hail', 'NPC'], demanda: ['receipt_long', 'Demanda'], personagem: ['hiking', 'Personagem'] };
+const TAGS = { local: ['d_local', 'Local'], npc: ['d_npc', 'NPC'], demanda: ['d_demanda', 'Demanda'], personagem: ['d_personagem', 'Personagem'] };
 const now = Date.now();
 const entries = KR.get('diary', null) || [
     { id: 'n1', text: 'Encontramos um item suspeito escondido. Ele sumiu ao toque. Melhor voltarmos aqui depois.', tags: ['local', 'personagem'], chapter: 1, part: '115', date: now - 172800000, updated: now - 86400000,
@@ -65,8 +66,8 @@ let filter = 'all';
 const fmt = d => new Date(d).toLocaleDateString('pt-BR', { day: '2-digit', month: 'short' }).replace('.', '');
 
 function renderRibbons() {
-    const r = [['all', 'dashboard', 'Todos'], ...Object.entries(TAGS).map(([k, [ic, lb]]) => [k, ic, lb])];
-    $('ribbons').innerHTML = r.map(([k, ic, lb]) => `<button class="ribbon r-${k} ${filter === k ? 'active' : ''}" data-filter="${k}" aria-pressed="${filter === k}"><span class="ms">${ic}</span><span>${lb}</span></button>`).join('');
+    const r = [['all', 'd_todos', 'Todos'], ...Object.entries(TAGS).map(([k, [ic, lb]]) => [k, ic, lb])];
+    $('ribbons').innerHTML = r.map(([k, ic, lb]) => `<button class="ribbon r-${k} ${filter === k ? 'active' : ''}" data-filter="${k}" aria-pressed="${filter === k}">${KR.gi(ic)}<span>${lb}</span></button>`).join('');
 }
 
 function render() {
@@ -81,7 +82,7 @@ function render() {
                 <span class="t-title" style="font-size:.8125rem;color:var(--text-2);letter-spacing:.1em;text-transform:uppercase">Parte ${KR.esc(n.part)}</span>
                 <span class="t-meta">${fmt(n.date)}</span>
                 <div style="flex:1"></div>
-                <div class="tags">${n.tags.map(t => `<span class="fitilho f-${t}" title="${TAGS[t][1]}"><span class="ms">${TAGS[t][0]}</span></span>`).join('')}</div>
+                <div class="tags">${n.tags.map(t => `<span class="fitilho f-${t}" title="${TAGS[t][1]}">${KR.gi(TAGS[t][0])}</span>`).join('')}</div>
                 <button class="menu-btn" data-menu="${n.id}" aria-label="Opções da anotação"><span class="ms">more_vert</span></button>
             </div>
             <p class="entry-text">${KR.esc(n.text)}</p>
@@ -108,7 +109,7 @@ function openForm(mode, noteId, replyId) {
             <label style="flex:1"><span class="t-label">Parte</span><input class="field" id="f-pt" value="${KR.esc(cur?.part ?? part.branch + ':' + part.n)}" style="text-align:center"></label>
         </div>
         <textarea class="field" id="f-text" placeholder="${mode === 'reply' ? 'O que descobriu depois?' : 'O que aconteceu?'}">${KR.esc(cur?.text ?? '')}</textarea>
-        ${withTags ? `<div class="t-label" style="margin:12px 0 6px">Fitilhos (opcional)</div><div class="tag-grid">${Object.entries(TAGS).map(([k, [ic, lb]]) => `<button class="tag-btn ${sel.has(k) ? 'on' : ''}" data-tag="${k}"><span class="ms outline">${ic}</span>${lb}</button>`).join('')}</div>` : ''}
+        ${withTags ? `<div class="t-label" style="margin:12px 0 6px">Fitilhos (opcional)</div><div class="tag-grid">${Object.entries(TAGS).map(([k, [ic, lb]]) => `<button class="tag-btn ${sel.has(k) ? 'on' : ''}" data-tag="${k}">${KR.gi(ic)}${lb}</button>`).join('')}</div>` : ''}
         <p id="f-err" style="color:var(--danger);font-size:.875rem;margin:8px 0 0" hidden>Escreva algo antes de salvar.</p>
         <button class="btn block" id="f-save" style="margin-top:14px"><span class="ms outline" style="font-size:1.2rem">save</span>Salvar registro</button>`);
     el.querySelector('#f-text').focus();
