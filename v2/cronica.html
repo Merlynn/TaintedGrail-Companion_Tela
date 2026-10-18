@@ -14,7 +14,7 @@
 .rule { height: 1px; width: 70%; margin: 14px auto 22px; background: linear-gradient(90deg, transparent, var(--gold), transparent); opacity: .5; }
 
 .dial { --g1: rgba(70, 225, 195, .95); --g2: rgba(35, 140, 120, .6); --halo: rgba(80, 230, 200, .95); --core: #e6fff9;
-    position: relative; width: clamp(230px, 74vw, 300px); aspect-ratio: 1; margin: 0 auto; border-radius: 50%; background: url('https://lh3.googleusercontent.com/d/1CsYPx6EHQ0guM14NKt8KxKmhIQccaAs9') center / cover; border: 2px solid #1a211e; box-shadow: 0 8px 25px rgba(0,0,0,.9), inset 0 0 40px rgba(0,0,0,.95); touch-action: none; isolation: isolate; }
+    position: relative; width: clamp(170px, min(74vw, calc(100dvh - var(--cr-rest))), 300px); aspect-ratio: 1; margin: 0 auto; border-radius: 50%; background: url('https://lh3.googleusercontent.com/d/1CsYPx6EHQ0guM14NKt8KxKmhIQccaAs9') center / cover; border: 2px solid #1a211e; box-shadow: 0 8px 25px rgba(0,0,0,.9), inset 0 0 40px rgba(0,0,0,.95); touch-action: none; isolation: isolate; }
 .dial::before { content: ""; position: absolute; inset: 0; border-radius: 50%; background: radial-gradient(circle, transparent 25%, rgba(0,0,0,.85) 100%); pointer-events: none; z-index: 1; }
 
 .spot { position: absolute; width: 22%; height: 22%; margin: -11% 0 0 -11%; border-radius: 50%; }
@@ -41,7 +41,19 @@
 
 .p1 { top: 14%; left: 50%; } .p2 { top: 20%; left: 80%; } .p3 { top: 62%; left: 85%; } .p4 { top: 77%; left: 55%; } .p5 { top: 63%; left: 20%; } .p6 { top: 20%; left: 23%; }
 .count { text-align: center; margin-top: 16px; font-family: var(--font-title); font-weight: 700; color: var(--title); font-size: 1.1rem; letter-spacing: .1em; }
-.omen { text-align: center; margin: 8px 0 0; font-style: italic; color: var(--gold-soft); font-size: 1.0625rem; line-height: 1.4; }
+.omen { text-align: center; margin: 8px 0 0; font-style: italic; color: var(--text-3); font-size: 1.0625rem; line-height: 1.4; }
+/* proporcional à tela: o relógio fica com a altura que sobra; em telas baixas os espaços também encolhem */
+:root { --cr-rest: 430px; }
+@media (max-height: 720px) {
+    :root { --cr-rest: 360px; }
+    .stepper .step-btn { width: 40px; height: 40px; }
+    .chapter { font-size: clamp(1.4rem, 6.5vw, 1.9rem); padding: 0 8px; }
+    .part { padding: 2px 8px; }
+    .rule { margin: 6px auto 10px; }
+    .cr-title { margin-bottom: 10px !important; }
+    .count { margin-top: 10px; }
+    .omen { margin-top: 4px; font-size: 1rem; }
+}
 </style>
 </head>
 <body>
@@ -57,7 +69,7 @@
         <button class="step-btn" id="pt-next" aria-label="Próxima parte" style="font-size:1.8rem">&rsaquo;</button>
     </div>
     <div class="rule"></div>
-    <div class="t-title" style="text-align:center;color:var(--gold);font-size:.95rem;letter-spacing:.15em;text-transform:uppercase;margin-bottom:18px">Passagem do tempo</div>
+    <div class="t-title cr-title" style="text-align:center;color:var(--gold);font-size:.95rem;letter-spacing:.15em;text-transform:uppercase;margin-bottom:18px">Passagem do tempo</div>
     <div class="dial" id="dial">
         <div class="center-target" id="center"><span class="ms outline">block</span><span>Solte aqui para apagar</span></div>
     </div>
