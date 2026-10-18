@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Kings of Ruin · Ícones Material</title>
+<link rel="stylesheet" href="theme.css">
+<style>
+.page { padding-bottom: 96px; }
+.slot-row { display: flex; align-items: center; gap: 12px; width: 100%; min-height: 60px; padding: 8px 4px 8px 8px; border-bottom: 1px solid var(--line); text-align: left; }
+.slot-row:active { background: var(--card-raised); }
+.slot-row .cur { width: 48px; height: 48px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; border: 1px solid var(--line-control); border-radius: var(--radius); background: #060807; color: var(--gold); }
+.slot-row .cur .ms { font-size: 1.8rem; }
+.slot-row .info { flex: 1; min-width: 0; }
+.slot-row .info .t-title { font-size: .9375rem; display: block; }
+.slot-row .changed { color: var(--gold); font-style: normal; font-weight: 600; }
+.search-row { display: flex; gap: 8px; margin-bottom: 10px; }
+.results { display: grid; grid-template-columns: repeat(auto-fill, minmax(64px, 1fr)); gap: 6px; }
+.res { aspect-ratio: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; border: 1px solid var(--line); border-radius: var(--radius); background: #060807; color: var(--text); padding: 4px; min-height: 64px; }
+.res .ms { font-size: 1.7rem; }
+.res small { font-size: .5625rem; color: var(--text-3); max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.res[aria-pressed="true"] { border-color: var(--gold); background: var(--card-selected); color: var(--gold); }
+.res:active { background: var(--card-raised); }
+.style-row { display: flex; gap: 6px; margin-bottom: 10px; }
+.bar { position: fixed; left: 0; right: 0; bottom: 0; z-index: 30; padding: 10px 12px; background: rgba(7,9,8,.97); border-top: 1px solid var(--line); display: flex; justify-content: center; }
+.bar > div { width: 100%; max-width: 30rem; display: flex; align-items: center; gap: 10px; }
+.bar .btn { flex: 1; }
+textarea.field { min-height: 200px; font-family: ui-monospace, monospace; font-size: .8125rem; resize: none; }
+.ms.outline-pv { font-variation-settings: 'FILL' 0, 'wght' 500, 'GRAD' 0, 'opsz' 24; }
+</style>
+</head>
+<body class="ms-raw">
+<main class="page no-nav">
+    <h1 class="t-title" style="text-align:center;font-size:1.1rem;letter-spacing:.15em;text-transform:uppercase;margin:6px 0 4px">Ícones Material</h1>
+    <p class="t-meta" style="text-align:center;margin:0 0 14px">Toque em um ícone para buscar outro no Material Symbols. A troca vale na hora, só naquele lugar: o mesmo ícone em outra tela ou contexto não muda junto.</p>
+    <div id="list"></div>
+    <p class="t-meta" style="text-align:center;margin:20px 0 0">Os ícones temáticos (game-icons) ficam em <a href="icones.html" style="color:var(--gold);text-decoration:underline">Ícones temáticos</a>.<br>Catálogo completo: <a href="https://fonts.google.com/icons" target="_blank" rel="noopener" style="color:var(--gold);text-decoration:underline">fonts.google.com/icons</a></p>
+</main>
+<div class="bar"><div><span class="t-label" id="count" style="white-space:nowrap"></span><button class="btn primary" id="export"><span class="ms outline ms-raw" style="font-size:1.2rem">content_copy</span>Copiar trocas</button></div></div>
+
+<script src="app.js"></script>
+<script>
+KR.header({ back: 'config.html', player: false });
+const $ = id => document.getElementById(id);
+// [contexto, ícone, descrição] por tela. O contexto é o data-ic do lugar (ou o nome da página): trocar
+// um ícone muda só aquele contexto; dentro dele, todas as repetições (ex.: cada linha de uma lista) mudam juntas.
+const SECTIONS = [
+    ['Cabeçalho (todas as telas)', [['cabecalho', 'arrow_back', 'Voltar'], ['cabecalho', 'settings', 'Configurações'], ['cabecalho', 'music_note', 'Botão Ecos (música)']]],
+    ['Player de música', [['player', 'expand_more', 'Abrir lista de playlists'], ['player', 'skip_previous', 'Faixa anterior'], ['player', 'play_arrow', 'Tocar'], ['player', 'pause', 'Pausar'], ['player', 'skip_next', 'Próxima faixa'], ['player', 'volume_down', 'Volume baixo'], ['player', 'volume_up', 'Volume alto'], ['player', 'mic', 'Atenuar para narrar']]],
+    ['Início', [['index', 'add_circle', 'Nova campanha'], ['index', 'archive', 'Continuar'], ['index', 'chevron_right', 'Setinha dos botões']]],
+    ['Nova campanha', [['nova_campanha', 'check', 'Herói marcado'], ['nova_campanha', 'qr_code_2', 'Importar ficha do jogador'], ['nova_campanha', 'qr_code_scanner', 'Leitor de QR code'], ['nova_campanha', 'close', 'Fechar importação'], ['nova_campanha', 'shield', 'Botão iniciar jornada']]],
+    ['Continuar', [['continuar', 'more_vert', 'Mais opções (⋮)'], ['continuar', 'edit', 'Menu · Renomear'], ['continuar', 'ios_share', 'Menu · Exportar'], ['continuar', 'delete', 'Menu · Apagar'], ['continuar', 'import_contacts', 'Campanha da ficha'], ['continuar', 'favorite', 'Saúde'], ['continuar', 'bolt', 'Energia'], ['continuar', 'star', 'XP'], ['continuar', 'menu_book', 'Nenhuma campanha salva'], ['continuar', 'person', 'Nenhuma ficha salva']]],
+    ['Crônica', [['cronica', 'block', 'Alvo para apagar a parte']]],
+    ['Condições', [['condicoes', 'close', 'Limpar busca'], ['condicoes', 'delete', 'Confirmar apagar número'], ['condicoes', 'auto_awesome', 'Nenhuma condição marcada']]],
+    ['Diário', [['diario', 'more_vert', 'Mais opções (⋮)'], ['diario', 'edit', 'Menu · Editar'], ['diario', 'delete', 'Menu · Apagar'], ['diario', 'subdirectory_arrow_right', 'Adicionar desdobramento'], ['diario', 'import_contacts', 'Diário vazio'], ['diario', 'close', 'Fechar formulário'], ['diario', 'save', 'Salvar registro']]],
+    ['Ficha do herói (grupo)', [['grupo', 'person', 'Jogador do herói'], ['grupo', 'location_on', 'Local do herói'], ['grupo', 'expand_more', 'Abrir / fechar ficha'],
+        ['grupo.attrs', 'expand_more', 'Atributos · escolher perícia'],
+        ['grupo.inv', 'check_circle', 'Itens · equipado'], ['grupo.inv', 'backpack', 'Itens · na mochila'], ['grupo.inv', 'battery_full', 'Itens · pronto'], ['grupo.inv', 'battery_0_bar', 'Itens · usado'], ['grupo.inv', 'delete', 'Itens · fundo ao deslizar'], ['grupo.inv', 'swipe_left', 'Itens · dica de deslizar'],
+        ['grupo.echoes', 'info', 'Ecos · ver todas as memórias'], ['grupo.echoes', 'check', 'Ecos · memória marcada'], ['grupo.echoes', 'radio_button_unchecked', 'Ecos · memória não marcada'], ['grupo.echoes', 'battery_full', 'Ecos · ação lendária pronta'], ['grupo.echoes', 'battery_0_bar', 'Ecos · ação lendária usada'],
+        ['grupo.memorias', 'check_circle', 'Lista de memórias · marcada'], ['grupo.memorias', 'radio_button_unchecked', 'Lista de memórias · não marcada'], ['grupo.memorias', 'close', 'Lista de memórias · fechar'],
+        ['grupo.envelopes', 'mail_lock', 'Envelopes · abrir'], ['grupo.envelopes', 'drafts', 'Envelopes · aberto']]],
+    ['Salvar', [['salvar.fotos', 'add_a_photo', 'Heróis · adicionar foto das fichas'], ['salvar.fotos', 'photo_camera', 'Criaturas · adicionar foto da mesa'], ['salvar.fotos', 'map', 'Mapa · adicionar foto do mapa'], ['salvar.fotos', 'image', 'Foto anexada'], ['salvar.fotos', 'delete', 'Remover foto'],
+        ['salvar.criaturas', 'delete', 'Criaturas · fundo ao deslizar'], ['salvar.criaturas', 'swipe_left', 'Criaturas · dica de deslizar'],
+        ['salvar.mapa', 'pin_drop', 'Mapa · locais revelados'], ['salvar.mapa', 'delete', 'Mapa · fundo ao deslizar'], ['salvar.mapa', 'swipe_left', 'Mapa · dica de deslizar'],
+        ['salvar.caixa', 'person', 'Caixa · cada jogador'], ['salvar.caixa', 'map', 'Caixa · compartimento grande'], ['salvar.caixa', 'style', 'Caixa · compartimento padrão'], ['salvar.caixa', 'inventory_2', 'Caixa · compartimento pequeno']]],
+    ['Configurações', [['config', 'library_music', 'Catálogo de ecos'], ['config.ecos', 'download', 'Catálogo · baixar trilha'], ['config.ecos', 'close', 'Catálogo · cancelar download'], ['config.ecos', 'delete', 'Catálogo · remover trilha'],
+        ['config', 'format_size', 'Tamanho do texto'], ['config', 'translate', 'Idioma'], ['config', 'expand_more', 'Abrir lista de idiomas'], ['config', 'database', 'Seus dados'], ['config', 'download', 'Exportar cópia'], ['config', 'restore', 'Restaurar cópia']]],
+    ['Exportar (modo jogador)', [['exportar', 'qr_code_2', 'Tela ainda não desenhada']]]
+];
+const overrides = KR.get('msOverrides', {});
+const key = (ctx, n) => `${ctx}:${n}`, base = k => k.slice(k.indexOf(':') + 1);
+// trocas antigas (só pelo nome, valiam para todas as telas) viram uma troca por contexto
+for (const k of Object.keys(overrides)) if (!k.includes(':')) {
+    SECTIONS.forEach(([, rows]) => rows.forEach(([ctx, n]) => { if (n === k) overrides[key(ctx, n)] ??= overrides[k]; }));
+    delete overrides[k];
+}
+KR.set('msOverrides', overrides);
+const current = k => overrides[k] || base(k);
+// ms-raw: impede que app.js troque o ícone exibido aqui (esta página mostra nomes literais)
+const icon = (n, cls = '', style = '') => `<span class="ms ms-raw ${cls}"${style ? ` style="${style}"` : ''}>${n}</span>`;
+
+function render() {
+    $('list').innerHTML = SECTIONS.map(([sec, rows]) => `<div class="section-head" style="margin-top:20px"><span class="t-title">${sec}</span></div>` + rows.map(([ctx, n, lb]) => { const k = key(ctx, n); return `
+        <button class="slot-row" data-key="${k}" data-label="${KR.esc(lb)}">
+            <span class="cur">${icon(current(k))}</span>
+            <span class="info"><span class="t-title">${lb}</span><span class="t-meta">${current(k)}${overrides[k] ? ` <span class="changed">· trocado (padrão: ${n})</span>` : ''}</span></span>
+            ${icon('chevron_right', '', 'color:var(--text-3)')}
+        </button>`; }).join('')).join('');
+    $('count').textContent = `${Object.keys(overrides).length} troca(s)`;
+}
+
+// Iconify lista o Material Symbols com sufixos de estilo (-rounded, -outline...); o nome da fonte usa "_"
+const toFontName = n => n.replace('material-symbols:', '').replace(/-(outline-rounded|outline-sharp|rounded|sharp|outline)$/, '').replace(/-/g, '_');
+
+function openPicker(k, label) {
+    const name = base(k);
+    let outline = false;
+    const { el, close } = KR.sheet(`
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px"><div class="t-title" style="color:var(--gold)">${KR.esc(label)}</div><button class="icon-btn" data-close aria-label="Fechar">${icon('close')}</button></div>
+        <form class="search-row" id="pk-form"><input class="field" id="pk-q" placeholder="Buscar em inglês (arrow, gear…)" autocomplete="off" value="${KR.esc(current(k).replace(/_/g, ' '))}"><button class="btn" type="submit" aria-label="Buscar">${icon('search')}</button></form>
+        <div class="style-row"><button class="chip on" data-st="fill">Cheio</button><button class="chip" data-st="outline">Contorno</button><span class="t-meta" style="align-self:center;font-size:.75rem">só a prévia; o estilo de cada tela não muda</span></div>
+        <div class="t-meta" id="pk-msg" style="margin-bottom:8px"></div>
+        <div class="results" id="pk-res"></div>
+        ${overrides[k] ? `<button class="btn block" id="pk-reset" style="margin-top:12px">${icon('restart_alt', 'outline', 'font-size:1.2rem')}Voltar ao padrão (${name})</button>` : ''}`);
+    const q = el.querySelector('#pk-q'), res = el.querySelector('#pk-res'), msg = el.querySelector('#pk-msg');
+    let names = [];
+    const draw = () => { res.innerHTML = names.map(n => `<button class="res" data-pick="${n}" aria-pressed="${n === current(k)}" aria-label="${n}">${icon(n, outline ? 'outline-pv' : '')}<small>${n}</small></button>`).join(''); };
+    const search = async () => {
+        const term = q.value.trim(); if (!term) return;
+        msg.textContent = 'Buscando…'; res.innerHTML = '';
+        try {
+            const r = await fetch(`https://api.iconify.design/search?query=${encodeURIComponent(term)}&prefix=material-symbols&limit=300`);
+            names = [...new Set(((await r.json()).icons || []).map(toFontName))];
+            msg.textContent = names.length ? `${names.length} resultado(s) para "${term}"` : `Nada para "${term}". Tente outra palavra em inglês.`;
+            draw();
+        } catch { msg.textContent = 'Sem conexão com o catálogo de ícones.'; }
+    };
+    el.querySelector('#pk-form').onsubmit = e => { e.preventDefault(); search(); };
+    el.querySelector('.style-row').onclick = e => {
+        const b = e.target.closest('[data-st]'); if (!b) return;
+        outline = b.dataset.st === 'outline';
+        el.querySelectorAll('[data-st]').forEach(x => x.classList.toggle('on', x === b)); draw();
+    };
+    res.onclick = e => {
+        const b = e.target.closest('[data-pick]'); if (!b) return;
+        const n = b.dataset.pick;
+        if (n === name) delete overrides[k]; else overrides[k] = n;
+        KR.set('msOverrides', overrides); render(); close();
+        KR.snackbar(`${label}: ${n}`);
+    };
+    el.querySelector('#pk-reset')?.addEventListener('click', () => { delete overrides[k]; KR.set('msOverrides', overrides); render(); close(); });
+    search();
+}
+
+$('list').addEventListener('click', e => {
+    const b = e.target.closest('[data-key]'); if (!b) return;
+    openPicker(b.dataset.key, b.dataset.label);
+});
+
+$('export').onclick = async () => {
+    const text = Object.keys(overrides).length
+        ? Object.entries(overrides).map(([n, to]) => `${n} -> ${to}`).join('\n')
+        : 'Nenhuma troca: manter todos os ícones Material padrão.';
+    try { await navigator.clipboard.writeText(text); KR.snackbar('Trocas copiadas · cole na conversa'); return; } catch {}
+    // http na rede local não tem acesso à área de transferência: mostra o texto para copiar à mão
+    const { el } = KR.sheet(`<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px"><div class="t-title" style="color:var(--gold)">Suas trocas</div><button class="icon-btn" data-close aria-label="Fechar">${icon('close')}</button></div>
+        <p class="t-meta" style="margin:0 0 8px">Segure no texto, selecione tudo e copie.</p>
+        <textarea class="field" readonly>${KR.esc(text)}</textarea>`);
+    const ta = el.querySelector('textarea'); ta.focus(); ta.select();
+};
+
+render();
+</script>
+</body>
+</html>

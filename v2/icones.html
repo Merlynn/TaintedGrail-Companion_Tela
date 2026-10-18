@@ -27,10 +27,10 @@
 textarea.field { min-height: 200px; font-family: ui-monospace, monospace; font-size: .8125rem; resize: none; }
 </style>
 </head>
-<body>
+<body class="ms-raw">
 <main class="page no-nav">
     <h1 class="t-title" style="text-align:center;font-size:1.1rem;letter-spacing:.15em;text-transform:uppercase;margin:6px 0 4px">Ícones temáticos</h1>
-    <p class="t-meta" style="text-align:center;margin:0 0 14px">Toque em um ícone para buscar outro no game-icons. A troca vale na hora em todas as telas deste navegador.</p>
+    <p class="t-meta" style="text-align:center;margin:0 0 14px">Toque em um ícone para buscar outro no game-icons. A troca vale na hora, só no lugar escolhido (o mesmo desenho em outra tela não muda junto).</p>
     <div id="list"></div>
     <p class="t-meta" style="text-align:center;margin:20px 0 0">Ícones utilitários (voltar, fechar, ⋮, engrenagem…) seguem no Material.<br>Catálogo completo: <a href="https://game-icons.net" target="_blank" rel="noopener" style="color:var(--gold);text-decoration:underline">game-icons.net</a> · CC BY 3.0</p>
 </main>
@@ -40,14 +40,16 @@ textarea.field { min-height: 200px; font-family: ui-monospace, monospace; font-s
 <script>
 KR.header({ back: 'config.html', player: false });
 const $ = id => document.getElementById(id);
+// por tela: cada linha é um lugar independente; repetir o desenho em outra tela não liga as trocas
 const SECTIONS = [
     ['Menu inferior', [['cronica', 'Crônica'], ['condicoes', 'Condições'], ['diario', 'Diário'], ['grupo', 'Grupo'], ['personagem', 'Personagem (modo jogador)'], ['salvar', 'Salvar'], ['exportar', 'Exportar (modo jogador)']]],
-    ['Abas da ficha', [['t_status', 'Status'], ['t_attrs', 'Atributos'], ['t_itens', 'Itens'], ['t_cartas', 'Cartas'], ['t_ecos', 'Ecos']]],
-    ['Ficha do herói', [['combate', 'Combate (e papel Jogador, playlist de combate)'], ['diplomacia', 'Diplomacia'], ['lendaria', 'Ação lendária'], ['secreta', 'Carta secreta bloqueada'], ['evoluida', 'Habilidade evoluída']]],
-    ['Diário', [['d_todos', 'Fitilho Todos'], ['d_local', 'Fitilho Local'], ['d_npc', 'Fitilho NPC'], ['d_demanda', 'Fitilho Demanda (e token de demanda)'], ['d_personagem', 'Fitilho Personagem'], ['d_nova', 'Botão nova anotação']]],
-    ['Salvar', [['s_herois', 'Heróis (e aba Fichas)'], ['s_criaturas', 'Criaturas e companheiros'], ['s_mapa', 'Mapa'], ['s_caixa', 'Caixa'], ['s_resumo', 'Resumo'], ['s_padrons', 'Padrons'], ['s_monarcas', 'Monarcas'], ['s_guardioes', 'Guardiões'], ['s_claro', 'Tempo claro'], ['s_escuro', 'Tempo escuro'], ['s_universal', 'Cubo universal']]],
-    ['Heróis e campanha', [['h_elgan', 'Elgan · o Candelário'], ['h_gerdwyn', 'Gerdwyn · a Mercenária'], ['h_iunis', 'Iunis · a Gladiatrix'], ['h_osbert', 'Osbert · o Bufão'], ['cronista', 'Cronista, Narrativo, Campanhas'], ['desafiador', 'Desafiador']]],
-    ['Player', [['musica', 'Playlist Ecos de Ruína'], ['exploracao', 'Playlist exploração'], ['taverna', 'Playlist taverna']]]
+    ['Nova campanha', [['n_solo', 'Modo solo'], ['n_multi', 'Multiplayer'], ['n_cronista', 'Papel Cronista'], ['n_jogador', 'Papel Jogador'], ['h_elgan', 'Elgan · o Candelário'], ['h_gerdwyn', 'Gerdwyn · a Mercenária'], ['h_iunis', 'Iunis · a Gladiatrix'], ['h_osbert', 'Osbert · o Bufão'], ['n_narrativo', 'Aba Narrativo (modificadores)'], ['n_desafiador', 'Aba Desafiador (modificadores)']]],
+    ['Continuar', [['c_campanhas', 'Aba Campanhas'], ['c_fichas', 'Aba Fichas'], ['c_elgan', 'Ficha salva · Elgan'], ['c_gerdwyn', 'Ficha salva · Gerdwyn'], ['c_iunis', 'Ficha salva · Iunis'], ['c_osbert', 'Ficha salva · Osbert']]],
+    ['Ficha do herói (grupo)', [['t_status', 'Aba Status'], ['t_attrs', 'Aba Atributos'], ['t_itens', 'Aba Itens'], ['t_cartas', 'Aba Cartas'], ['t_ecos', 'Aba Ecos'], ['combate', 'Cartas · Combate'], ['diplomacia', 'Cartas · Diplomacia'], ['lendaria', 'Ecos · Ação lendária'], ['secreta', 'Ecos · Carta secreta bloqueada'], ['evoluida', 'Ecos · Habilidade evoluída'], ['bloqueada', 'Ecos · Habilidade evoluída bloqueada']]],
+    ['Diário', [['d_todos', 'Fitilho Todos'], ['d_local', 'Fitilho Local'], ['d_npc', 'Fitilho NPC'], ['d_demanda', 'Fitilho Demanda'], ['d_personagem', 'Fitilho Personagem'], ['d_nova', 'Botão nova anotação']]],
+    ['Salvar', [['s_herois', 'Aba Heróis'], ['s_criaturas', 'Aba Criaturas'], ['s_mapa', 'Aba Mapa'], ['s_caixa', 'Aba Caixa'], ['s_resumo', 'Aba Resumo'], ['s_padrons', 'Padrons'], ['s_monarcas', 'Monarcas'], ['s_companheiros', 'Companheiros'], ['s_guardioes', 'Guardiões'], ['s_claro', 'Token tempo claro'], ['s_escuro', 'Token tempo escuro'], ['s_demanda', 'Token demanda'], ['s_universal', 'Cubo universal'], ['s_botao', 'Botão Salvar jogo']]],
+    ['Player de música', [['pl_musica', 'Ecos de Ruína'], ['pl_combate', 'Sangue e Gelo (combate)'], ['pl_exploracao', 'Névoa Espessa (exploração)'], ['pl_taverna', 'Taverna do Chifre']]],
+    ['Configurações · catálogo de ecos', [['cf_musica', 'Ecos de Ruína'], ['cf_combate', 'Sangue e Gelo (combate)'], ['cf_exploracao', 'Névoa Espessa (exploração)'], ['cf_taverna', 'Taverna do Chifre']]]
 ];
 const overrides = KR.get('iconOverrides', {});
 const current = slot => overrides[slot] || KR.GAME_ICONS[slot];

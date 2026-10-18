@@ -23,7 +23,7 @@
     <section class="card cfg">
         <div class="section-head"><span class="t-title"><span class="ms outline" style="font-size:1.1rem">library_music</span> Catálogo de ecos</span></div>
         <p style="color:var(--text-2);margin:0 0 10px">Baixe as trilhas para tocar sem internet durante a sessão.</p>
-        <div id="tracks"></div>
+        <div id="tracks" data-ic="config.ecos"></div>
     </section>
 
     <section class="card cfg">
@@ -46,7 +46,7 @@
 
     <section class="cfg proto-note" style="flex-direction:column;align-items:stretch;margin-top:20px">
         <span>Somente para o protótipo</span>
-        <div style="display:flex;gap:8px;flex-wrap:wrap"><button id="p-role"></button><button id="p-reset">Restaurar dados de exemplo</button><button onclick="location.href='icones.html'">Ícones temáticos</button></div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap"><button id="p-role"></button><button id="p-reset">Restaurar dados de exemplo</button><button onclick="location.href='icones.html'">Ícones temáticos</button><button onclick="location.href='material.html'">Ícones Material</button></div>
     </section>
 </main>
 
@@ -57,7 +57,7 @@ document.querySelector('.pill-btn.back').addEventListener('click', e => {
     if (document.referrer.includes(location.host) && history.length > 1) { e.preventDefault(); history.back(); }
 });
 const $ = id => document.getElementById(id);
-const TRACKS = [['Ecos de Ruína', 'Trilha padrão', 'musica', '#c2a675', 38], ['Sangue e Gelo', 'Combate', 'combate', '#e0706a', 52], ['Névoa Espessa', 'Exploração e tensão', 'exploracao', '#8fb3c2', 45], ['Taverna do Chifre', 'Descanso e cidades', 'taverna', '#d9a14a', 31]];
+const TRACKS = [['Ecos de Ruína', 'Trilha padrão', 'cf_musica', '#c2a675', 38], ['Sangue e Gelo', 'Combate', 'cf_combate', '#e0706a', 52], ['Névoa Espessa', 'Exploração e tensão', 'cf_exploracao', '#8fb3c2', 45], ['Taverna do Chifre', 'Descanso e cidades', 'cf_taverna', '#d9a14a', 31]];
 const dl = KR.get('downloads', { 2: 'done' });
 const timers = {};
 

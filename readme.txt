@@ -53,3 +53,10 @@ Cabra Negra
 Isolut
 Golem das Velas
 veneta
+
+knight-banner
+rally-the-troops
+battle-gear
+round-table
+tattered-banner
+vertical-banner

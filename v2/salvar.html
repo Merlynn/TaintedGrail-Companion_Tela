@@ -51,7 +51,7 @@
 <script>
 KR.header();
 KR.nav('salvar');
-document.getElementById('save-ic').outerHTML = KR.gi('salvar', 'font-size:1.2rem');
+document.getElementById('save-ic').outerHTML = KR.gi('s_botao', 'font-size:1.2rem');
 const $ = id => document.getElementById(id);
 const TABS = [['herois', 's_herois', 'Heróis'], ['criaturas', 's_criaturas', 'Criaturas'], ['mapa', 's_mapa', 'Mapa'], ['caixa', 's_caixa', 'Caixa'], ['resumo', 's_resumo', 'Resumo']];
 let tab = KR.get('saveTab', 'herois');
@@ -64,13 +64,13 @@ const S = KR.get('saveState', null) || {
 const save = () => KR.set('saveState', S);
 let openLoc = null;
 const ENT = { monarcas: ['Claudyne', 'Nōnus', 'Veneda'], companheiros: ['Cabra Negra', 'Golem das Velas', 'Isolut', 'Kendrick'], guardioes: ['Aberração de Wyrd', 'Aparição Anciã', 'Banshee do Lamento', 'Besta da Névoa', 'Cão Infernal', 'Cavaleiro Sem Cabeça', 'Gigante da Geada', 'Harpia Sombria', 'Lobo Sangrento', 'Lorde Fomoriano', 'Troll das Cavernas'] };
-const TRK = { monarcas: ['Monarcas da Ruína', 's_monarcas', 3], companheiros: ['Companheiros', 's_criaturas', 4], guardioes: ['Guardiões', 's_guardioes', 99] };
-const TOK = { luz: ['s_claro', '#d1d5db', 'Tempo claro'], trevas: ['s_escuro', '#5f6773', 'Tempo escuro'], demanda: ['d_demanda', '#c2a675', 'Demanda'], cubo: ['s_universal', '#e0706a', 'Universal'] };
+const TRK = { monarcas: ['Monarcas da Ruína', 's_monarcas', 3], companheiros: ['Companheiros', 's_companheiros', 4], guardioes: ['Guardiões', 's_guardioes', 99] };
+const TOK = { luz: ['s_claro', '#d1d5db', 'Tempo claro'], trevas: ['s_escuro', '#5f6773', 'Tempo escuro'], demanda: ['s_demanda', '#c2a675', 'Demanda'], cubo: ['s_universal', '#e0706a', 'Universal'] };
 
 function photos(key, label, icon) {
     const list = S.photos[key];
     return `<div class="section-head"><span class="t-title">${label}</span><span class="t-label">Opcional</span></div>
-    <div class="photos"><button class="photo-add" data-photo-add="${key}"><span class="ms outline">${icon}</span><span class="t-label">Foto</span></button>
+    <div class="photos" data-ic="salvar.fotos"><button class="photo-add" data-photo-add="${key}"><span class="ms outline">${icon}</span><span class="t-label">Foto</span></button>
     ${list.map((p, i) => `<div class="photo"><span class="ms outline">image</span><button class="del" data-photo-del="${key}:${i}" aria-label="Remover foto"><span class="ms">delete</span></button></div>`).join('')}</div>`;
 }
 
@@ -129,6 +129,7 @@ const panes = {
 
 function render() {
     $('tabs').innerHTML = TABS.map(([id, ic, lb]) => `<button class="tab ${id === tab ? 'active' : ''}" data-tab="${id}" role="tab">${KR.gi(ic)}${lb}</button>`).join('');
+    $('pane').dataset.ic = 'salvar.' + tab;
     $('pane').innerHTML = panes[tab]();
     document.querySelectorAll('[data-swipe]').forEach(r => KR.swipe(r, () => removeRow(r.dataset.swipe, r.dataset.id)));
     const f = $('loc-form');

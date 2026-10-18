@@ -66,7 +66,7 @@
         <span class="badge" id="role-badge" style="white-space:nowrap"></span>
     </div>
     <div id="heroes"></div>
-    <div id="envelopes" style="margin-top:24px"></div>
+    <div id="envelopes" data-ic="grupo.envelopes" style="margin-top:24px"></div>
 </main>
 
 <script src="app.js"></script>
@@ -175,7 +175,7 @@ function echoesTab(h) {
     }
     html += done === 9
         ? `<div class="echo-block unlocked" style="text-align:center;margin-top:8px"><div class="t-title" style="color:var(--gold);font-size:.875rem">${KR.gi('evoluida', 'font-size:1rem')} ${cat.final[0]}</div><p style="margin:4px 0 0">${cat.final[1]}</p></div>`
-        : `<div class="echo-block" style="text-align:center;margin-top:8px"><span class="t-label">${KR.gi('secreta', 'font-size:.9rem')} Habilidade evoluída · conclua as 9 memórias</span></div>`;
+        : `<div class="echo-block" style="text-align:center;margin-top:8px"><span class="t-label">${KR.gi('bloqueada', 'font-size:.9rem')} Habilidade evoluída · conclua as 9 memórias</span></div>`;
     return html + `<p class="t-meta" style="margin:8px 0 0;text-align:center">Toque para marcar · segure para ler a memória</p>`;
 }
 
@@ -211,7 +211,7 @@ function render() {
                 </div>
                 <span class="ms" style="color:${open ? 'var(--gold)' : 'var(--text-3)'};transform:rotate(${open ? 180 : 0}deg);transition:transform .2s">expand_more</span>
             </div>
-            ${open ? `<div class="hero-body">${tabs()}${body}</div>` : ''}
+            ${open ? `<div class="hero-body" data-ic="grupo.${tab}">${tabs()}${body}</div>` : ''}
         </section>`;
     }).join('');
     document.querySelectorAll('[data-swipe]').forEach(r => KR.swipe(r, () => removeRow(r.dataset.swipe, r.dataset.id)));
@@ -313,14 +313,14 @@ function openMemoryDetail(h, k) {
             <span class="ms outline" style="font-size:1.1rem;color:${marked ? 'var(--gold)' : 'var(--text-3)'}">${marked ? 'check_circle' : 'radio_button_unchecked'}</span>
             <span class="t-label">${KR.esc(type)}</span>
         </div>
-        <p style="margin:0">${KR.esc(desc)}</p>`);
+        <p style="margin:0">${KR.esc(desc)}</p>`, 'grupo.memorias');
 }
 
 function openMemories(h, focus) {
     const cat = ECHOES[h.id];
     const { el } = KR.sheet(`<div style="display:flex;align-items:center;justify-content:space-between"><div class="t-title" style="color:var(--gold)">Memórias de ${h.name}</div><button class="icon-btn" data-close aria-label="Fechar"><span class="ms">close</span></button></div>
         ${cat.mem.map(([type, desc], i) => `<div class="mem ${i === focus ? 'hl' : ''}" id="mem-${i}"><div style="display:flex;align-items:center;gap:6px"><span class="ms outline" style="font-size:1rem;color:${h.echoes.marks[i] ? 'var(--gold)' : 'var(--text-3)'}">${h.echoes.marks[i] ? 'check_circle' : 'radio_button_unchecked'}</span><span class="t-label">Memória ${i + 1} · ${type}</span></div><p style="margin:4px 0 0">${desc}</p></div>`).join('')}
-        <div class="mem"><span class="t-label" style="color:var(--gold)">Habilidade evoluída · ${cat.final[0]}</span><p style="margin:4px 0 0">${cat.final[1]}</p></div>`);
+        <div class="mem"><span class="t-label" style="color:var(--gold)">Habilidade evoluída · ${cat.final[0]}</span><p style="margin:4px 0 0">${cat.final[1]}</p></div>`, 'grupo.memorias');
     if (focus >= 0) setTimeout(() => el.querySelector('#mem-' + focus)?.scrollIntoView({ block: 'center' }), 50);
 }
 

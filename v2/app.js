@@ -13,16 +13,29 @@ const KR = (() => {
     applyZoom();
 
     // Ícones temáticos (game-icons.net, CC BY 3.0) por lugar de uso; utilitários seguem no Material.
+    // Cada tela/contexto tem o seu slot, mesmo quando o desenho se repete, para trocar um sem mexer nos outros.
     // icones.html permite trocar qualquer um para teste (fica em 'iconOverrides').
     const GAME_ICONS = {
-        cronica: 'hourglass', condicoes: 'scroll-unfurled', diario: 'quill-ink', grupo: 'kr-grupo', personagem: 'hooded-figure', salvar: 'campfire', exportar: 'paper-arrow',
-        t_status: 'heart-beats', t_attrs: 'skills', t_itens: 'knapsack', t_cartas: 'card-draw', t_ecos: 'echo-ripples',
-        combate: 'crossed-swords', diplomacia: 'shaking-hands', lendaria: 'star-swirl', secreta: 'padlock', evoluida: 'upgrade',
-        d_todos: 'book-cover', d_local: 'village', d_npc: 'conversation', d_demanda: 'scroll-quill', d_personagem: 'walking-boot', d_nova: 'quill',
-        s_herois: 'id-card', s_criaturas: 'wolf-head', s_mapa: 'treasure-map', s_caixa: 'chest', s_resumo: 'checklist', s_padrons: 'totem',
-        s_monarcas: 'crown', s_guardioes: 'dragon-head', s_claro: 'empty-hourglass', s_escuro: 'hourglass', s_universal: 'cube',
-        h_elgan: 'candle-light', h_gerdwyn: 'archery-target', h_iunis: 'gladius', h_osbert: 'duality-mask', cronista: 'spell-book', desafiador: 'skull-crossed-bones',
-        musica: 'lyre', exploracao: 'compass', taverna: 'beer-stein'
+        // menu inferior
+        cronica: 'hourglass', condicoes: 'scroll-unfurled', diario: 'bookmarklet', grupo: 'uprising', personagem: 'spartan', salvar: 'camping-tent', exportar: 'thrown-spear',
+        // nova campanha
+        n_solo: 'spartan', n_multi: 'uprising', n_cronista: 'rule-book', n_jogador: 'crossed-swords', n_narrativo: 'rule-book', n_desafiador: 'skull-crossed-bones',
+        h_elgan: 'candle-holder', h_gerdwyn: 'crossbow', h_iunis: 'crossed-swords', h_osbert: 'duality-mask',
+        // continuar
+        c_campanhas: 'rule-book', c_fichas: 'id-card', c_elgan: 'candle-holder', c_gerdwyn: 'crossbow', c_iunis: 'crossed-swords', c_osbert: 'duality-mask',
+        // ficha do herói (grupo)
+        t_status: 'healing-shield', t_attrs: 'skills', t_itens: 'backpack', t_cartas: 'card-play', t_ecos: 'shield-echoes',
+        combate: 'crossed-swords', diplomacia: 'shaking-hands', lendaria: 'star-swirl', secreta: 'padlock', bloqueada: 'padlock', evoluida: 'muscle-up',
+        // diário
+        d_todos: 'book-cover', d_local: 'village', d_npc: 'robe', d_demanda: 'stabbed-note', d_personagem: 'swordman', d_nova: 'quill-ink',
+        // salvar
+        s_botao: 'camping-tent', s_herois: 'id-card', s_criaturas: 'paw-print', s_mapa: 'treasure-map', s_caixa: 'chest', s_resumo: 'checklist',
+        s_padrons: 'deer-head', s_monarcas: 'queen-crown', s_companheiros: 'paw-print', s_guardioes: 'swords-emblem',
+        s_claro: 'hourglass', s_escuro: 'hourglass', s_demanda: 'stabbed-note', s_universal: 'cube',
+        // player de música
+        pl_musica: 'lyre', pl_combate: 'crossed-swords', pl_exploracao: 'compass', pl_taverna: 'beer-stein',
+        // configurações (catálogo de ecos)
+        cf_musica: 'lyre', cf_combate: 'crossed-swords', cf_exploracao: 'compass', cf_taverna: 'beer-stein'
     };
     // Ícones próprios, montados a partir de peças do game-icons (CC BY 3.0: crédito mantido)
     // kr-grupo: escudo com chapéu de mago vazado, espada e adaga cruzadas atrás (pointy-hat, broadsword, plain-dagger)
@@ -34,6 +47,16 @@ const KR = (() => {
         s.src = 'https://cdn.jsdelivr.net/npm/iconify-icon@2.1.0/dist/iconify-icon.min.js';
         document.head.appendChild(s);
     }
+    // Migração única: trocas feitas quando um slot servia a vários lugares passam para os slots novos
+    const GI_SPLIT = { personagem: ['n_solo'], grupo: ['n_multi'], salvar: ['s_botao'], cronista: ['n_cronista', 'n_narrativo', 'c_campanhas'], desafiador: ['n_desafiador'],
+        combate: ['n_jogador', 'pl_combate', 'cf_combate'], s_herois: ['c_fichas'], s_criaturas: ['s_companheiros'], d_demanda: ['s_demanda'], secreta: ['bloqueada'],
+        h_elgan: ['c_elgan'], h_gerdwyn: ['c_gerdwyn'], h_iunis: ['c_iunis'], h_osbert: ['c_osbert'],
+        musica: ['pl_musica', 'cf_musica'], exploracao: ['pl_exploracao', 'cf_exploracao'], taverna: ['pl_taverna', 'cf_taverna'] };
+    if (!get('iconSplit', false)) {
+        const ov = get('iconOverrides', {});
+        for (const [o, ns] of Object.entries(GI_SPLIT)) if (ov[o]) { ns.forEach(n => { ov[n] ??= ov[o]; }); if (!GAME_ICONS[o]) delete ov[o]; }
+        set('iconOverrides', ov); set('iconSplit', true);
+    }
     const giName = slot => ({ ...GAME_ICONS, ...get('iconOverrides', {}) })[slot];
     // class "ms" para herdar os mesmos tamanhos e cores definidos para os ícones Material
     const gi = (slot, style = '') => {
@@ -43,12 +66,35 @@ const KR = (() => {
             : `<iconify-icon class="ms gi" icon="game-icons:${n}" aria-hidden="true"${st}></iconify-icon>`;
     };
 
+    // Trocas de ícones Material para teste (material.html grava em 'msOverrides'): o Material desenha
+    // pelo nome escrito no elemento, então basta trocar o texto. A chave é "contexto:nome"; o contexto vem do
+    // data-ic mais próximo (cabeçalho, player, aba...) ou, sem ele, do nome da página. Elementos .ms-raw ficam de fora.
+    const PAGE = location.pathname.split('/').pop().replace(/\.html$/, '') || 'index';
+    const msCtx = el => el.closest('[data-ic]')?.dataset.ic ?? PAGE;
+    const msOverrides = get('msOverrides', {});
+    const msSwap = root => {
+        if (!Object.keys(msOverrides).length) return;
+        (root.matches?.('.ms') ? [root] : []).concat([...(root.querySelectorAll?.('.ms') ?? [])]).forEach(el => {
+            if (el.classList.contains('gi') || el.classList.contains('ms-raw') || el.closest('.ms-raw')) return;
+            const t = el.textContent.trim(), to = msOverrides[msCtx(el) + ':' + t];
+            if (to && el.dataset.msTo !== t) { el.dataset.msTo = to; el.textContent = to; }
+        });
+    };
+    const msWatch = () => {
+        msSwap(document.body);
+        new MutationObserver(ms => ms.forEach(m => {
+            if (m.type === 'characterData') msSwap(m.target.parentElement ?? document.body);
+            else m.addedNodes.forEach(n => n.nodeType === 1 ? msSwap(n) : n.parentElement && msSwap(n.parentElement));
+        })).observe(document.body, { childList: true, subtree: true, characterData: true });
+    };
+    if (document.body) msWatch(); else document.addEventListener('DOMContentLoaded', msWatch);
+
     const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
     const norm = s => String(s).normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase().trim();
     const h = html => { const t = document.createElement('template'); t.innerHTML = html.trim(); return t.content.firstElementChild; };
 
     function header({ back = null, player = true, settings = true } = {}) {
-        const el = h(`<header class="header">
+        const el = h(`<header class="header" data-ic="cabecalho">
             <img class="header-logo" src="${LOGO}" alt="Kings of Ruin">
             <div class="header-actions">
                 ${player ? `<button class="pill-btn" id="kr-ecos" aria-label="Controle de áudio"><span class="dot"><span class="ms">music_note</span></span>Ecos</button>` : ''}
@@ -112,8 +158,8 @@ const KR = (() => {
         el.addEventListener('click', e => { const b = e.target.closest('[data-i]'); if (b) { close(); items[+b.dataset.i].action(); } });
     }
 
-    function sheet(inner) {
-        const el = h(`<div class="sheet-scrim"><div class="sheet" role="dialog" aria-modal="true"><div class="sheet-grip"></div>${inner}</div></div>`);
+    function sheet(inner, ctx) {
+        const el = h(`<div class="sheet-scrim"${ctx ? ` data-ic="${ctx}"` : ''}><div class="sheet" role="dialog" aria-modal="true"><div class="sheet-grip"></div>${inner}</div></div>`);
         const close = () => { el.remove(); document.removeEventListener('keydown', onKey); };
         const onKey = e => { if (e.key === 'Escape') close(); };
         el.addEventListener('click', e => { if (e.target === el || e.target.closest('[data-close]')) close(); });
@@ -185,14 +231,14 @@ const KR = (() => {
     const swipeRow = inner => `<div class="swipe-row"><div class="swipe-bg"><span class="ms">delete</span>Remover</div><div class="swipe-fg">${inner}</div></div>`;
 
     const PLAYLISTS = [
-        { name: 'Ecos de Ruína', icon: 'musica', color: '#c2a675' },
-        { name: 'Sangue e Gelo', icon: 'combate', color: '#e0706a' },
-        { name: 'Névoa Espessa', icon: 'exploracao', color: '#8fb3c2' },
-        { name: 'Taverna do Chifre', icon: 'taverna', color: '#d9a14a' }
+        { name: 'Ecos de Ruína', icon: 'pl_musica', color: '#c2a675' },
+        { name: 'Sangue e Gelo', icon: 'pl_combate', color: '#e0706a' },
+        { name: 'Névoa Espessa', icon: 'pl_exploracao', color: '#8fb3c2' },
+        { name: 'Taverna do Chifre', icon: 'pl_taverna', color: '#d9a14a' }
     ];
     function initPlayer() {
         const st = { playing: get('playing', false), pl: get('playlist', 0), vol: get('volume', 80), muffled: get('muffled', false), eff: 0 };
-        const el = h(`<div class="player" hidden role="dialog" aria-label="Player de áudio">
+        const el = h(`<div class="player" data-ic="player" hidden role="dialog" aria-label="Player de áudio">
             <div style="display:flex;gap:12px;align-items:center;margin-bottom:14px">
                 <div class="player-art" id="kr-art"></div>
                 <div style="flex:1;min-width:0">

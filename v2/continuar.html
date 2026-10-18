@@ -30,7 +30,7 @@
 KR.header({ back: 'index.html', player: false });
 const $ = id => document.getElementById(id);
 const HERO = { elgan: 'Elgan', gerdwyn: 'Gerdwyn', iunis: 'Iunis', osbert: 'Osbert' };
-const ICON = { elgan: 'h_elgan', gerdwyn: 'h_gerdwyn', iunis: 'h_iunis', osbert: 'h_osbert' };
+const ICON = { elgan: 'c_elgan', gerdwyn: 'c_gerdwyn', iunis: 'c_iunis', osbert: 'c_osbert' };
 const data = KR.get('saves', null) || {
     camps: [
         { id: 'c1', name: 'Mesa de Sexta · Avalon', type: 'multi', chapter: 2, part: 'B:2', date: Date.now(), heroes: [['elgan', 'Carlos'], ['gerdwyn', 'Mariana']] },
@@ -43,7 +43,7 @@ let tab = 'camps';
 const fmt = d => new Date(d).toLocaleDateString('pt-BR');
 
 function render() {
-    $('tabs').innerHTML = [['camps', 'cronista', 'Campanhas'], ['sheets', 's_herois', 'Fichas']].map(([id, ic, lb]) => `<button class="tab ${tab === id ? 'active' : ''}" data-tab="${id}">${KR.gi(ic)}${lb}</button>`).join('');
+    $('tabs').innerHTML = [['camps', 'c_campanhas', 'Campanhas'], ['sheets', 'c_fichas', 'Fichas']].map(([id, ic, lb]) => `<button class="tab ${tab === id ? 'active' : ''}" data-tab="${id}">${KR.gi(ic)}${lb}</button>`).join('');
     const list = data[tab];
     if (!list.length) { $('list').innerHTML = `<div class="empty"><span class="ms outline">${tab === 'camps' ? 'menu_book' : 'person'}</span><p>${tab === 'camps' ? 'Nenhuma campanha salva.' : 'Nenhuma ficha salva.'}</p></div>`; return; }
     $('list').innerHTML = list.map(s => tab === 'camps' ? `
