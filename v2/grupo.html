@@ -11,6 +11,9 @@
 .hero.open { border-color: var(--gold-soft); }
 .hero-head { display: flex; align-items: center; gap: 8px; padding: 12px 8px 12px 14px; cursor: pointer; }
 .hero-head .t-title { font-size: 1.125rem; }
+.hero-avatar { width: 48px; height: 48px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; border: 1px solid var(--line-control); border-radius: var(--radius); background: #141a17; color: var(--gold-soft); margin-right: 4px; }
+.hero-avatar .ms { font-size: 1.75rem; }
+.hero.open .hero-avatar { color: var(--gold); border-color: var(--gold-soft); }
 .hero-sub { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 14px; margin-top: 4px; color: var(--text); font-size: 1rem; }
 .hero-sub .ms { font-size: 1.05rem; color: var(--text-3); }
 .loc-btn { background: transparent; border: none; border-bottom: 1px dashed var(--line-control); color: var(--gold); font-family: var(--font-title); font-weight: 700; font-size: .9rem; padding: 0 1px; min-height: 28px; }
@@ -145,8 +148,8 @@ function attrsTab(h) {
 function invTab(h) {
     const items = h.items.map(it => KR.swipeRow(`<div class="item-row" style="flex-direction:column;align-items:stretch;gap:4px">
         <input class="field-line" data-item="${it.id}" data-k="name" placeholder="Nome do item" value="${KR.esc(it.name)}">
-        <div style="display:flex;gap:8px"><button class="chip ${it.equipped ? 'on' : ''}" data-toggle="${it.id}" data-k="equipped"><span class="ms outline">${it.equipped ? 'check_circle' : 'backpack'}</span>${it.equipped ? 'Equipado' : 'Mochila'}</button>
-        <button class="chip ${it.spent ? 'off' : ''}" data-toggle="${it.id}" data-k="spent"><span class="ms outline">${it.spent ? 'battery_0_bar' : 'battery_full'}</span>${it.spent ? 'Usado' : 'Pronto'}</button></div>
+        <div style="display:flex;gap:8px"><button class="chip ${it.equipped ? 'on' : ''}" data-toggle="${it.id}" data-k="equipped">${KR.gi(it.equipped ? 'i_equipado' : 'i_mochila')}${it.equipped ? 'Equipado' : 'Mochila'}</button>
+        <button class="chip ${it.spent ? 'off' : ''}" data-toggle="${it.id}" data-k="spent">${KR.gi(it.spent ? 'i_usado' : 'i_pronto')}${it.spent ? 'Usado' : 'Pronto'}</button></div>
     </div>`).replace('class="swipe-row"', `class="swipe-row" data-swipe="item" data-id="${it.id}"`)).join('');
     const secrets = h.secrets.map(s => KR.swipeRow(`<div class="item-row">
         <input class="field-line" data-secret="${s.id}" data-k="num" inputmode="numeric" placeholder="Nº" value="${KR.esc(s.num)}" style="width:3.2rem;text-align:center;font-family:var(--font-title);color:var(--gold)">
@@ -168,7 +171,7 @@ function echoesTab(h) {
         html += `<div class="echo-block ${unlocked ? 'unlocked' : ''}">
             <div style="display:flex;align-items:center;justify-content:space-between;min-height:30px">
                 <span class="t-title" style="font-size:.8125rem;color:${unlocked ? 'var(--gold)' : 'var(--text-3)'}">${KR.gi(unlocked ? 'lendaria' : 'secreta', 'font-size:1rem')} ${unlocked ? 'Ação lendária · ' : 'Carta secreta '}${cat.cards[b]}</span>
-                ${unlocked ? `<button class="chip ${spent ? 'off' : 'on'}" data-spent="${b}"><span class="ms outline">${spent ? 'battery_0_bar' : 'battery_full'}</span>${spent ? 'Usada' : 'Pronta'}</button>` : ''}
+                ${unlocked ? `<button class="chip ${spent ? 'off' : 'on'}" data-spent="${b}">${KR.gi(spent ? 'e_usada' : 'e_pronta')}${spent ? 'Usada' : 'Pronta'}</button>` : ''}
             </div>
             <div class="echo-cells">${[0, 1, 2].map(i => { const k = b * 3 + i; return `<div class="echo-cell ${m[k] ? 'on' : ''}" data-mem="${k}" role="checkbox" aria-checked="${m[k]}"><span class="ms outline">${m[k] ? 'check' : 'radio_button_unchecked'}</span>${cat.mem[k][0]}</div>`; }).join('')}</div>
         </div>`;
@@ -201,9 +204,10 @@ function render() {
         const body = !open ? '' : { status: statusTab, attrs: attrsTab, inv: invTab, echoes: echoesTab, decks: decksTab }[tab](h);
         return `<section class="hero ${open ? 'open' : ''}" data-hero="${h.id}">
             <div class="hero-head" data-head="${h.id}" role="button" aria-expanded="${open}">
+                <span class="hero-avatar">${KR.gi('g_' + h.id)}</span>
                 <div style="flex:1;min-width:0">
                     <div style="display:flex;align-items:baseline;gap:8px;flex-wrap:wrap"><span class="t-title">${h.name}</span><span class="t-meta">${h.title}</span></div>
-                    <div class="hero-sub"><span><span class="ms outline">person</span> ${KR.esc(h.player) || '<span class="t-meta">sem jogador</span>'}</span><span><span class="ms outline">location_on</span> Local
+                    <div class="hero-sub"><span>${KR.gi('g_jogador')} ${KR.esc(h.player) || '<span class="t-meta">sem jogador</span>'}</span><span>${KR.gi('g_local')} Local
                         ${editingLoc === h.id
                             ? `<input class="loc-input" data-locedit="${h.id}" inputmode="numeric" maxlength="4" value="${KR.esc(h.loc)}">`
                             : `<button class="loc-btn" data-locview="${h.id}">${KR.esc(h.loc) || '?'}</button>`}

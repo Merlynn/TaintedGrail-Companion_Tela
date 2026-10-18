@@ -61,6 +61,8 @@ const S = KR.get('saveState', null) || {
     monarcas: [{ id: 'm1', name: 'Claudyne', loc: '104' }], companheiros: [], guardioes: [{ id: 'g1', name: 'Lobo Sangrento', loc: '118' }, { id: 'g2', name: 'Harpia Sombria', loc: '' }],
     locais: [{ id: 'l1', num: '104', strange: false, tokens: { luz: 1, trevas: 0, demanda: 0, cubo: 0 }, note: '' }, { id: 'l2', num: '118', strange: true, tokens: { luz: 0, trevas: 2, demanda: 1, cubo: 0 }, note: 'Voltar com a chave' }]
 };
+// registros salvos por versões antigas podem não ter todas as listas de fotos
+S.photos = { herois: [], criaturas: [], mapa: [], ...S.photos };
 const save = () => KR.set('saveState', S);
 let openLoc = null;
 const ENT = { monarcas: ['Claudyne', 'Nōnus', 'Veneda'], companheiros: ['Cabra Negra', 'Golem das Velas', 'Isolut', 'Kendrick'], guardioes: ['Aberração de Wyrd', 'Aparição Anciã', 'Banshee do Lamento', 'Besta da Névoa', 'Cão Infernal', 'Cavaleiro Sem Cabeça', 'Gigante da Geada', 'Harpia Sombria', 'Lobo Sangrento', 'Lorde Fomoriano', 'Troll das Cavernas'] };
@@ -70,7 +72,7 @@ const TOK = { luz: ['s_claro', '#d1d5db', 'Tempo claro'], trevas: ['s_escuro', '
 function photos(key, label, icon) {
     const list = S.photos[key];
     return `<div class="section-head"><span class="t-title">${label}</span><span class="t-label">Opcional</span></div>
-    <div class="photos" data-ic="salvar.fotos"><button class="photo-add" data-photo-add="${key}"><span class="ms outline">${icon}</span><span class="t-label">Foto</span></button>
+    <div class="photos" data-ic="salvar.${key}.fotos"><button class="photo-add" data-photo-add="${key}"><span class="ms outline">${icon}</span><span class="t-label">Foto</span></button>
     ${list.map((p, i) => `<div class="photo"><span class="ms outline">image</span><button class="del" data-photo-del="${key}:${i}" aria-label="Remover foto"><span class="ms">delete</span></button></div>`).join('')}</div>`;
 }
 
@@ -90,7 +92,7 @@ const panes = {
         }
         return h + `<div class="swipe-hint"><span class="ms">swipe_left</span>Deslize uma linha para a esquerda para remover</div>${photos('criaturas', 'Fotos da mesa', 'photo_camera')}`;
     },
-    mapa: () => `<div class="section-head"><span class="t-title"><span class="ms outline" style="font-size:1.1rem">pin_drop</span> Locais revelados</span></div>
+    mapa: () => `<div class="section-head"><span class="t-title">${KR.gi('s_locais', 'font-size:1.1rem')} Locais revelados</span></div>
         <form id="loc-form" style="display:flex;gap:8px;margin-bottom:12px"><input class="field" id="loc-in" inputmode="numeric" placeholder="Número do local"><button class="btn" type="submit">Registrar</button></form>
         ${S.locais.length ? S.locais.map(l => {
             const open = openLoc === l.id;
@@ -108,12 +110,12 @@ const panes = {
             </div></div>`;
         }).join('') : '<p class="t-meta">Nenhum local em jogo.</p>'}
         ${S.locais.length ? '<div class="swipe-hint"><span class="ms">swipe_left</span>Deslize um local para a esquerda para remover · toque no número para detalhes</div>' : ''}
-        ${photos('mapa', 'Fotos do mapa', 'map')}`,
+        ${photos('mapa', 'Fotos do mapa', 'add_a_photo')}`,
     caixa: () => `<p class="pane-intro">Recolha os componentes da mesa e guarde cada grupo no seu compartimento.</p>
-        ${[['person', 'Cada jogador', ['Cartas de Combate e Diplomacia ativas.', 'Separadores e cartas do acervo de evolução.', 'Itens e segredos pessoais.', 'Perícias adquiridas.']],
-           ['map', 'Mundo salvo · compartimento grande', ['Todos os locais revelados e cartas de consulta (não vire as cartas).']],
-           ['style', 'Mundo salvo · compartimento padrão', ['Guardiões ativos, conflitos atuais e segredos padrão ativos.', 'Baralho de incidentes, demandas ativas e incidentes ativos.']],
-           ['inventory_2', 'Compartimento pequeno e caixa', ['Baralho de itens disponíveis e segredos pequenos.', 'Miniaturas, totens e tokens restantes.']]].map(([ic, t, li]) => `<div class="card"><div class="section-head" style="margin-top:0"><span class="t-title"><span class="ms outline" style="font-size:1.1rem">${ic}</span> ${t}</span></div><ul class="box-list">${li.map(x => `<li>${x}</li>`).join('')}</ul></div>`).join('')}`,
+        ${[['s_cx_jogador', 'Cada jogador', ['Cartas de Combate e Diplomacia ativas.', 'Separadores e cartas do acervo de evolução.', 'Itens e segredos pessoais.', 'Perícias adquiridas.']],
+           ['s_cx_grande', 'Mundo salvo · compartimento grande', ['Todos os locais revelados e cartas de consulta (não vire as cartas).']],
+           ['s_cx_padrao', 'Mundo salvo · compartimento padrão', ['Guardiões ativos, conflitos atuais e segredos padrão ativos.', 'Baralho de incidentes, demandas ativas e incidentes ativos.']],
+           ['s_cx_pequeno', 'Compartimento pequeno e caixa', ['Baralho de itens disponíveis e segredos pequenos.', 'Miniaturas, totens e tokens restantes.']]].map(([ic, t, li]) => `<div class="card"><div class="section-head" style="margin-top:0"><span class="t-title">${KR.gi(ic, 'font-size:1.1rem')} ${t}</span></div><ul class="box-list">${li.map(x => `<li>${x}</li>`).join('')}</ul></div>`).join('')}`,
     resumo: () => {
         const pad = S.padrons.filter(q => q.some(v => v.trim())).length;
         const n = k => S[k].filter(e => e.name.trim()).length;

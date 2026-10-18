@@ -45,7 +45,7 @@ const fmt = d => new Date(d).toLocaleDateString('pt-BR');
 function render() {
     $('tabs').innerHTML = [['camps', 'c_campanhas', 'Campanhas'], ['sheets', 'c_fichas', 'Fichas']].map(([id, ic, lb]) => `<button class="tab ${tab === id ? 'active' : ''}" data-tab="${id}">${KR.gi(ic)}${lb}</button>`).join('');
     const list = data[tab];
-    if (!list.length) { $('list').innerHTML = `<div class="empty"><span class="ms outline">${tab === 'camps' ? 'menu_book' : 'person'}</span><p>${tab === 'camps' ? 'Nenhuma campanha salva.' : 'Nenhuma ficha salva.'}</p></div>`; return; }
+    if (!list.length) { $('list').innerHTML = `<div class="empty">${KR.gi(tab === 'camps' ? 'c_sem_campanha' : 'c_sem_ficha')}<p>${tab === 'camps' ? 'Nenhuma campanha salva.' : 'Nenhuma ficha salva.'}</p></div>`; return; }
     $('list').innerHTML = list.map(s => tab === 'camps' ? `
         <div class="save-card" data-load="${s.id}">
             <div style="flex:1;min-width:0">

@@ -156,6 +156,7 @@ select.field { appearance: none; padding-right: 32px; background-image: none; }
 
 .empty { text-align: center; padding: 24px 16px; border: 1px dashed var(--line-control); border-radius: var(--radius); background: rgba(16, 20, 18, .8); }
 .empty .ms { font-size: 2.5rem; color: var(--line-empty); }
+.empty .gi { color: var(--text-3); }
 .empty p { margin: 6px 0 0; font-style: italic; color: var(--text-3); font-size: 1.0625rem; }
 
 .menu-btn { width: 44px; height: 44px; display: inline-flex; align-items: center; justify-content: center; border-radius: 50%; color: var(--text-2); flex-shrink: 0; }

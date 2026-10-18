@@ -17,25 +17,32 @@ const KR = (() => {
     // icones.html permite trocar qualquer um para teste (fica em 'iconOverrides').
     const GAME_ICONS = {
         // menu inferior
-        cronica: 'hourglass', condicoes: 'scroll-unfurled', diario: 'bookmarklet', grupo: 'uprising', personagem: 'spartan', salvar: 'camping-tent', exportar: 'thrown-spear',
+        cronica: 'hourglass', condicoes: 'scroll-unfurled', diario: 'bookmarklet', grupo: 'rally-the-troops', personagem: 'spartan', salvar: 'camping-tent', exportar: 'thrown-spear',
         // nova campanha
-        n_solo: 'spartan', n_multi: 'uprising', n_cronista: 'rule-book', n_jogador: 'crossed-swords', n_narrativo: 'rule-book', n_desafiador: 'skull-crossed-bones',
-        h_elgan: 'candle-holder', h_gerdwyn: 'crossbow', h_iunis: 'crossed-swords', h_osbert: 'duality-mask',
+        n_solo: 'spartan', n_multi: 'rally-the-troops', n_cronista: 'rule-book', n_jogador: 'battle-gear', n_narrativo: 'spell-book', n_desafiador: 'skull-crack',
+        h_elgan: 'candle-holder', h_gerdwyn: 'crossbow', h_iunis: 'dervish-swords', h_osbert: 'duality-mask',
         // continuar
-        c_campanhas: 'rule-book', c_fichas: 'id-card', c_elgan: 'candle-holder', c_gerdwyn: 'crossbow', c_iunis: 'crossed-swords', c_osbert: 'duality-mask',
+        c_campanhas: 'rule-book', c_fichas: 'id-card', c_elgan: 'candle-holder', c_gerdwyn: 'crossbow', c_iunis: 'dervish-swords', c_osbert: 'duality-mask',
+        c_sem_campanha: 'spell-book', c_sem_ficha: 'sword-in-stone',
         // ficha do herói (grupo)
         t_status: 'healing-shield', t_attrs: 'skills', t_itens: 'backpack', t_cartas: 'card-play', t_ecos: 'shield-echoes',
-        combate: 'crossed-swords', diplomacia: 'shaking-hands', lendaria: 'star-swirl', secreta: 'padlock', bloqueada: 'padlock', evoluida: 'muscle-up',
+        g_elgan: 'candle-holder', g_gerdwyn: 'crossbow', g_iunis: 'dervish-swords', g_osbert: 'duality-mask',
+        g_jogador: 'barbute', g_local: 'wooden-sign',
+        i_equipado: 'attached-shield', i_mochila: 'light-backpack', i_pronto: 'battery-100', i_usado: 'battery-0',
+        combate: 'axe-sword', diplomacia: 'shaking-hands', lendaria: 'star-swirl', e_pronta: 'battery-100', e_usada: 'battery-0', secreta: 'padlock', bloqueada: 'padlock', evoluida: 'muscle-up',
         // diário
-        d_todos: 'book-cover', d_local: 'village', d_npc: 'robe', d_demanda: 'stabbed-note', d_personagem: 'swordman', d_nova: 'quill-ink',
+        d_todos: 'book-cover', d_local: 'village', d_npc: 'robe', d_demanda: 'scroll-unfurled', d_personagem: 'swordman', d_nova: 'quill-ink', d_vazio: 'fluffy-trefoil',
+        // condições
+        k_vazio: 'ermine',
         // salvar
-        s_botao: 'camping-tent', s_herois: 'id-card', s_criaturas: 'paw-print', s_mapa: 'treasure-map', s_caixa: 'chest', s_resumo: 'checklist',
-        s_padrons: 'deer-head', s_monarcas: 'queen-crown', s_companheiros: 'paw-print', s_guardioes: 'swords-emblem',
-        s_claro: 'hourglass', s_escuro: 'hourglass', s_demanda: 'stabbed-note', s_universal: 'cube',
+        s_botao: 'camping-tent', s_herois: 'id-card', s_criaturas: 'werewolf', s_mapa: 'treasure-map', s_caixa: 'cardboard-box', s_resumo: 'checklist',
+        s_locais: 'direction-signs', s_padrons: 'deer-head', s_monarcas: 'jewel-crown', s_companheiros: 'paw-print', s_guardioes: 'wyvern',
+        s_claro: 'hourglass', s_escuro: 'hourglass', s_demanda: 'scroll-unfurled', s_universal: 'cube',
+        s_cx_jogador: 'barbute', s_cx_grande: 'earth-america', s_cx_padrao: 'earth-africa-europe', s_cx_pequeno: 'cardboard-box-closed',
         // player de música
-        pl_musica: 'lyre', pl_combate: 'crossed-swords', pl_exploracao: 'compass', pl_taverna: 'beer-stein',
+        pl_musica: 'lyre', pl_combate: 'axe-sword', pl_exploracao: 'compass', pl_taverna: 'beer-stein',
         // configurações (catálogo de ecos)
-        cf_musica: 'lyre', cf_combate: 'crossed-swords', cf_exploracao: 'compass', cf_taverna: 'beer-stein'
+        cf_musica: 'lyre', cf_combate: 'axe-sword', cf_exploracao: 'compass', cf_taverna: 'beer-stein'
     };
     // Ícones próprios, montados a partir de peças do game-icons (CC BY 3.0: crédito mantido)
     // kr-grupo: escudo com chapéu de mago vazado, espada e adaga cruzadas atrás (pointy-hat, broadsword, plain-dagger)
@@ -89,6 +96,8 @@ const KR = (() => {
     };
     if (document.body) msWatch(); else document.addEventListener('DOMContentLoaded', msWatch);
 
+    // código da parte: o ramo (letra) é opcional, há capítulos só com a numeração ("B:2" ou "7")
+    const partCode = p => (p.branch ? p.branch + ':' : '') + p.n;
     const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
     const norm = s => String(s).normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase().trim();
     const h = html => { const t = document.createElement('template'); t.innerHTML = html.trim(); return t.content.firstElementChild; };
@@ -306,5 +315,5 @@ const KR = (() => {
         draw(); drawEff();
     }
 
-    return { get, set, role, esc, norm, h, gi, GAME_ICONS, header, nav, snackbar, confirmDialog, menu, sheet, pressPreview, swipe, swipeRow, applyZoom, ZOOMS };
+    return { get, set, role, partCode, esc, norm, h, gi, GAME_ICONS, header, nav, snackbar, confirmDialog, menu, sheet, pressPreview, swipe, swipeRow, applyZoom, ZOOMS };
 })();

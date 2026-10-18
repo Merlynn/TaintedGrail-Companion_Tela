@@ -75,7 +75,7 @@ function render() {
     if (!list.length) {
         $('list').innerHTML = q
             ? `<p class="t-meta" style="text-align:center;margin-top:32px;font-size:1.0625rem">Nenhum registro encontrado nas brumas.</p>`
-            : `<div class="empty"><span class="ms outline">auto_awesome</span><p>O ermo está silencioso.</p><div class="t-label" style="margin-top:8px">Busque uma condição para marcá-la</div></div>`;
+            : `<div class="empty">${KR.gi('k_vazio', 'font-size:3.25rem')}<p>O ermo está silencioso.<br>Interaja com o mundo, e ele responderá.</p></div>`;
         return;
     }
     $('list').innerHTML = list.map(c => {

@@ -74,7 +74,7 @@ function render() {
     renderRibbons();
     const q = KR.norm($('q').value);
     let list = entries.filter(n => (filter === 'all' || n.tags.includes(filter)) && (!q || KR.norm(n.text).includes(q) || n.replies.some(r => KR.norm(r.text).includes(q))));
-    if (!list.length) { $('feed').innerHTML = `<div class="empty" style="margin-top:16px"><span class="ms outline">import_contacts</span><p>As páginas estão em branco.</p></div>`; return; }
+    if (!list.length) { $('feed').innerHTML = `<div class="empty" style="margin-top:16px">${KR.gi('d_vazio', 'font-size:3.25rem')}<p>Registre os fatos, antes que a Wyrd apague a história.</p></div>`; return; }
     const chapters = [...new Set(list.map(n => +n.chapter))].sort((a, b) => b - a);
     $('feed').innerHTML = chapters.map(ch => `<div class="chapter-div"><span>✦ Capítulo ${ch} ✦</span></div>` + list.filter(n => +n.chapter === ch).sort((a, b) => b.updated - a.updated).map(n => `
         <article class="entry">
@@ -106,7 +106,7 @@ function openForm(mode, noteId, replyId) {
         <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px"><div class="t-title" style="color:var(--gold)">${title}</div><button class="icon-btn" data-close aria-label="Fechar"><span class="ms">close</span></button></div>
         <div style="display:flex;gap:8px;margin-bottom:10px">
             <label style="flex:1"><span class="t-label">Capítulo</span><input class="field" id="f-ch" inputmode="numeric" value="${cur?.chapter ?? KR.get('chapter', 1)}" style="text-align:center"></label>
-            <label style="flex:1"><span class="t-label">Parte</span><input class="field" id="f-pt" value="${KR.esc(cur?.part ?? part.branch + ':' + part.n)}" style="text-align:center"></label>
+            <label style="flex:1"><span class="t-label">Parte</span><input class="field" id="f-pt" value="${KR.esc(cur?.part ?? KR.partCode(part))}" style="text-align:center"></label>
         </div>
         <textarea class="field" id="f-text" placeholder="${mode === 'reply' ? 'O que descobriu depois?' : 'O que aconteceu?'}">${KR.esc(cur?.text ?? '')}</textarea>
         ${withTags ? `<div class="t-label" style="margin:12px 0 6px">Fitilhos (opcional)</div><div class="tag-grid">${Object.entries(TAGS).map(([k, [ic, lb]]) => `<button class="tag-btn ${sel.has(k) ? 'on' : ''}" data-tag="${k}">${KR.gi(ic)}${lb}</button>`).join('')}</div>` : ''}
@@ -118,7 +118,7 @@ function openForm(mode, noteId, replyId) {
     el.querySelector('#f-save').onclick = () => {
         const text = el.querySelector('#f-text').value.trim();
         if (!text) { el.querySelector('#f-err').hidden = false; return; }
-        const chapter = parseInt(el.querySelector('#f-ch').value) || 1, pt = el.querySelector('#f-pt').value.trim() || 'A:1', t = Date.now();
+        const chapter = parseInt(el.querySelector('#f-ch').value) || 1, pt = el.querySelector('#f-pt').value.trim() || KR.partCode(part), t = Date.now();
         if (mode === 'new') entries.push({ id: 'n' + t, text, tags: [...sel], chapter, part: pt, date: t, updated: t, replies: [] });
         if (mode === 'reply') { n.replies.push({ id: 'r' + t, text, chapter, part: pt, date: t }); n.updated = t; }
         if (mode === 'edit') Object.assign(n, { text, chapter, part: pt, tags: [...sel] });

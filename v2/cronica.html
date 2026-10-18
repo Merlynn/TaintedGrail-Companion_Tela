@@ -41,7 +41,7 @@
 
 .p1 { top: 14%; left: 50%; } .p2 { top: 20%; left: 80%; } .p3 { top: 62%; left: 85%; } .p4 { top: 77%; left: 55%; } .p5 { top: 63%; left: 20%; } .p6 { top: 20%; left: 23%; }
 .count { text-align: center; margin-top: 16px; font-family: var(--font-title); font-weight: 700; color: var(--title); font-size: 1.1rem; letter-spacing: .1em; }
-.hint { text-align: center; margin-top: 6px; }
+.omen { text-align: center; margin: 8px 0 0; font-style: italic; color: var(--gold-soft); font-size: 1.0625rem; line-height: 1.4; }
 </style>
 </head>
 <body>
@@ -62,7 +62,7 @@
         <div class="center-target" id="center"><span class="ms outline">block</span><span>Solte aqui para apagar</span></div>
     </div>
     <div class="count" id="count"></div>
-    <div class="hint t-meta">Toque na pedra que pulsa para acendê-la.<br>Arraste a última pedra acesa até o altar para apagá-la.</div>
+    <p class="omen">Enquanto você hesita, a Wyrd avança<br>e Avalon cobra seu preço.</p>
 </main>
 
 <script src="app.js"></script>
@@ -85,7 +85,7 @@ const spots = [1, 2, 3, 4, 5, 6].map(i => {
 
 function draw() {
     $('ch').textContent = 'Capítulo ' + chapter;
-    $('pt').textContent = `Parte ${part.branch}:${part.n}`;
+    $('pt').textContent = `Parte ${KR.partCode(part)}`;
     spots.forEach((s, idx) => {
         s.classList.toggle('lit', idx < time);
         s.classList.toggle('next', idx === time);
@@ -104,7 +104,7 @@ function editModal(kind) {
     const html = kind === 'ch'
         ? `<h3 class="t-title">Capítulo</h3><input class="field" id="m-ch" inputmode="numeric" value="${chapter}" style="text-align:center;font-size:1.5rem;margin:8px 0 16px">`
         : `<h3 class="t-title">Código da parte</h3><div style="display:flex;align-items:flex-end;gap:10px;margin:8px 0 16px">
-            <label style="flex:1"><span class="t-label">Ramo</span><input class="field" id="m-br" maxlength="2" value="${part.branch}" style="text-align:center;font-size:1.5rem;text-transform:uppercase"></label>
+            <label style="flex:1"><span class="t-label">Ramo (opcional)</span><input class="field" id="m-br" maxlength="2" placeholder="—" value="${part.branch}" style="text-align:center;font-size:1.5rem;text-transform:uppercase"></label>
             <span class="t-title" style="font-size:1.5rem;padding-bottom:8px;color:var(--text-3)">:</span>
             <label style="flex:1"><span class="t-label">Parte</span><input class="field" id="m-pt" inputmode="numeric" value="${part.n}" style="text-align:center;font-size:1.5rem"></label></div>`;
     const el = KR.h(`<div class="scrim"><div class="dialog">${html}<div class="dialog-actions"><button class="btn" data-a="0">Cancelar</button><button class="btn" data-a="1">Confirmar</button></div></div></div>`);
@@ -115,7 +115,7 @@ function editModal(kind) {
         if (e.target === el || (b && b.dataset.a === '0')) return el.remove();
         if (b && b.dataset.a === '1') {
             if (kind === 'ch') chapter = Math.max(1, parseInt(el.querySelector('#m-ch').value) || chapter);
-            else part = { branch: (el.querySelector('#m-br').value.trim() || 'A').toUpperCase(), n: Math.max(1, parseInt(el.querySelector('#m-pt').value) || 1) };
+            else part = { branch: el.querySelector('#m-br').value.trim().toUpperCase(), n: Math.max(1, parseInt(el.querySelector('#m-pt').value) || 1) };
             el.remove(); draw();
         }
     });
