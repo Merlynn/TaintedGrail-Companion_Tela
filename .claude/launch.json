@@ -8,6 +8,12 @@
       "port": 8765
     },
     {
+      "name": "prototipo-v3",
+      "runtimeExecutable": "serve-nocache",
+      "runtimeArgs": ["--root=v3", "--port=8767"],
+      "port": 8767
+    },
+    {
       "name": "prototipo-original",
       "runtimeExecutable": "serve-nocache",
       "runtimeArgs": ["--root=.", "--port=8766"],
