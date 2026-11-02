@@ -32,7 +32,7 @@ const KR = (() => {
         // ficha do herói (grupo)
         t_status: 'healing-shield', t_attrs: 'skills', t_itens: 'backpack', t_cartas: 'card-play', t_ecos: 'triple-lock',
         g_elgan: 'candle-holder', g_gerdwyn: 'crossbow', g_iunis: 'dervish-swords', g_osbert: 'duality-mask',
-        g_jogador: 'barbute', g_local: 'wooden-sign',
+        g_jogador: 'barbute', g_local: 'wooden-sign', env_lacrado: 'padlock', env_aberto: 'padlock-open',
         i_equipado: 'attached-shield', i_mochila: 'light-backpack', i_pronto: 'battery-100', i_usado: 'battery-0',
         combate: 'axe-sword', diplomacia: 'shaking-hands', lendaria: 'star-swirl', e_pronta: 'battery-100', e_usada: 'battery-0', secreta: 'padlock', bloqueada: 'padlock', evoluida: 'muscle-up',
         // diário

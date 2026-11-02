@@ -24,11 +24,17 @@
 .tk select { min-height: 48px; font-size: 1.4rem; }
 .tk .row { display: flex; align-items: center; gap: 6px; }
 .tk .row select { flex: 1; min-width: 0; }
-.extra { margin-top: 10px; background: var(--card); border: 1px solid var(--line-control); border-radius: var(--radius); }
-.extra-head { display: flex; align-items: center; gap: 8px; width: 100%; min-height: 52px; padding: 8px 12px; text-align: left; font-family: var(--font-title); font-weight: 700; color: var(--title); }
-.extra-head .gi { color: var(--gold); font-size: 1.3rem; }
-.extra-head .t-meta { margin-left: auto; font-family: var(--font-text); font-weight: 400; }
-.extra-body { padding: 0 12px 14px; }
+/* separa a ficha (trilhas, atributos) das cartas físicas do jogo (itens, segredos, baralhos) */
+.deck-sub { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin: 16px 0 10px; }
+.section-head + .deck-sub { margin-top: 12px; }
+.deck-sub .t-title { display: flex; align-items: center; gap: 6px; font-size: .8125rem; text-transform: uppercase; letter-spacing: .08em; }
+.part-divider { display: flex; align-items: center; gap: 10px; margin: 22px 0 4px; color: var(--gold); font-family: var(--font-title); font-weight: 700; font-size: .8125rem; letter-spacing: .12em; text-transform: uppercase; }
+.part-divider::before, .part-divider::after { content: ""; flex: 1; height: 1px; background: linear-gradient(90deg, transparent, var(--gold-soft)); }
+.part-divider::after { background: linear-gradient(90deg, var(--gold-soft), transparent); }
+.env-row { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 14px; padding-top: 12px; border-top: 1px solid var(--line); }
+.env-btn { display: flex; align-items: center; justify-content: center; gap: 8px; min-height: 48px; border: 1px solid var(--line-control); border-radius: var(--radius); background: #060807; color: var(--text-3); font-family: var(--font-title); font-weight: 700; font-size: .9375rem; }
+.env-btn .gi { font-size: 1.5rem; }
+.env-btn.on { color: var(--c); border-color: var(--c); background: var(--card-selected); }
 .grid2 { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 6px; }
 .grid3 { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
 .grid4 { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 6px; }
@@ -170,6 +176,18 @@ function invTab(h) {
         ${(h.items.length || h.secrets.length) ? '<div class="swipe-hint"><span class="ms">swipe_left</span>Deslize uma linha para a esquerda para remover</div>' : ''}`;
 }
 
+// envelopes da caixa: abertos uma vez, liberam as fileiras D/F nos baralhos de todos
+function envBlock() {
+    return `<div class="env-row">${[['D', 'var(--gold)'], ['F', 'var(--serie-f)']].map(([k, c]) => `<button class="env-btn ${env[k] ? 'on' : ''}" data-env="${k}" aria-pressed="${env[k]}" style="--c:${c}" aria-label="Baralho ${k}, ${env[k] ? 'aberto' : 'lacrado'}">${KR.gi(env[k] ? 'env_aberto' : 'env_lacrado')}<span>Baralho ${k}</span></button>`).join('')}</div>`;
+}
+
+async function toggleEnv(k) {
+    const ok = await KR.confirmDialog(env[k]
+        ? { title: `Lacrar o baralho ${k}?`, msg: `As fileiras ${k} somem dos baralhos. As cartas marcadas nelas continuam salvas.`, ok: 'Lacrar' }
+        : { title: `Abrir o envelope do baralho ${k}?`, msg: 'Estas cartas são reveladas durante a história. Abra somente quando o jogo mandar.', ok: 'Abrir envelope' });
+    if (ok) { env[k] = !env[k]; KR.set('envelopes', env); render(); }
+}
+
 function decksTab(h) {
     const row = (type, letter, n, color) => {
         let s = '';
@@ -177,7 +195,7 @@ function decksTab(h) {
         return `<div class="deck-row"><span class="letter" style="color:${color}">${letter}</span><div class="slots ${n === 5 ? 'half' : ''}">${s}</div></div>`;
     };
     const block = (type, label, color, icon) => `
-        <div class="section-head"><span class="t-title" style="color:${color}">${KR.gi(icon, 'font-size:1.1rem')} ${label}</span><span class="t-label">${h.decks[type].length} ativas</span></div>
+        <div class="deck-sub"><span class="t-title" style="color:${color}">${KR.gi(icon, 'font-size:1rem')} ${label}</span><span class="t-label">${h.decks[type].length} ativas</span></div>
         ${row(type, 'B', 10, 'var(--gold)')}${row(type, 'E', 10, 'var(--gold)')}${env.D ? row(type, 'D', 5, 'var(--gold)') : ''}${env.F ? row(type, 'F', 5, 'var(--serie-f)') : ''}`;
     return block('combat', 'Combate', 'var(--combat)', 'combate') + block('diplomacy', 'Diplomacia', 'var(--diplo)', 'diplomacia');
 }
@@ -218,12 +236,13 @@ function render() {
     </button>`).join('')}</div>`;
     const done = h.echoes.marks.filter(Boolean).length;
     const tabs = echoesOn ? `<div class="tabs" role="tablist">${[['ficha', 'c_fichas', 'Ficha'], ['ecos', 't_ecos', 'Ecos da Ruína']].map(([id, ic, lb]) => `<button class="tab ${id === tab ? 'active' : ''}" data-tab="${id}" role="tab" aria-selected="${id === tab}">${KR.gi(ic)}${lb}</button>`).join('')}</div>` : '';
-    const ex = KR.get('fichaExtras', { cards: false });
-    const cards = `<section class="extra"><button class="extra-head" data-extra="cards" aria-expanded="${!!ex.cards}">${KR.gi('t_cartas')}Cartas<span class="t-meta">${h.decks.combat.length + h.decks.diplomacy.length} ativas</span><span class="ms" style="color:${ex.cards ? 'var(--gold)' : 'var(--text-3)'};transform:rotate(${ex.cards ? 180 : 0}deg);transition:transform .2s">expand_more</span></button>${ex.cards ? `<div class="extra-body">${decksTab(h)}</div>` : ''}</section>`;
+    const decks = `<div class="section-head"><span class="t-title">Baralhos</span><span class="t-label">${h.decks.combat.length + h.decks.diplomacy.length} ativas</span></div>${decksTab(h)}${envBlock()}`;
     const ficha = `<div class="section-head" style="margin-top:0"><span class="t-title">Trilhas e recursos</span></div>${tracksBlock(h)}
         <div style="margin-top:8px">${resBlock(h)}</div>
         <div class="section-head"><span class="t-title">Atributos</span></div>${attrsTab(h)}
-        ${invTab(h)}`;
+        <div class="part-divider"><span>Cartas do jogo</span></div>
+        ${invTab(h)}
+        ${decks}`;
     $('heroes').innerHTML = strip + `
         <section class="ficha">
             <div class="hero-head">
@@ -240,7 +259,7 @@ function render() {
             ${tabs}
             ${tab === 'ecos' ? memList(h) : ficha}
         </section>
-        ${tab === 'ficha' ? cards : ''}`;
+`;
     document.querySelectorAll('[data-swipe]').forEach(r => KR.swipe(r, () => removeRow(r.dataset.swipe, r.dataset.id)));
 }
 const renderEchoes = render;
@@ -258,12 +277,12 @@ $('heroes').addEventListener('click', e => {
     const t = e.target;
     const locBtn = t.closest('[data-locview]');
     if (locBtn) { editingLoc = locBtn.dataset.locview; render(); const inp = document.querySelector('[data-locedit]'); inp?.focus(); inp?.select(); return; }
+    const en = t.closest('[data-env]');
+    if (en) return toggleEnv(en.dataset.env);
     const tb = t.closest('[data-tab]');
     if (tb) { tab = tb.dataset.tab; KR.set('heroiAba', tab); render(); return; }
     const pick = t.closest('[data-pick]');
     if (pick) { openId = pick.dataset.pick; KR.set('openHero', openId); render(); return; }
-    const xt = t.closest('[data-extra]');
-    if (xt) { const ex = KR.get('fichaExtras', { cards: false }); ex[xt.dataset.extra] = !ex[xt.dataset.extra]; KR.set('fichaExtras', ex); render(); return; }
     const h = byId(openId); if (!h) return;
     const add = t.closest('[data-add]');
     if (add) {
