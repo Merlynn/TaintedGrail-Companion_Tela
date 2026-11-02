@@ -42,6 +42,7 @@ KR.header({ back: 'config.html', player: false });
 const $ = id => document.getElementById(id);
 // por tela: cada linha é um lugar independente; repetir o desenho em outra tela não liga as trocas
 const SECTIONS = [
+    ['Topo', [['bardo', 'Bardo · música ambiente']]],
     ['Menu inferior', [['cronica', 'Crônica'], ['condicoes', 'Condições'], ['diario', 'Diário'], ['grupo', 'Grupo'], ['ecos', 'Ecos'], ['personagem', 'Personagem (modo jogador)'], ['salvar', 'Salvar'], ['exportar', 'Exportar (modo jogador)']]],
     ['Nova campanha', [['n_solo', 'Modo solo'], ['n_multi', 'Multiplayer'], ['n_cronista', 'Papel Cronista'], ['n_jogador', 'Papel Jogador'], ['h_elgan', 'Elgan · o Candelário'], ['h_gerdwyn', 'Gerdwyn · a Mercenária'], ['h_iunis', 'Iunis · a Gladiatrix'], ['h_osbert', 'Osbert · o Bufão'], ['n_narrativo', 'Aba Narrativo (modificadores)'], ['n_desafiador', 'Aba Desafiador (modificadores)']]],
     ['Continuar', [['c_campanhas', 'Aba Campanhas'], ['c_fichas', 'Aba Fichas'], ['c_elgan', 'Ficha salva · Elgan'], ['c_gerdwyn', 'Ficha salva · Gerdwyn'], ['c_iunis', 'Ficha salva · Iunis'], ['c_osbert', 'Ficha salva · Osbert'], ['c_sem_campanha', 'Nenhuma campanha salva'], ['c_sem_ficha', 'Nenhuma ficha salva']]],

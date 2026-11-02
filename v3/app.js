@@ -17,7 +17,7 @@ const KR = (() => {
     // icones.html permite trocar qualquer um para teste (fica em 'iconOverrides').
     const GAME_ICONS = {
         // menu inferior
-        cronica: 'hourglass', condicoes: 'scroll-unfurled', narrador: 'hooded-figure', diario: 'bookmarklet', grupo: 'rally-the-troops', personagem: 'spartan', ecos: 'triple-lock', salvar: 'camping-tent', exportar: 'thrown-spear',
+        cronica: 'hourglass', condicoes: 'scroll-unfurled', narrador: 'hooded-figure', diario: 'bookmarklet', grupo: 'rally-the-troops', personagem: 'spartan', ecos: 'triple-lock', salvar: 'camping-tent', bardo: 'lyre', exportar: 'thrown-spear',
         // narrador
         nr_prompt: 'open-book', nr_vazio: 'book-cover', nr_audio: 'hooded-figure', nr_ecos: 'triple-lock', nr_segredo: 'keyring', nr_locais: 'treasure-map', nr_trocar: 'direction-signs', nr_tutorial: 'graduate-cap',
         nr_h_elgan: 'candle-holder', nr_h_gerdwyn: 'crossbow', nr_h_iunis: 'dervish-swords', nr_h_osbert: 'duality-mask',
@@ -115,7 +115,7 @@ const KR = (() => {
         const el = h(`<header class="header" data-ic="cabecalho">
             <img class="header-logo" src="${LOGO}" alt="Kings of Ruin">
             <div class="header-actions">
-                ${player ? `<button class="pill-btn" id="kr-ecos" aria-label="Controle de áudio"><span class="dot"><span class="ms">music_note</span></span>Ecos</button>` : ''}
+                ${player ? `<button class="icon-btn bard-btn" id="kr-ecos" aria-label="Bardo · música ambiente">${gi('bardo')}<span class="eq" aria-hidden="true"><i></i><i></i><i></i></span></button>` : ''}
                 ${settings && !back ? `<button class="icon-btn" id="kr-menu" aria-label="Mais opções" aria-haspopup="menu"><span class="ms">more_vert</span></button>` : ''}
                 ${back ? `<a class="pill-btn back" href="${back}"><span class="ms" style="font-size:1rem">arrow_back</span>Voltar</a>` : ''}
             </div>
@@ -310,7 +310,7 @@ const KR = (() => {
             $('kr-plname').textContent = p.name;
             el.querySelectorAll('#kr-pllist button').forEach((b, i) => b.classList.toggle('sel', i === st.pl));
             $('kr-playic').textContent = st.playing ? 'pause' : 'play_arrow';
-            pill.classList.toggle('playing', st.playing);
+            pill.classList.toggle('playing', st.playing); pill.setAttribute('aria-label', st.playing ? 'Bardo · tocando ' + p.name : 'Bardo · música ambiente');
             $('kr-vol').value = st.vol;
             $('kr-muffle').classList.toggle('on', st.muffled);
             $('kr-mufflel').textContent = st.muffled ? 'Narrando · música a 50%' : 'Atenuar para narrar';
