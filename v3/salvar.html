@@ -45,7 +45,7 @@
     <div class="save-tabs"><div class="tabs" role="tablist" id="tabs"></div></div>
     <div id="pane"></div>
 </main>
-<div class="save-bar"><button class="btn primary" id="save-btn"><span id="save-ic"></span>Salvar jogo</button></div>
+<div class="save-bar"><button class="btn ouro" id="save-btn"><span id="save-ic"></span>Salvar jogo</button></div>
 
 <script src="app.js"></script>
 <script>
@@ -196,7 +196,7 @@ $('pane').addEventListener('pointerup', e => {
 });
 
 $('save-btn').onclick = async () => {
-    const ok = await KR.confirmDialog({ title: 'Salvar jogo?', msg: `Capítulo ${KR.get('chapter', 1)} · ${S.locais.length} locais · ${S.guardioes.length + S.monarcas.length + S.companheiros.length} criaturas registradas.`, ok: 'Salvar' });
+    const ok = await KR.confirmDialog({ title: 'Salvar jogo?', msg: `${KR.chapterName(KR.get('chapter', 1))} · ${S.locais.length} locais · ${S.guardioes.length + S.monarcas.length + S.companheiros.length} criaturas registradas.`, ok: 'Salvar' });
     if (ok) KR.snackbar('Jogo salvo');
 };
 render();

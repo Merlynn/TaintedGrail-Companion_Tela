@@ -76,7 +76,7 @@ function render() {
     let list = entries.filter(n => (filter === 'all' || n.tags.includes(filter)) && (!q || KR.norm(n.text).includes(q) || n.replies.some(r => KR.norm(r.text).includes(q))));
     if (!list.length) { $('feed').innerHTML = `<div class="empty" style="margin-top:16px">${KR.gi('d_vazio', 'font-size:3.25rem')}<p>Registre os fatos, antes que a Wyrd apague a história.</p></div>`; return; }
     const chapters = [...new Set(list.map(n => +n.chapter))].sort((a, b) => b - a);
-    $('feed').innerHTML = chapters.map(ch => `<div class="chapter-div"><span>✦ Capítulo ${ch} ✦</span></div>` + list.filter(n => +n.chapter === ch).sort((a, b) => b.updated - a.updated).map(n => `
+    $('feed').innerHTML = chapters.map(ch => `<div class="chapter-div"><span>✦ ${KR.chapterName(ch)} ✦</span></div>` + list.filter(n => +n.chapter === ch).sort((a, b) => b.updated - a.updated).map(n => `
         <article class="entry">
             <div class="entry-head">
                 <span class="t-title" style="font-size:.8125rem;color:var(--text-2);letter-spacing:.1em;text-transform:uppercase">Parte ${KR.esc(n.part)}</span>
@@ -87,7 +87,7 @@ function render() {
             </div>
             <p class="entry-text">${KR.esc(n.text)}</p>
             ${n.replies.map(r => `<div class="reply">
-                <div class="reply-head"><span class="t-title" style="font-size:.75rem;color:var(--gold);letter-spacing:.1em;text-transform:uppercase">Cap. ${r.chapter} · Parte ${KR.esc(r.part)}</span><span class="t-meta">${fmt(r.date)}</span><div style="flex:1"></div>
+                <div class="reply-head"><span class="t-title" style="font-size:.75rem;color:var(--gold);letter-spacing:.1em;text-transform:uppercase">${KR.chapterName(r.chapter, true)} · Parte ${KR.esc(r.part)}</span><span class="t-meta">${fmt(r.date)}</span><div style="flex:1"></div>
                 <button class="menu-btn" data-menu="${n.id}:${r.id}" aria-label="Opções do desdobramento"><span class="ms">more_vert</span></button></div>
                 <p class="entry-text" style="font-size:1rem">${KR.esc(r.text)}</p>
             </div>`).join('')}
@@ -111,14 +111,14 @@ function openForm(mode, noteId, replyId) {
         <textarea class="field" id="f-text" placeholder="${mode === 'reply' ? 'O que descobriu depois?' : 'O que aconteceu?'}">${KR.esc(cur?.text ?? '')}</textarea>
         ${withTags ? `<div class="t-label" style="margin:12px 0 6px">Fitilhos (opcional)</div><div class="tag-grid">${Object.entries(TAGS).map(([k, [ic, lb]]) => `<button class="tag-btn ${sel.has(k) ? 'on' : ''}" data-tag="${k}">${KR.gi(ic)}${lb}</button>`).join('')}</div>` : ''}
         <p id="f-err" style="color:var(--danger);font-size:.875rem;margin:8px 0 0" hidden>Escreva algo antes de salvar.</p>
-        <button class="btn block" id="f-save" style="margin-top:14px"><span class="ms outline" style="font-size:1.2rem">save</span>Salvar registro</button>`);
+        <button class="btn block ouro" id="f-save" style="margin-top:14px"><span class="ms outline" style="font-size:1.2rem">save</span>Salvar registro</button>`);
     el.querySelector('#f-text').focus();
     el.querySelectorAll('[data-tag]').forEach(b => b.onclick = () => { const k = b.dataset.tag; sel.has(k) ? sel.delete(k) : sel.add(k); b.classList.toggle('on'); });
     el.querySelector('#f-text').oninput = () => { el.querySelector('#f-err').hidden = true; };
     el.querySelector('#f-save').onclick = () => {
         const text = el.querySelector('#f-text').value.trim();
         if (!text) { el.querySelector('#f-err').hidden = false; return; }
-        const chapter = parseInt(el.querySelector('#f-ch').value) || 1, pt = el.querySelector('#f-pt').value.trim() || KR.partCode(part), t = Date.now();
+        const chv = parseInt(el.querySelector('#f-ch').value), chapter = Number.isNaN(chv) ? 1 : Math.max(0, chv), pt = el.querySelector('#f-pt').value.trim() || KR.partCode(part), t = Date.now();
         if (mode === 'new') entries.push({ id: 'n' + t, text, tags: [...sel], chapter, part: pt, date: t, updated: t, replies: [] });
         if (mode === 'reply') { n.replies.push({ id: 'r' + t, text, chapter, part: pt, date: t }); n.updated = t; }
         if (mode === 'edit') Object.assign(n, { text, chapter, part: pt, tags: [...sel] });

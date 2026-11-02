@@ -96,7 +96,7 @@ const spots = [1, 2, 3, 4, 5, 6].map(i => {
 });
 
 function draw() {
-    $('ch').textContent = 'Capítulo ' + chapter;
+    $('ch').textContent = KR.chapterName(chapter);
     $('pt').textContent = `Parte ${KR.partCode(part)}`;
     spots.forEach((s, idx) => {
         s.classList.toggle('lit', idx < time);
@@ -104,29 +104,29 @@ function draw() {
         s.setAttribute('aria-label', idx < time ? `Tempo ${idx + 1} aceso` : idx === time ? `Acender tempo ${idx + 1}` : `Tempo ${idx + 1} apagado`);
     });
     $('count').textContent = `${time} / 6`;
-    KR.set('chapter', chapter); KR.set('part', part); KR.set('time', time);
+    KR.setChapter(chapter); KR.set('part', part); KR.set('time', time);
 }
 
-$('ch-prev').onclick = () => { chapter = Math.max(1, chapter - 1); draw(); };
+$('ch-prev').onclick = () => { chapter = Math.max(0, chapter - 1); draw(); };
 $('ch-next').onclick = () => { chapter += 1; draw(); };
 $('pt-prev').onclick = () => { part.n = Math.max(1, part.n - 1); draw(); };
 $('pt-next').onclick = () => { part.n += 1; draw(); };
 
 function editModal(kind) {
     const html = kind === 'ch'
-        ? `<h3 class="t-title">Capítulo</h3><input class="field" id="m-ch" inputmode="numeric" value="${chapter}" style="text-align:center;font-size:1.5rem;margin:8px 0 16px">`
+        ? `<h3 class="t-title">Capítulo</h3><p class="t-meta" style="margin:4px 0 0">0 = Tutorial</p><input class="field" id="m-ch" inputmode="numeric" value="${chapter}" style="text-align:center;font-size:1.5rem;margin:8px 0 16px">`
         : `<h3 class="t-title">Código da parte</h3><div style="display:flex;align-items:flex-end;gap:10px;margin:8px 0 16px">
             <label style="flex:1"><span class="t-label">Ramo (opcional)</span><input class="field" id="m-br" maxlength="2" placeholder="—" value="${part.branch}" style="text-align:center;font-size:1.5rem;text-transform:uppercase"></label>
             <span class="t-title" style="font-size:1.5rem;padding-bottom:8px;color:var(--text-3)">:</span>
             <label style="flex:1"><span class="t-label">Parte</span><input class="field" id="m-pt" inputmode="numeric" value="${part.n}" style="text-align:center;font-size:1.5rem"></label></div>`;
-    const el = KR.h(`<div class="scrim"><div class="dialog">${html}<div class="dialog-actions"><button class="btn" data-a="0">Cancelar</button><button class="btn" data-a="1">Confirmar</button></div></div></div>`);
+    const el = KR.h(`<div class="scrim"><div class="dialog">${html}<div class="dialog-actions"><button class="btn ghost" data-a="0">Cancelar</button><button class="btn ouro" data-a="1">Confirmar</button></div></div></div>`);
     document.body.appendChild(el);
     el.querySelector('input').focus();
     el.addEventListener('click', e => {
         const b = e.target.closest('[data-a]');
         if (e.target === el || (b && b.dataset.a === '0')) return el.remove();
         if (b && b.dataset.a === '1') {
-            if (kind === 'ch') chapter = Math.max(1, parseInt(el.querySelector('#m-ch').value) || chapter);
+            if (kind === 'ch') { const v = parseInt(el.querySelector('#m-ch').value); if (!Number.isNaN(v)) chapter = Math.max(0, v); }
             else part = { branch: el.querySelector('#m-br').value.trim().toUpperCase(), n: Math.max(1, parseInt(el.querySelector('#m-pt').value) || 1) };
             el.remove(); draw();
         }

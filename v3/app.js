@@ -17,9 +17,9 @@ const KR = (() => {
     // icones.html permite trocar qualquer um para teste (fica em 'iconOverrides').
     const GAME_ICONS = {
         // menu inferior
-        cronica: 'hourglass', condicoes: 'scroll-unfurled', narrador: 'hooded-figure', diario: 'bookmarklet', grupo: 'rally-the-troops', personagem: 'spartan', salvar: 'camping-tent', exportar: 'thrown-spear',
+        cronica: 'hourglass', condicoes: 'scroll-unfurled', narrador: 'hooded-figure', diario: 'bookmarklet', grupo: 'rally-the-troops', personagem: 'spartan', ecos: 'triple-lock', salvar: 'camping-tent', exportar: 'thrown-spear',
         // narrador
-        nr_prompt: 'open-book', nr_vazio: 'book-cover', nr_audio: 'hooded-figure', nr_ecos: 'shield-echoes',
+        nr_prompt: 'open-book', nr_vazio: 'book-cover', nr_audio: 'hooded-figure', nr_ecos: 'triple-lock', nr_segredo: 'keyring', nr_locais: 'treasure-map', nr_trocar: 'direction-signs', nr_tutorial: 'graduate-cap',
         nr_h_elgan: 'candle-holder', nr_h_gerdwyn: 'crossbow', nr_h_iunis: 'dervish-swords', nr_h_osbert: 'duality-mask',
         // menu do cabeçalho (⋮)
         m_salvar: 'camping-tent', m_exportar: 'thrown-spear',
@@ -30,7 +30,7 @@ const KR = (() => {
         c_campanhas: 'rule-book', c_fichas: 'id-card', c_elgan: 'candle-holder', c_gerdwyn: 'crossbow', c_iunis: 'dervish-swords', c_osbert: 'duality-mask',
         c_sem_campanha: 'spell-book', c_sem_ficha: 'sword-in-stone',
         // ficha do herói (grupo)
-        t_status: 'healing-shield', t_attrs: 'skills', t_itens: 'backpack', t_cartas: 'card-play', t_ecos: 'shield-echoes',
+        t_status: 'healing-shield', t_attrs: 'skills', t_itens: 'backpack', t_cartas: 'card-play', t_ecos: 'triple-lock',
         g_elgan: 'candle-holder', g_gerdwyn: 'crossbow', g_iunis: 'dervish-swords', g_osbert: 'duality-mask',
         g_jogador: 'barbute', g_local: 'wooden-sign',
         i_equipado: 'attached-shield', i_mochila: 'light-backpack', i_pronto: 'battery-100', i_usado: 'battery-0',
@@ -103,6 +103,10 @@ const KR = (() => {
 
     // código da parte: o ramo (letra) é opcional, há capítulos só com a numeração ("B:2" ou "7")
     const partCode = p => (p.branch ? p.branch + ':' : '') + p.n;
+    // capítulo 0 é o tutorial (o livro de versos tem uma seção própria para ele)
+    const chapterName = (ch, short = false) => +ch === 0 ? 'Tutorial' : (short ? 'Cap. ' : 'Capítulo ') + ch;
+    // ao sair do capítulo 0 o tutorial conta como concluído e o botão some do Narrador; voltar ao 0 o traz de volta
+    const setChapter = ch => { const was = get('chapter', 1); set('chapter', ch); if (ch === 0) set('tutorialDone', false); else if (was === 0) set('tutorialDone', true); };
     const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
     const norm = s => String(s).normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase().trim();
     const h = html => { const t = document.createElement('template'); t.innerHTML = html.trim(); return t.content.firstElementChild; };
@@ -128,10 +132,9 @@ const KR = (() => {
     }
 
     function nav(active) {
-        const r = role();
-        const items = r === 'jogador'
-            ? [['cronica', 'cronica', 'Crônica'], ['condicoes', 'condicoes', 'Condições'], ['narrador', 'narrador', 'Narrador'], ['diario', 'diario', 'Diário'], ['grupo', 'personagem', 'Personagem']]
-            : [['cronica', 'cronica', 'Crônica'], ['condicoes', 'condicoes', 'Condições'], ['narrador', 'narrador', 'Narrador'], ['diario', 'diario', 'Diário'], ['grupo', 'grupo', 'Grupo']];
+        // quinto item: ficha dos heróis + Ecos da Ruína (a aba de Ecos só aparece com a expansão)
+        const items = [['cronica', 'cronica', 'Crônica'], ['condicoes', 'condicoes', 'Condições'], ['narrador', 'narrador', 'Narrador'], ['diario', 'diario', 'Diário'],
+            role() === 'jogador' ? ['ecos', 'personagem', 'Personagem'] : ['ecos', 'grupo', 'Grupo']];
         const el = h(`<nav class="nav"><div class="nav-inner">${items.map(([id, ic, lb]) =>
             `<a href="${id}.html" class="${id === active ? 'active' : ''}">${gi(ic)}<span>${lb}</span></a>`).join('')}</div></nav>`);
         document.body.appendChild(el);
@@ -152,7 +155,7 @@ const KR = (() => {
         return new Promise(res => {
             const el = h(`<div class="scrim"><div class="dialog" role="dialog" aria-modal="true">
                 <h3 class="t-title">${esc(title)}</h3><p>${esc(msg)}</p>
-                <div class="dialog-actions"><button class="btn" data-a="0">Cancelar</button><button class="btn ${danger ? 'danger' : ''}" data-a="1">${esc(ok)}</button></div>
+                <div class="dialog-actions"><button class="btn ghost" data-a="0">Cancelar</button><button class="btn ${danger ? 'primary' : 'ouro'}" data-a="1">${esc(ok)}</button></div>
             </div></div>`);
             const close = v => { el.remove(); document.removeEventListener('keydown', onKey); res(v); };
             const onKey = e => { if (e.key === 'Escape') close(false); };
@@ -327,5 +330,5 @@ const KR = (() => {
         draw(); drawEff();
     }
 
-    return { get, set, role, partCode, esc, norm, h, gi, GAME_ICONS, header, nav, snackbar, confirmDialog, menu, sheet, pressPreview, swipe, swipeRow, applyZoom, ZOOMS };
+    return { get, set, role, partCode, chapterName, setChapter, esc, norm, h, gi, GAME_ICONS, header, nav, snackbar, confirmDialog, menu, sheet, pressPreview, swipe, swipeRow, applyZoom, ZOOMS };
 })();

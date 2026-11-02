@@ -6,14 +6,16 @@
 <title>Kings of Ruin · Narrador</title>
 <link rel="stylesheet" href="theme.css">
 <style>
-.recent { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; margin-bottom: 14px; }
+.recent { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; margin-bottom: 14px; min-height: 32px; }
+.recent .chip { min-width: 44px; justify-content: center; font-family: var(--font-title); font-weight: 700; font-size: .875rem; letter-spacing: .06em; }
 .recent .chip { cursor: pointer; }
 .kp-title { text-align: center; font-size: .875rem; color: var(--text-2); text-transform: uppercase; letter-spacing: .12em; }
-.kp-display { min-height: 64px; display: flex; align-items: center; justify-content: center; margin: 6px auto 4px; max-width: 22rem; border-bottom: 1px solid var(--line-control); }
+.kp-display { min-height: 64px; display: flex; align-items: center; justify-content: center; margin: 6px auto 4px; max-width: 22rem; width: 80vw; border-bottom: 1px solid var(--line-control); }
 .kp-code { font-family: var(--font-title); font-weight: 700; font-size: 2.1rem; color: var(--gold); letter-spacing: .14em; }
 .kp-placeholder { color: var(--text-3); font-style: italic; font-size: 1.0625rem; }
 .kp-msg { min-height: 24px; text-align: center; color: var(--danger); font-size: .9375rem; margin-bottom: 8px; }
-.keypad { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; max-width: 22rem; margin: 0 auto; }
+/* teclado, visor e botões de baixo ocupam 80% da largura: sobra ~10% de cada lado da tela */
+.keypad { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; max-width: 22rem; width: 80vw; margin: 0 auto; }
 .key { height: 58px; display: flex; align-items: center; justify-content: center; background: var(--card-raised); border: 1px solid var(--line-control); border-radius: var(--radius); font-family: var(--font-title); font-weight: 700; font-size: 1.4rem; color: var(--title); user-select: none; -webkit-user-select: none; }
 .key:active { border-color: var(--gold); background: var(--card-selected); }
 .key.letter { color: var(--gold); }
@@ -22,8 +24,16 @@
 .key.ok { background: linear-gradient(135deg, #d4b886, #9c7f4c); color: #060807; border-color: #111613; }
 .key.ok:active { filter: brightness(1.1); }
 .key.ok.dim { opacity: .4; }
-.mode-row { display: flex; gap: 8px; max-width: 22rem; margin: 14px auto 0; }
+.mode-row { display: flex; gap: 8px; max-width: 22rem; width: 80vw; margin: 14px auto 0; }
 .mode-row .btn { flex: 1; min-width: 0; padding: 0 8px; letter-spacing: .06em; }
+.mode-row { flex-wrap: wrap; }
+/* modo tutorial: mesmos locais físicos, textos da seção de tutorial do livro; sempre visível para não ler o texto errado */
+.tut-bar { display: flex; align-items: center; justify-content: space-between; gap: 8px; min-height: 48px; margin: 0 0 12px; padding: 4px 4px 4px 12px; border: 1px solid var(--gold-soft); border-radius: var(--radius); background: var(--card-selected); }
+.tut-bar .t-title { font-size: .875rem; color: var(--gold); display: flex; align-items: center; gap: 6px; }
+.tut-bar .t-meta { display: block; font-size: .8125rem; }
+.tut-list .t-label { display: block; margin-bottom: 8px; }
+.tut-num { min-width: 2.6rem; font-family: var(--font-title); font-size: 1.15rem; }
+.read-ref { display: block; margin-top: 2px; font-family: var(--font-text); font-weight: 400; font-size: .8125rem; color: var(--text-3); letter-spacing: .04em; }
 .gi-inline { display: inline-flex; font-size: 1.25rem; color: var(--gold); margin-right: 6px; }
 .part-head { display: flex; align-items: center; gap: 6px; margin: 0 0 12px -10px; }
 .parts { max-width: 24rem; margin: 0 auto; }
@@ -45,6 +55,13 @@
 .narr-progress { flex: 1; min-width: 0; }
 .seek { height: 24px; display: block; }
 .narr-progress .t-meta { line-height: 1; margin-top: 0 !important; }
+/* velocidade no meio da linha dos tempos: discreta em 1x, dourada em qualquer outra */
+.time-row { display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; }
+.time-row span:last-child { text-align: right; }
+.rate-btn { min-width: 44px; min-height: 22px; padding: 0 6px; border: 1px solid var(--line-control); border-radius: 999px; background: transparent; color: var(--text-3); font-family: var(--font-text); font-weight: 700; font-style: normal; text-transform: none; letter-spacing: .02em; font-size: .8125rem; line-height: 1; }
+.rate-btn.on { color: var(--gold); border-color: var(--gold-soft); background: var(--card-selected); }
+.rate-btn::before { content: ""; position: absolute; inset: -12px -4px; }
+.rate-btn { position: relative; }
 .seek::-webkit-slider-runnable-track { background: linear-gradient(to right, var(--gold) var(--p, 0%), #050706 var(--p, 0%)); }
 .seek::-moz-range-progress { background: var(--gold); height: 8px; border-radius: 4px; }
 .narr-controls { display: flex; align-items: center; justify-content: center; gap: 28px; margin-top: 6px; }
@@ -61,13 +78,17 @@
 .choices { margin-top: 18px; padding-top: 14px; border-top: 1px solid var(--line); }
 .choice-btn { display: flex; align-items: center; gap: 10px; width: 100%; min-height: 52px; padding: 8px 12px; background: var(--card-raised); border: 1px solid var(--line-control); border-radius: var(--radius); text-align: left; color: var(--title); font-family: var(--font-title); font-weight: 700; font-size: .9375rem; }
 .choice-btn + .choice-btn { margin-top: 8px; }
-.choice-btn:active { border-color: var(--gold); background: var(--card-selected); }
+/* botões da narrativa: faixa de velino rasgado (arte própria, icons/faixa-*.png). O border-image fatia a imagem em 9 partes:
+   as pontas e o fio dourado mantêm a proporção e só o meio estica, para caber qualquer largura */
+.choice-btn { background: none; border-style: solid; border-width: 0; border-radius: 0; min-height: 56px; padding: 8px 22px;
+    border-image: url(icons/faixa-lisa.png) 28 44 fill / 11px 18px / 0 stretch; }
+.choice-btn:active { background: none; filter: brightness(1.4); }
 .choice-btn .choice-label { flex: 1; min-width: 0; }
 .choice-btn .ms { color: var(--text-3); }
 .cost { display: inline-flex; align-items: center; gap: 3px; color: var(--gold); flex-shrink: 0; }
 .cost img { width: 22px; height: 22px; border-radius:var(--radius); }
 .end-text { margin: 0 0 12px; font-size: 1.0625rem; color: var(--text-2); font-style: italic; }
-.choices .t-label { display: block; margin-bottom: 8px; }
+.read-head .gi-btn .gi { font-size: 1.9rem; color: var(--gold); }
 </style>
 </head>
 <body>
@@ -134,6 +155,13 @@ const NODES = {
         text: 'Iunis gira as lâminas em círculos lentos, e o ar parece cantar. Cada giro desperta uma lembrança que não é dela.' },
     'e4': { code: 'Parte 4', title: 'Osbert', duration: 90,
         text: 'Osbert ajusta a máscara. Por trás dela, dois rostos discutem em silêncio sobre qual deles vai falar primeiro.' },
+    // tutorial: o local físico é o mesmo, mas o texto vem da seção de tutorial do livro. Cada texto tem um número
+    // próprio de 4 dígitos (ref), o mesmo que o app oficial mostra no topo; o 150 do tutorial é o texto 1101.
+    // ref só onde o número real é conhecido; os textos ainda são provisórios.
+    't150': { code: '150', ref: '1101', title: 'Trilha dos Escravos', duration: 70,
+        text: 'Texto provisório do tutorial para o Local 150. Olhe a carta do local sobre a mesa: os símbolos nas bordas mostram para onde vocês podem viajar.' },
+    't110': { code: '110', title: 'Passagem do Rei', duration: 64,
+        text: 'Texto provisório do tutorial para o Local 110.' },
     's48': { code: 'Segredo 48', title: 'Conflitos Reforçados', duration: 52,
         text: 'Algo nos olhos dos inimigos mudou: eles já não hesitam. Cada golpe parece conhecer o caminho até vocês antes mesmo de ser desferido.',
         effects: [{ tone: 'bad', text: '+1 efeito em todo ataque e resposta do inimigo' }] },
@@ -141,14 +169,31 @@ const NODES = {
         text: 'Quando todos os outros recuam, vocês enxergam o campo como um tabuleiro. Existe uma abertura — e ela só dura um instante.',
         effects: [{ tone: 'good', text: 'Baixe cartas extras sem receber bônus de energia' }] }
 };
+// segredos do tutorial (Livro de Segredos 626 a 631), na ordem da lista do app oficial
+for (let n = 626; n <= 631; n++) NODES['s' + n] ??= { code: 'Segredo ' + n, title: 'Livro de Segredos', duration: 40, text: `Texto provisório do segredo ${n} (tutorial).` };
+const TUTORIAL = ['t150', 't110', 's626', 's627', 's628', 's629', 's630', 's631'];
 const MAX = 6;
 let view = 'keypad', mode = 'local', code = '', msg = '';
 let current = null, trail = [], playing = false, elapsed = 0, timer = null, lastT = 0, seeking = false;
+// velocidade da narração, lembrada entre trechos e sessões; cada toque passa para a próxima
+const RATES = [1, 1.25, 1.5, 2, 0.75];
+let rate = RATES.includes(KR.get('narradorVelocidade', 1)) ? KR.get('narradorVelocidade', 1) : 1;
+const rateLabel = () => String(rate).replace('.', ',') + 'x';
+function cycleRate() {
+    rate = RATES[(RATES.indexOf(rate) + 1) % RATES.length]; KR.set('narradorVelocidade', rate);
+    const b = $('rate'); b.textContent = rateLabel(); b.classList.toggle('on', rate !== 1); b.setAttribute('aria-label', 'Velocidade da narração: ' + rateLabel());
+}
 const isEntry = n => NODES[n] && /^\d/.test(n);
+const isTutEntry = n => NODES[n] && /^t\d/.test(n);
+// o tutorial segue o capítulo da Crônica: capítulo 0 = tutorial
+let tutorial = KR.get('chapter', 1) === 0;
+const tutBar = () => tutorial ? `<div class="tut-bar"><span><span class="t-title">${KR.gi('nr_tutorial', 'font-size:1.1rem')}Tutorial</span><span class="t-meta">Textos da seção de tutorial do livro</span></span><button class="btn small" data-tut="off">Sair</button></div>` : '';
 const PARTS = [['e1', 'Parte 1', 'Elgan', 'nr_h_elgan'], ['e2', 'Parte 2', 'Gerdwyn', 'nr_h_gerdwyn'], ['e3', 'Parte 3', 'Iunis', 'nr_h_iunis'], ['e4', 'Parte 4', 'Osbert', 'nr_h_osbert']];
 const ecosOn = () => KR.get('expEcos', true);
 let recent = KR.get('narradorRecent', []).filter(isEntry);
 if (!recent.length) recent = ['101', '110'];
+// segredos abertos recentemente (ids "s" + número), lista própria do modo segredo
+let recentSec = KR.get('narradorRecentSeg', []).filter(id => NODES[id]);
 const fmt = s => Math.floor(s / 60) + ':' + String(Math.floor(s % 60)).padStart(2, '0');
 
 const keyHtml = k => k === 'del' ? `<button class="key del" data-k="del" aria-label="Apagar"><span class="ms outline">backspace</span></button>`
@@ -158,15 +203,20 @@ const keyHtml = k => k === 'del' ? `<button class="key del" data-k="del" aria-la
 function renderKeypad() {
     const keys = ['A', 'B', 'C', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'del', '0', 'ok'];
     const secret = mode === 'segredo';
+    // no tutorial só a lista, como no app oficial; o número fica em destaque para já acostumar com ele
+    if (tutorial) { $('view').innerHTML = `${tutBar()}<div class="tut-list"><span class="t-label">Partes do tutorial</span>${TUTORIAL.map(id => { const n = NODES[id], sec = id.startsWith('s');
+        return `<button class="choice-btn" data-go="${id}" data-entry><span class="read-code tut-num">${sec ? id.slice(1) : n.code}</span><span class="choice-label">${sec ? 'Livro de Segredos' : KR.esc(n.title)}</span><span class="ms">chevron_right</span></button>`; }).join('')}</div>`; return; }
     $('view').innerHTML = `
-        ${!secret && recent.length ? `<div class="recent"><span class="t-label">Recentes</span>${recent.map(n => `<button class="chip" data-recent="${n}">Local ${n}</button>`).join('')}</div>` : ''}
+        <!-- a linha de Recentes existe sempre (mesmo vazia), para o título e o teclado não mudarem de altura entre os modos -->
+        ${(() => { const list = secret ? recentSec : recent; return `<div class="recent">${list.length ? `<span class="t-label">Recentes</span>${list.map(id => `<button class="chip" data-recent="${id}" aria-label="${secret ? 'Segredo' : 'Local'} ${secret ? id.slice(1) : id}">${secret ? id.slice(1) : id}</button>`).join('')}` : ''}</div>`; })()}
         <div class="kp-title t-title">${secret ? 'Verificar segredo' : 'Selecionar local'}</div>
         <div class="kp-display" id="kp-display" aria-live="polite"></div>
         <div class="kp-msg" id="kp-msg" role="status"></div>
         <div class="keypad">${keys.map(keyHtml).join('')}</div>
         <div class="mode-row">
-            <button class="btn" data-mode="${secret ? 'local' : 'segredo'}"><span class="ms outline">${secret ? 'dialpad' : 'key'}</span>${secret ? 'Voltar aos locais' : 'Verificar segredo'}</button>
+            <button class="btn" data-mode="${secret ? 'local' : 'segredo'}"><span class="gi-inline">${KR.gi(secret ? 'nr_locais' : 'nr_segredo')}</span>${secret ? 'Voltar aos locais' : 'Verificar segredo'}</button>
             ${!secret && ecosOn() ? `<button class="btn" data-parts><span class="gi-inline">${KR.gi('nr_ecos')}</span>Ecos da Ruína</button>` : ''}
+            ${!secret && !KR.get('tutorialDone', false) ? `<button class="btn" data-tut="on" style="flex-basis:100%"><span class="gi-inline">${KR.gi('nr_tutorial')}</span>Tutorial</button>` : ''}
         </div>`;
     drawDisplay();
 }
@@ -185,7 +235,7 @@ function askInstruction(c, title = 'Instrução') {
     const i = c.instruction;
     const el = KR.h(`<div class="scrim"><div class="dialog" role="dialog" aria-modal="true">
         <h3 class="t-title">${title}</h3><p>${KR.esc(i.text)}</p>
-        <div class="dialog-actions"><button class="btn" data-a="ok">OK</button>${i.cond ? `<button class="btn" data-a="mark"><span class="ms outline">check_box</span>Marcar em Condições</button>` : ''}</div>
+        <div class="dialog-actions"><button class="btn ${i.cond ? 'ghost' : 'ouro'}" data-a="ok">OK</button>${i.cond ? `<button class="btn ouro" data-a="mark"><span class="ms outline">check_box</span>Marcar em Condições</button>` : ''}</div>
     </div></div>`);
     const close = () => { el.remove(); document.removeEventListener('keydown', onKey); c.to ? go(c.to) : toKeypad(); };
     const onKey = e => { if (e.key === 'Escape') close(); };
@@ -220,12 +270,12 @@ function drawDisplay() {
 function renderRead() {
     const e = NODES[current];
     const pre = e.precheck, eff = e.effects, ch = e.choices;
-    $('view').innerHTML = `
+    $('view').innerHTML = `${tutBar()}
         <div class="card">
             <div class="read-head">
                 ${trail.length > 1 ? `<button class="icon-btn" data-nav="back" aria-label="Voltar ao trecho anterior"><span class="ms">arrow_back</span></button>` : ''}
-                <h1 class="t-title read-title"><span class="read-code">${KR.esc(e.code)}</span> – ${KR.esc(e.title)}</h1>
-                <button class="icon-btn" data-nav="keypad" aria-label="Trocar local"><span class="ms">dialpad</span></button>
+                <h1 class="t-title read-title"><span class="read-code">${KR.esc(e.code)}</span> – ${KR.esc(e.title)}${e.ref ? `<span class="read-ref">Texto ${KR.esc(e.ref)}</span>` : ''}</h1>
+                <button class="icon-btn gi-btn" data-nav="keypad" aria-label="Voltar aos locais">${KR.gi('nr_trocar')}</button>
             </div>
             <div class="narr-player">
                 <button class="ctrl-btn" id="back10" aria-label="Voltar 10 segundos"><span class="ms">replay_10</span></button>
@@ -233,14 +283,14 @@ function renderRead() {
                 <button class="ctrl-btn" id="fwd10" aria-label="Avançar 10 segundos"><span class="ms">forward_10</span></button>
                 <div class="narr-progress">
                     <input type="range" class="range seek" id="seek" min="0" max="${e.duration}" step="1" value="0" aria-label="Posição da narração">
-                    <div style="display:flex;justify-content:space-between;margin-top:2px" class="t-meta"><span id="elapsed">0:00</span><span id="remain">−${fmt(e.duration)}</span></div>
+                    <div class="t-meta time-row" style="margin-top:2px"><span id="elapsed">0:00</span><button class="rate-btn ${rate !== 1 ? 'on' : ''}" id="rate" aria-label="Velocidade da narração: ${rateLabel()}">${rateLabel()}</button><span id="remain">−${fmt(e.duration)}</span></div>
                 </div>
             </div>
             ${pre ? `<div class="precheck"><button class="choice-btn" data-go="${pre.to}"><span class="choice-label">${KR.esc(pre.label)}</span><span class="ms">chevron_right</span></button><p class="hint">${KR.esc(pre.hint)}</p><p class="otherwise">${KR.esc(pre.otherwise)}</p></div>` : ''}
             <p class="narr-text">${KR.esc(e.text)}</p>
             ${eff ? `<div class="effects"><span class="t-label">Consequências no jogo</span><div class="effects-list">${eff.map(f => `<span class="effect ${f.tone}">${KR.esc(f.text)}</span>`).join('')}</div></div>` : ''}
-            ${ch ? `<div class="choices"><span class="t-label">Escolha uma ação</span>${ch.map((c, i) => `<button class="choice-btn" ${c.instruction ? `data-ins="${i}"` : `data-go="${c.to}"`}>${c.cost ? `<span class="cost">${c.cost}<img src="icons/energy.png" alt="energia"></span>` : ''}<span class="choice-label">${KR.esc(c.label)}</span><span class="ms">chevron_right</span></button>`).join('')}</div>` : ''}
-            ${ch ? '' : `<div class="choices"><span class="t-label">Escolha uma ação</span><button class="choice-btn" data-end><span class="choice-label">${e.code.startsWith('Segredo') ? 'Encerrar o segredo' : 'Encerrar a exploração'}</span><span class="ms">chevron_right</span></button></div>`}
+            ${ch ? `<div class="choices">${ch.map((c, i) => `<button class="choice-btn" ${c.instruction ? `data-ins="${i}"` : `data-go="${c.to}"`}>${c.cost ? `<span class="cost">${c.cost}<img src="icons/energy.png" alt="energia"></span>` : ''}<span class="choice-label">${KR.esc(c.label)}</span><span class="ms">chevron_right</span></button>`).join('')}</div>` : ''}
+            ${ch ? '' : `<div class="choices"><button class="choice-btn" data-end><span class="choice-label">${e.code.startsWith('Segredo') ? 'Encerrar o segredo' : 'Encerrar a exploração'}</span><span class="ms">chevron_right</span></button></div>`}
         </div>`;
     const s = $('seek');
     s.addEventListener('pointerdown', () => { seeking = true; });
@@ -269,7 +319,7 @@ function stopPlayback() { playing = false; clearInterval(timer); timer = null; }
 function tick() {
     if (!playing) return;
     const t = performance.now(), e = NODES[current];
-    if (!seeking) elapsed = Math.min(e.duration, elapsed + (t - lastT) / 1000);
+    if (!seeking) elapsed = Math.min(e.duration, elapsed + (t - lastT) / 1000 * rate);
     lastT = t;
     drawProgress(!seeking);
     if (elapsed >= e.duration) { stopPlayback(); elapsed = 0; renderRead(); }
@@ -295,6 +345,9 @@ function openEntry(id) {
     if (isEntry(id)) {
         recent = [id, ...recent.filter(x => x !== id)].slice(0, 6);
         KR.set('narradorRecent', recent);
+    } else if (/^s\d/.test(id) && !tutorial) {
+        recentSec = [id, ...recentSec.filter(x => x !== id)].slice(0, 6);
+        KR.set('narradorRecentSeg', recentSec);
     }
     go(id);
 }
@@ -304,11 +357,13 @@ function goBack() { trail.pop(); show(trail[trail.length - 1]); }
 function toKeypad() { stopPlayback(); trail = []; view = 'keypad'; mode = 'local'; code = ''; msg = ''; renderKeypad(); }
 
 function press(k) {
+    // depois de um número que não existe, a próxima tecla já começa um número novo (apagar limpa tudo)
+    if (msg && k !== 'ok') { code = ''; msg = ''; if (k === 'del') return drawDisplay(); }
     if (k === 'del') code = code.slice(0, -1);
     else if (k === 'ok') {
         if (!code) return;
-        const id = mode === 'segredo' ? 's' + code : code;
-        if (!NODES[id] || (mode === 'local' && !isEntry(id))) { msg = mode === 'segredo' ? `Nenhum segredo com o número ${code}.` : `Nenhum registro para o local ${code}.`; drawDisplay(); return; }
+        const id = mode === 'segredo' ? 's' + code : (tutorial ? 't' : '') + code;
+        if (!NODES[id] || (mode === 'local' && !(tutorial ? isTutEntry(id) : isEntry(id)))) { msg = mode === 'segredo' ? `Nenhum segredo com o número ${code}.` : tutorial ? `Nenhum registro do tutorial para o local ${code}.` : `Nenhum registro para o local ${code}.`; drawDisplay(); return; }
         return openEntry(id);
     } else if (code.length < MAX) code += k;
     msg = '';
@@ -320,6 +375,9 @@ $('view').addEventListener('click', e => {
     const r = e.target.closest('[data-recent]'); if (r) return openEntry(r.dataset.recent);
     const m = e.target.closest('[data-mode]'); if (m) { mode = m.dataset.mode; code = ''; msg = ''; return renderKeypad(); }
     if (e.target.closest('[data-parts]')) return renderParts();
+    const tu = e.target.closest('[data-tut]');
+    // ativar marca a Crônica no tutorial; sair passa ao capítulo 1 e esconde o botão até a Crônica voltar ao tutorial
+    if (tu) { tutorial = tu.dataset.tut === 'on'; KR.setChapter(tutorial ? 0 : 1); return toKeypad(); }
     if (e.target.closest('[data-end]')) { const n = NODES[current], sec = n.code.startsWith('Segredo'); return askInstruction({ to: null, instruction: n.end || { text: sec ? 'O segredo termina.' : 'A exploração termina.' } }, 'Fim'); }
     const ins = e.target.closest('[data-ins]'); if (ins) return askInstruction(NODES[current].choices[+ins.dataset.ins]);
     const g = e.target.closest('[data-go]'); if (g) return g.hasAttribute('data-entry') ? openEntry(g.dataset.go) : go(g.dataset.go);
@@ -327,6 +385,7 @@ $('view').addEventListener('click', e => {
     if (e.target.closest('#play')) return togglePlay();
     if (e.target.closest('#back10')) return skip(-10);
     if (e.target.closest('#fwd10')) return skip(10);
+    if (e.target.closest('#rate')) return cycleRate();
 });
 document.addEventListener('keydown', e => {
     if (view !== 'keypad' || e.ctrlKey || e.metaKey || e.altKey || e.target.closest('input, textarea')) return;

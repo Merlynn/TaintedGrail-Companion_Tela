@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Kings of Ruin · Grupo</title>
+<link rel="stylesheet" href="theme.css">
+<style>
+.hero-avatar { width: 48px; height: 48px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; border: 1px solid var(--line-control); border-radius: var(--radius); background: #141a17; color: var(--gold-soft); margin-right: 4px; }
+.hero-sub { display: flex; flex-wrap: wrap; align-items: center; gap: 2px 14px; margin-top: 0; line-height: 1.2; color: var(--text); font-size: 1rem; }
+.hero-sub .ms { font-size: 1.05rem; color: var(--text-3); }
+.loc-btn { background: transparent; border: none; text-decoration: underline dashed var(--line-control); text-decoration-thickness: 1px; text-underline-offset: 4px; color: var(--gold); font-family: var(--font-title); font-weight: 700; font-size: .9rem; padding: 0 1px; min-height: 28px; margin: -4px 0; line-height: 1.2; }
+.loc-input { width: 3.4rem; background: transparent; border: none; border-bottom: 1px solid var(--gold); color: var(--gold); font-family: var(--font-title); font-weight: 700; font-size: .9rem; text-align: center; outline: none; padding: 0; }
+/* seletor fixo no topo: uma linha só, ícone em cima e nome embaixo, para caber 1 a 4 heróis */
+.strip { position: sticky; top: var(--header-h); z-index: 20; display: grid; grid-auto-columns: minmax(0, 1fr); grid-auto-flow: column; gap: 6px; margin: -12px -12px 12px; padding: 8px 12px; background: var(--bg); border-bottom: 1px solid var(--line); }
+.tile { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; min-height: 60px; padding: 4px 2px; background: var(--card); border: 1px solid var(--line-control); border-radius: var(--radius); }
+.tile.sel { border-color: var(--gold); background: var(--card-selected); }
+.tile .gi { font-size: 1.5rem; color: var(--gold-soft); }
+.tile.sel .gi { color: var(--gold); }
+.tile .nm { max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-family: var(--font-title); font-weight: 700; color: var(--title); font-size: .875rem; }
+.ficha { background: var(--card); border: 1px solid var(--gold-soft); border-radius: var(--radius); padding: 0 12px 14px; }
+.ficha .hero-head { padding: 12px 0; cursor: default; }
+.tk .row img { flex-shrink: 0; width: 32px; height: 32px; border-radius: var(--radius); }
+.tk select { min-height: 48px; font-size: 1.4rem; }
+.tk .row { display: flex; align-items: center; gap: 6px; }
+.tk .row select { flex: 1; min-width: 0; }
+.extra { margin-top: 10px; background: var(--card); border: 1px solid var(--line-control); border-radius: var(--radius); }
+.extra-head { display: flex; align-items: center; gap: 8px; width: 100%; min-height: 52px; padding: 8px 12px; text-align: left; font-family: var(--font-title); font-weight: 700; color: var(--title); }
+.extra-head .gi { color: var(--gold); font-size: 1.3rem; }
+.extra-head .t-meta { margin-left: auto; font-family: var(--font-text); font-weight: 400; }
+.extra-body { padding: 0 12px 14px; }
+.grid2 { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 6px; }
+.grid3 { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
+.grid4 { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 6px; }
+.stat { background: #060807; border: 1px solid var(--line); border-radius: var(--radius); padding: 6px; }
+.stat .t-label { display: block; text-align: center; margin-bottom: 4px; }
+.stat select, .stat input { width: 100%; min-height: 40px; background: #050706; border: 1px solid var(--line-control); border-radius: var(--radius); color: var(--gold); font-family: var(--font-title); font-weight: 700; font-size: 1.1rem; text-align: center; text-align-last: center; appearance: none; outline: none; }
+.stat select:focus, .stat input:focus { border-color: var(--gold); }
+.track { display: flex; align-items: center; gap: 6px; }
+.track img { width: 34px; height: 34px; border-radius:var(--radius); flex-shrink: 0; }
+.attr-icon { width: 26px; height: 26px; object-fit: contain; flex-shrink: 0; }
+.stat .skill { min-height: 30px; font-family: var(--font-text); font-weight: 400; font-size: .8125rem; color: var(--title); text-align: left; text-align-last: auto; padding: 2px 24px 2px 8px; }
+.stat .skill::placeholder { color: var(--text-3); font-style: italic; }
+.item-row { display: flex; align-items: center; gap: 8px; padding: 6px 10px; }
+.item-row .field-line { border-bottom: none; padding: 6px 0; }
+/* item numa linha só: nome encolhe, os dois botões ficam à direita */
+.item-line { gap: 4px; padding: 4px 4px 4px 9px; }
+.swipe-row:has(.item-line) + .swipe-row { margin-top: 4px; }
+.sec-line { min-height: 38px; }
+/* uma caixa só por segredo, dividida: número dourado à esquerda, descrição à direita */
+.sec-line { padding: 0; gap: 0; }
+.sec-num, .sec-desc { align-self: stretch; min-height: 38px; background: transparent; border: none; outline: none; }
+.sec-num { width: 3rem; flex-shrink: 0; text-align: center; border-right: 1px solid var(--line-control); font-family: var(--font-title); font-weight: 700; font-size: 1rem; color: var(--gold); }
+.sec-desc { flex: 1; min-width: 0; padding: 0 10px; font-size: .9375rem; color: var(--title); text-overflow: ellipsis; }
+.swipe-fg:has(.sec-line :focus) { border-color: var(--gold); }
+.sec-num::placeholder, .sec-desc::placeholder { color: var(--text-3); font-style: italic; font-family: var(--font-text); font-weight: 400; }
+.swipe-row:has(.sec-line) + .swipe-row { margin-top: 4px; }
+.item-line .field-line { flex: 1; min-width: 0; padding: 2px 0; text-overflow: ellipsis; }
+.item-chips { display: flex; gap: 4px; flex-shrink: 0; }
+.item-chips .chip { min-height: 30px; padding: 0 6px; letter-spacing: .04em; justify-content: center; }
+.item-chips .chip:first-child { width: 5.2rem; }
+.item-chips .chip:last-child { width: 4.3rem; }
+.deck-row { display: flex; align-items: center; gap: 6px; }
+.deck-row + .deck-row { margin-top: 6px; }
+.deck-row .letter { width: 18px; font-family: var(--font-title); font-weight: 700; font-size: .95rem; text-align: center; flex-shrink: 0; }
+.deck-row .slots { flex: 1; }
+.deck-row .slot { height: 34px; font-size: .8125rem; max-width: none; }
+.deck-row .slots.half { max-width: calc(50% - 1px); }
+.hero-head { display: flex; align-items: center; gap: 8px; }
+.hero-head .t-title { font-size: 1.125rem; line-height: 1.2; }
+.hero-avatar .gi { font-size: 1.75rem; }
+/* abas dentro do cartão do herói: deixa claro de quem são os dados */
+.ficha .tabs { margin: 0 -12px 12px; padding: 0 4px; }
+/* aba ativa em destaque (maior e com mais espaço); a outra volta ao tamanho normal */
+.ficha .tab { flex: 1 1 0; min-width: 0; min-height: 48px; gap: 6px; font-size: .75rem; transition: font-size .15s, flex-grow .15s; }
+.ficha .tab.active { flex-grow: 1.6; font-size: clamp(.75rem, calc(7vw - 10.5px), 1.1875rem); }
+.ficha .tab .gi { font-size: 1.45em; }
+.grp { border: 1px solid var(--line); border-radius: var(--radius); background: #050706; overflow: hidden; }
+.grp + .grp { margin-top: 8px; }
+.grp.unlocked { border-color: #52412b; background: #0a0d0b; }
+.grp-head { display: flex; align-items: center; justify-content: space-between; gap: 8px; min-height: 44px; padding: 4px 10px; }
+.grp-head .t-title { font-size: .875rem; color: var(--text-3); display: flex; align-items: center; gap: 6px; }
+.grp.unlocked .grp-head .t-title { color: var(--gold); }
+/* uma linha por memória, como na folha: caixa à esquerda, texto inteiro ao lado */
+.mem-row { display: flex; align-items: flex-start; gap: 10px; width: 100%; min-height: 44px; padding: 8px 10px; border-top: 1px solid var(--line); text-align: left; background: transparent; color: var(--text); font-size: 1rem; line-height: 1.3; }
+.mem-row:active { background: rgba(194,166,117,.06); }
+.box { width: 28px; height: 28px; flex-shrink: 0; margin-top: 1px; display: flex; align-items: center; justify-content: center; border: 2px solid var(--text-3); border-radius: 4px; color: transparent; }
+.box .ms { font-size: 1.3rem; }
+.mem-row.on .box { border-color: var(--gold); background: var(--card-selected); color: var(--gold); }
+.mem-row b { color: var(--title); font-weight: 700; }
+.mem-row .go { display: block; margin-top: 0; font-size: .875rem; color: var(--text-3); }
+.mem-row.on .go { color: var(--gold-soft); }
+.final { margin-top: 8px; padding: 10px; text-align: center; border: 1px solid var(--line); border-radius: var(--radius); background: #050706; }
+.final.unlocked { border-color: #52412b; background: #0a0d0b; }
+</style>
+</head>
+<body>
+<main class="page">
+    <div id="heroes"></div>
+</main>
+
+<script src="app.js"></script>
+<script src="herois.js"></script>
+<script>
+KR.header();
+KR.nav('ecos');
+const $ = id => document.getElementById(id);
+const role = KR.role();
+const { ATTRS, SKILLS, ECHOES } = HEROIS;
+// só os heróis da campanha (1 a 4); sem campanha registrada, todos
+const all = HEROIS.load(), inCamp = KR.get('campaign', null)?.heroes;
+const heroes = inCamp?.length ? all.filter(h => inCamp.includes(h.id)) : all;
+const save = () => HEROIS.save(all);
+const byId = id => heroes.find(h => h.id === id);
+const solo = role === 'jogador' || heroes.length === 1;
+const env = KR.get('envelopes', { D: false, F: false });
+const echoesOn = KR.get('expEcos', true);
+let openId = role === 'jogador' ? KR.get('playerHero', 'elgan') : KR.get('openHero', 'elgan');
+if (!byId(openId)) openId = heroes[0].id;
+let tab = echoesOn ? KR.get('heroiAba', 'ecos') : 'ficha';
+let editingLoc = null;
+const opts = (max, cur) => Array.from({ length: max + 1 }, (_, i) => `<option value="${i}" ${i === cur ? 'selected' : ''}>${i}</option>`).join('');
+
+function stepper(path, lb, icon, val, max) {
+    const sel = `<select data-f="${path}" aria-label="${lb}">${opts(max, val)}</select>`;
+    return `<div class="stat tk"><span class="t-label">${lb}</span>${icon ? `<div class="row">${icon}${sel}</div>` : sel}</div>`;
+}
+
+// ordem da ficha de papel: Energia, Saúde, Pavor
+function tracksBlock(h) {
+    const im = n => `<img src="icons/${n}.png" alt="">`;
+    return `<div class="grid3">${stepper('tracks.energy', 'Energia', im('energy'), h.tracks.energy, 15)}${stepper('tracks.health', 'Saúde', im('health'), h.tracks.health, 15)}${stepper('tracks.terror', 'Pavor', im('terror'), h.tracks.terror, 15)}</div>`;
+}
+
+function resBlock(h) {
+    return `<div class="grid4">${[['food', 'Comida'], ['wealth', 'Riqueza'], ['exp', 'Exp'], ['magic', 'Magia']].map(([k, lb]) => stepper('res.' + k, lb, '', h.res[k], 20)).join('')}</div>`;
+}
+
+function attrsTab(h) {
+    return `<div class="grid2">${ATTRS.map(([k, code, img]) => {
+        const cat = SKILLS[h.id]?.[k];
+        const skill = i => cat
+            ? `<div class="select-wrap"><select class="field skill" data-f="skills.${k}.${i}"><option value="">Perícia</option>${cat.map(s => `<option ${s === h.skills[k][i] ? 'selected' : ''}>${s}</option>`).join('')}</select><span class="ms">expand_more</span></div>`
+            : `<input class="field skill" data-f="skills.${k}.${i}" placeholder="Perícia" value="${KR.esc(h.skills[k][i])}">`;
+        return `<div class="stat attr" style="padding:6px">
+            <div style="display:flex;align-items:center;justify-content:space-between;gap:6px;margin-bottom:4px">
+                <div style="display:flex;align-items:center;gap:6px"><img class="attr-icon" src="icons/${img}.png" alt=""><span class="t-title" style="font-size:.875rem;letter-spacing:.1em">${code}</span></div>
+                <select data-f="attrs.${k}" aria-label="${code}" style="width:48px;min-height:32px">${opts(4, h.attrs[k])}</select>
+            </div>
+            <div style="display:grid;gap:4px">${skill(0)}${skill(1)}</div>
+        </div>`;
+    }).join('')}</div>`;
+}
+
+function invTab(h) {
+    const items = h.items.map(it => KR.swipeRow(`<div class="item-row item-line">
+        <input class="field-line" data-item="${it.id}" data-k="name" placeholder="Nome do item" value="${KR.esc(it.name)}">
+        <div class="item-chips"><button class="chip ${it.equipped ? 'on' : ''}" data-toggle="${it.id}" data-k="equipped">${it.equipped ? 'Equipado' : 'Mochila'}</button>
+        <button class="chip ${it.spent ? 'off' : ''}" data-toggle="${it.id}" data-k="spent">${it.spent ? 'Usado' : 'Pronto'}</button></div>
+    </div>`).replace('class="swipe-row"', `class="swipe-row" data-swipe="item" data-id="${it.id}"`)).join('');
+    const secrets = h.secrets.map(s => KR.swipeRow(`<div class="item-row item-line sec-line">
+        <input class="sec-num" data-secret="${s.id}" data-k="num" inputmode="numeric" placeholder="Nº" aria-label="Número do segredo" value="${KR.esc(s.num)}">
+        <input class="sec-desc" data-secret="${s.id}" data-k="desc" placeholder="Descrição do segredo" aria-label="Descrição do segredo" value="${KR.esc(s.desc)}">
+    </div>`).replace('class="swipe-row"', `class="swipe-row" data-swipe="secret" data-id="${s.id}"`)).join('');
+    return `
+        <div class="section-head"><span class="t-title">Itens</span><button class="btn small" data-add="item">+ Adicionar</button></div>
+        ${items || '<p class="t-meta">Nenhum item registrado.</p>'}
+        <div class="section-head"><span class="t-title">Segredos</span><button class="btn small" data-add="secret">+ Adicionar</button></div>
+        ${secrets || '<p class="t-meta">Nenhum segredo registrado.</p>'}
+        ${(h.items.length || h.secrets.length) ? '<div class="swipe-hint"><span class="ms">swipe_left</span>Deslize uma linha para a esquerda para remover</div>' : ''}`;
+}
+
+function decksTab(h) {
+    const row = (type, letter, n, color) => {
+        let s = '';
+        for (let i = 1; i <= n; i++) { const id = letter + i, on = h.decks[type].includes(id); s += `<div class="slot ${on ? (type === 'combat' ? 'c-on' : 'd-on') : ''}" data-card="${type}:${id}" data-label="${id}">${i}</div>`; }
+        return `<div class="deck-row"><span class="letter" style="color:${color}">${letter}</span><div class="slots ${n === 5 ? 'half' : ''}">${s}</div></div>`;
+    };
+    const block = (type, label, color, icon) => `
+        <div class="section-head"><span class="t-title" style="color:${color}">${KR.gi(icon, 'font-size:1.1rem')} ${label}</span><span class="t-label">${h.decks[type].length} ativas</span></div>
+        ${row(type, 'B', 10, 'var(--gold)')}${row(type, 'E', 10, 'var(--gold)')}${env.D ? row(type, 'D', 5, 'var(--gold)') : ''}${env.F ? row(type, 'F', 5, 'var(--serie-f)') : ''}`;
+    return block('combat', 'Combate', 'var(--combat)', 'combate') + block('diplomacy', 'Diplomacia', 'var(--diplo)', 'diplomacia');
+}
+
+// como a folha descreve o momento de cada memória
+const WHEN = { 'Fim do dia': 'No fim do dia', 'Durante o dia': 'Durante o dia', 'Sempre': 'A qualquer momento', 'Diplomacia': 'Na diplomacia', 'Encontro': 'No encontro', 'Combate': 'No combate', 'Exploração': 'Na exploração' };
+
+function memList(h) {
+    const cat = ECHOES[h.id], m = h.echoes.marks, done = m.filter(Boolean).length;
+    let html = '';
+    for (let b = 0; b < 3; b++) {
+        const got = [0, 1, 2].filter(i => m[b * 3 + i]).length, unlocked = got === 3, spent = h.echoes.spent[b];
+        html += `<section class="grp ${unlocked ? 'unlocked' : ''}">
+            <div class="grp-head">
+                <span class="t-title">${KR.gi(unlocked ? 'lendaria' : 'secreta', 'font-size:1.05rem')}${unlocked ? 'Ação lendária' : 'Carta secreta'} ${cat.cards[b]}</span>
+                ${unlocked ? `<button class="chip ${spent ? 'off' : 'on'}" data-spent="${b}">${KR.gi(spent ? 'e_usada' : 'e_pronta')}${spent ? 'Usada' : 'Pronta'}</button>` : `<span class="t-label">${got}/3</span>`}
+            </div>
+            ${[0, 1, 2].map(i => {
+                const k = b * 3 + i, [when, desc] = cat.mem[k];
+                return `<button class="mem-row ${m[k] ? 'on' : ''}" data-mem="${k}" role="checkbox" aria-checked="${m[k]}">
+                    <span class="box"><span class="ms">check</span></span>
+                    <span><b>${WHEN[when] || when}:</b> ${KR.esc(desc)}<span class="go">Memória ${k + 1} de ${h.name}</span></span>
+                </button>`;
+            }).join('')}
+        </section>`;
+    }
+    return html + `<div class="final ${done === 9 ? 'unlocked' : ''}">${done === 9
+        ? `<div class="t-title" style="color:var(--gold);font-size:.875rem">${KR.gi('evoluida', 'font-size:1rem')} ${cat.final[0]}</div><p style="margin:4px 0 0">${cat.final[1]}</p>`
+        : `<span class="t-label">${KR.gi('bloqueada', 'font-size:.9rem')} Habilidade evoluída · conclua as 9 memórias</span>`}</div>`;
+}
+
+
+function render() {
+    const h = byId(openId);
+    const im = n => `<img src="icons/${n}.png" alt="">`;
+    const strip = solo ? '' : `<div class="strip">${heroes.map(x => `<button class="tile ${x.id === openId ? 'sel' : ''}" data-pick="${x.id}" aria-pressed="${x.id === openId}">
+        ${KR.gi('g_' + x.id)}<span class="nm">${x.name}</span>
+    </button>`).join('')}</div>`;
+    const done = h.echoes.marks.filter(Boolean).length;
+    const tabs = echoesOn ? `<div class="tabs" role="tablist">${[['ficha', 'c_fichas', 'Ficha'], ['ecos', 't_ecos', 'Ecos da Ruína']].map(([id, ic, lb]) => `<button class="tab ${id === tab ? 'active' : ''}" data-tab="${id}" role="tab" aria-selected="${id === tab}">${KR.gi(ic)}${lb}</button>`).join('')}</div>` : '';
+    const ex = KR.get('fichaExtras', { cards: false });
+    const cards = `<section class="extra"><button class="extra-head" data-extra="cards" aria-expanded="${!!ex.cards}">${KR.gi('t_cartas')}Cartas<span class="t-meta">${h.decks.combat.length + h.decks.diplomacy.length} ativas</span><span class="ms" style="color:${ex.cards ? 'var(--gold)' : 'var(--text-3)'};transform:rotate(${ex.cards ? 180 : 0}deg);transition:transform .2s">expand_more</span></button>${ex.cards ? `<div class="extra-body">${decksTab(h)}</div>` : ''}</section>`;
+    const ficha = `<div class="section-head" style="margin-top:0"><span class="t-title">Trilhas e recursos</span></div>${tracksBlock(h)}
+        <div style="margin-top:8px">${resBlock(h)}</div>
+        <div class="section-head"><span class="t-title">Atributos</span></div>${attrsTab(h)}
+        ${invTab(h)}`;
+    $('heroes').innerHTML = strip + `
+        <section class="ficha">
+            <div class="hero-head">
+                <span class="hero-avatar">${KR.gi('g_' + h.id)}</span>
+                <div style="flex:1;min-width:0">
+                    <div style="display:flex;align-items:baseline;gap:8px;flex-wrap:wrap"><span class="t-title">${h.name}</span><span class="t-meta">${h.title}</span></div>
+                    <div class="hero-sub"><span>${KR.gi('g_jogador')} ${KR.esc(h.player) || '<span class="t-meta">sem jogador</span>'}</span><span>${KR.gi('g_local')} Local
+                        ${editingLoc === h.id
+                            ? `<input class="loc-input" data-locedit="${h.id}" inputmode="numeric" maxlength="4" value="${KR.esc(h.loc)}">`
+                            : `<button class="loc-btn" data-locview="${h.id}">${KR.esc(h.loc) || '?'}</button>`}
+                    </span></div>
+                </div>
+            </div>
+            ${tabs}
+            ${tab === 'ecos' ? memList(h) : ficha}
+        </section>
+        ${tab === 'ficha' ? cards : ''}`;
+    document.querySelectorAll('[data-swipe]').forEach(r => KR.swipe(r, () => removeRow(r.dataset.swipe, r.dataset.id)));
+}
+const renderEchoes = render;
+
+function removeRow(kind, id) {
+    const h = byId(openId), arr = kind === 'item' ? h.items : h.secrets;
+    const idx = arr.findIndex(x => x.id === id), removed = arr[idx];
+    arr.splice(idx, 1); save(); render();
+    KR.snackbar(kind === 'item' ? 'Item removido' : 'Segredo removido', () => { arr.splice(idx, 0, removed); save(); render(); });
+}
+
+function setPath(obj, path, val) { const k = path.split('.'); let o = obj; while (k.length > 1) o = o[k.shift()]; o[k[0]] = val; }
+
+$('heroes').addEventListener('click', e => {
+    const t = e.target;
+    const locBtn = t.closest('[data-locview]');
+    if (locBtn) { editingLoc = locBtn.dataset.locview; render(); const inp = document.querySelector('[data-locedit]'); inp?.focus(); inp?.select(); return; }
+    const tb = t.closest('[data-tab]');
+    if (tb) { tab = tb.dataset.tab; KR.set('heroiAba', tab); render(); return; }
+    const pick = t.closest('[data-pick]');
+    if (pick) { openId = pick.dataset.pick; KR.set('openHero', openId); render(); return; }
+    const xt = t.closest('[data-extra]');
+    if (xt) { const ex = KR.get('fichaExtras', { cards: false }); ex[xt.dataset.extra] = !ex[xt.dataset.extra]; KR.set('fichaExtras', ex); render(); return; }
+    const h = byId(openId); if (!h) return;
+    const add = t.closest('[data-add]');
+    if (add) {
+        const id = Date.now().toString(36);
+        if (add.dataset.add === 'item') h.items.push({ id, name: '', equipped: true, spent: false }); else h.secrets.push({ id, num: '', desc: '' });
+        save(); render();
+        document.querySelector(`[data-${add.dataset.add === 'item' ? 'item' : 'secret'}="${id}"]`)?.focus();
+        return;
+    }
+    const tg = t.closest('[data-toggle]');
+    if (tg) { const it = h.items.find(x => x.id === tg.dataset.toggle); it[tg.dataset.k] = !it[tg.dataset.k]; save(); render(); return; }
+    const sp = t.closest('[data-spent]');
+    if (sp) { h.echoes.spent[+sp.dataset.spent] = !h.echoes.spent[+sp.dataset.spent]; save(); render(); return; }
+    const row = t.closest('[data-mem]');
+    if (row) toggleMem(+row.dataset.mem);
+});
+
+$('heroes').addEventListener('change', e => {
+    const f = e.target.dataset.f; if (!f) return;
+    const h = byId(openId), num = e.target.tagName === 'SELECT' && !f.startsWith('skills');
+    setPath(h, f, num || f.startsWith('res') ? (parseInt(e.target.value) || 0) : e.target.value);
+    save();
+    if (f.startsWith('tracks')) render();
+});
+$('heroes').addEventListener('blur', e => {
+    const inp = e.target.closest?.('[data-locedit]'); if (!inp) return;
+    byId(inp.dataset.locedit).loc = inp.value.trim();
+    editingLoc = null; save(); render();
+}, true);
+$('heroes').addEventListener('keydown', e => { if (e.target.closest('[data-locedit]') && e.key === 'Enter') e.target.blur(); });
+$('heroes').addEventListener('input', e => {
+    const h = byId(openId); if (!h) return;
+    const d = e.target.dataset;
+    if (d.item) h.items.find(x => x.id === d.item)[d.k] = e.target.value;
+    else if (d.secret) h.secrets.find(x => x.id === d.secret)[d.k] = e.target.value;
+    else if (d.f && e.target.tagName === 'INPUT' && !d.f.startsWith('res')) setPath(h, d.f, e.target.value);
+    else return;
+    save();
+});
+
+
+// desmarcar pede confirmação pelo "Desfazer": um toque acidental na mesa não apaga a conquista
+function toggleMem(k) {
+    const h = byId(openId), m = h.echoes.marks, b = Math.floor(k / 3);
+    const before = { mark: m[k], spent: h.echoes.spent[b] };
+    m[k] = !m[k];
+    if (!(m[b * 3] && m[b * 3 + 1] && m[b * 3 + 2])) h.echoes.spent[b] = false;
+    save(); renderEchoes();
+    KR.snackbar(m[k] ? `Memória ${k + 1} marcada` : `Memória ${k + 1} desmarcada`, () => {
+        m[k] = before.mark; h.echoes.spent[b] = before.spent; save(); renderEchoes();
+    });
+}
+
+
+
+KR.pressPreview($('heroes'), {
+    onCommit: s => {
+        const [type, id] = s.dataset.card.split(':'), h = byId(openId), list = h.decks[type];
+        const i = list.indexOf(id); if (i === -1) list.push(id); else list.splice(i, 1);
+        list.sort((a, b) => a.localeCompare(b, undefined, { numeric: true }));
+        save(); render();
+    },
+    enabled: () => true
+});
+
+render();
+</script>
+</body>
+</html>
